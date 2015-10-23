@@ -4,6 +4,10 @@ import ebarrientos.deckStats.load.utils.URLUtils
 import ebarrientos.deckStats.basics.Card
 import ebarrientos.deckStats.load.utils.LoadUtils
 
+@Deprecated
+/**
+ * @deprecated Ya no funciona la p&aacute;gina.
+ */
 class MtgDBCardLoader extends CardLoader with LoadUtils with URLUtils {
 
   def card(name: String) = {
