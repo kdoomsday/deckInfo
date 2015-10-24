@@ -6,7 +6,7 @@ case object Snow extends ManaProperty
 
 
 // Common behavior for mana
-trait Mana {
+sealed trait Mana {
   def is(c: Color): Boolean
   def isColorless: Boolean
 
@@ -14,6 +14,14 @@ trait Mana {
   def hasProperty(p: ManaProperty): Boolean = properties(p)
 
   def cmc: Int
+}
+
+object Mana {
+  def asPhyrexian(mana: Mana): Mana = mana match {
+    case m @ ColorlessMana(_, properties) => m.copy(properties = properties + Phyrexian)
+    case m @ ColoredMana(_, properties) => m.copy(properties = properties + Phyrexian)
+    case m @ HybridMana(_) => ???  // No se como seria este
+  }
 }
 
 

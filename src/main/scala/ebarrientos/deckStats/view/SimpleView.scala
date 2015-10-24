@@ -32,6 +32,9 @@ import ebarrientos.deckStats.load.CachedLoader
 import ebarrientos.deckStats.load.H2DbLoader
 import scala.swing.FlowPanel
 import ebarrientos.deckStats.load.WeakCachedLoader
+import ebarrientos.deckStats.load.MagicAPICardLoader
+import scala.concurrent.Future
+import ebarrientos.deckStats.load.ScryCardLoader
 
 /** Main interface that shows a selector for the card database, a selector for the deck, and an
   * area for showing the deck stats.
@@ -47,7 +50,7 @@ object SimpleView extends SimpleSwingApplication {
   private[this] var mainPanel: Panel = null
 
 
-  lazy val netLoader = new MtgDBCardLoader
+  lazy val netLoader = new ScryCardLoader
   lazy val dbLoader = new H2DbLoader(netLoader)
   lazy val cardLoader: CardLoader = new WeakCachedLoader(dbLoader)
   private[this] var deckLoader: Option[DeckLoader] = None
@@ -138,7 +141,7 @@ object SimpleView extends SimpleSwingApplication {
     import scala.concurrent.future
     import scala.concurrent.ExecutionContext.Implicits._
 
-    val task = future {
+    val task = Future {
       // Handle loading of cards database and such prop
       for (loader <- deckLoader) {
         status.text = text.getString("statusbar.loading")

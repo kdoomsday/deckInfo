@@ -10,5 +10,6 @@ libraryDependencies ++= Seq(
   "com.github.wookietreiber" %% "scala-chart" % "latest.integration",
   "org.scala-lang" % "scala-swing" % "2.10+",
   "org.scala-lang.modules" %% "scala-parser-combinators" % "1.0.2",
-  "org.scala-lang.modules" %% "scala-xml" % "1.0.2"
+  "org.scala-lang.modules" %% "scala-xml" % "1.0.2",
+  "org.json4s" %% "json4s-jackson" % "3.3.0.RC2"
 )

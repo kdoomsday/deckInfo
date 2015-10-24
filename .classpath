@@ -20,7 +20,15 @@
   <classpathentry kind="lib" path="/home/doomsday/.ivy2/cache/org.scala-lang.modules/scala-swing_2.11/bundles/scala-swing_2.11-1.0.2.jar"/>
   <classpathentry kind="lib" path="/home/doomsday/.ivy2/cache/org.scala-lang/scala-swing/jars/scala-swing-2.10.6.jar"/>
   <classpathentry kind="lib" path="/home/doomsday/.ivy2/cache/org.scala-lang.modules/scala-parser-combinators_2.11/bundles/scala-parser-combinators_2.11-1.0.2.jar"/>
-  <classpathentry kind="lib" path="/home/doomsday/.ivy2/cache/org.scala-lang.modules/scala-xml_2.11/bundles/scala-xml_2.11-1.0.2.jar"/>
+  <classpathentry kind="lib" path="/home/doomsday/.ivy2/cache/org.json4s/json4s-jackson_2.11/jars/json4s-jackson_2.11-3.3.0.RC2.jar"/>
+  <classpathentry kind="lib" path="/home/doomsday/.ivy2/cache/org.json4s/json4s-core_2.11/jars/json4s-core_2.11-3.3.0.RC2.jar"/>
+  <classpathentry kind="lib" path="/home/doomsday/.ivy2/cache/org.json4s/json4s-ast_2.11/jars/json4s-ast_2.11-3.3.0.RC2.jar"/>
+  <classpathentry kind="lib" path="/home/doomsday/.ivy2/cache/org.json4s/json4s-scalap_2.11/jars/json4s-scalap_2.11-3.3.0.RC2.jar"/>
+  <classpathentry kind="lib" path="/home/doomsday/.ivy2/cache/com.thoughtworks.paranamer/paranamer/bundles/paranamer-2.7.jar"/>
+  <classpathentry kind="lib" path="/home/doomsday/.ivy2/cache/org.scala-lang.modules/scala-xml_2.11/bundles/scala-xml_2.11-1.0.4.jar"/>
+  <classpathentry kind="lib" path="/home/doomsday/.ivy2/cache/com.fasterxml.jackson.core/jackson-databind/bundles/jackson-databind-2.3.5.jar"/>
+  <classpathentry kind="lib" path="/home/doomsday/.ivy2/cache/com.fasterxml.jackson.core/jackson-annotations/bundles/jackson-annotations-2.3.0.jar"/>
+  <classpathentry kind="lib" path="/home/doomsday/.ivy2/cache/com.fasterxml.jackson.core/jackson-core/bundles/jackson-core-2.3.5.jar"/>
   <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
   <classpathentry kind="output" path="bin"/>
 </classpath>
