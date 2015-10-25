@@ -3,7 +3,7 @@ package ebarrientos.deckStats.math
 /** Seq operations. */
 object Seqs {
 
-  /** Return a map with the number of appearances of an item in a Seq */
+  /** Return a map with the number of appearances of each item in a Seq */
   def encode[T](s: Seq[T]): Map[T, Int] = {
     def enc[T](seq: Seq[T], map: Map[T, Int]): Map[T, Int] = seq match {
       case some if some.isEmpty => map

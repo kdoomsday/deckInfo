@@ -47,20 +47,9 @@ object Calc {
     // Compare tuples only by the first element.
     def lt(a: Tuple2[Int, Int], b: Tuple2[Int, Int]) = a._1 < b._1
 
-    /** "Fill in" values that are not present. Only fills until the max. Seems an awful way to do
-      * this, so should improve later.
-      */
-    def fillmap(m: Map[Int, Int]): Map[Int, Int] = {
-      val max = m.keys.max
-      var res = m
-      (0 to max) foreach { i => if (!res.contains(i)) res = res updated (i, 0)}
-      res
-    }
+    val map = Seqs.encode(d.cards.filter(criterion) map (_.cmc)).withDefault { x => 0 }
 
-    val map = Seqs.encode(d.cards.filter(criterion) map (_.cmc))
-
-    if (map.isEmpty) map.toSeq
-    else fillmap(map).toSeq.sortWith(lt)
+    map.toSeq.sortWith(lt)
   }
 
 
