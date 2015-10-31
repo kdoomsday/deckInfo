@@ -35,6 +35,8 @@ import ebarrientos.deckStats.load.WeakCachedLoader
 import ebarrientos.deckStats.load.MagicAPICardLoader
 import scala.concurrent.Future
 import ebarrientos.deckStats.load.ScryCardLoader
+import javax.swing.UIManager
+import javax.swing.plaf.nimbus.NimbusLookAndFeel
 
 /** Main interface that shows a selector for the card database, a selector for the deck, and an
   * area for showing the deck stats.
@@ -56,6 +58,9 @@ object SimpleView extends SimpleSwingApplication {
   private[this] var deckLoader: Option[DeckLoader] = None
   // What will actually show the information
   lazy val shower: ShowStats = new FormattedStats
+  
+  
+  UIManager.setLookAndFeel(new NimbusLookAndFeel)
 
 
   def top = new MainFrame {
