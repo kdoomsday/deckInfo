@@ -14,7 +14,7 @@ case class Card(	cost: Seq[Mana],
     							power: Int = 0,
     							toughness: Int = 0	)
 {
-	def cmc = cost.foldLeft(0)(_ + _.cmc)
+	def cmc = cost.map(_.cmc).sum
 
 	def is(color: Color) = cost.exists(mana => mana.is(color))
 

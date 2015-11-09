@@ -60,7 +60,7 @@ object SimpleView extends SimpleSwingApplication {
   lazy val shower: ShowStats = new FormattedStats
   
   
-  UIManager.setLookAndFeel(new NimbusLookAndFeel)
+  UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName)
 
 
   def top = new MainFrame {
