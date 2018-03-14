@@ -1,39 +1,22 @@
 package ebarrientos.deckStats.view
 
+import ebarrientos.deckStats.load.{ SequenceLoader, XMLCardLoader }
 import java.awt.Cursor
-import java.awt.Cursor.WAIT_CURSOR
-import java.awt.Cursor.getDefaultCursor
+import java.awt.Cursor.{WAIT_CURSOR, getDefaultCursor}
 import java.awt.Dimension
 import java.util.ResourceBundle
+
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.swing.BorderPanel
-import scala.swing.BorderPanel.Position.Center
-import scala.swing.BorderPanel.Position.East
-import scala.swing.BorderPanel.Position.West
-import scala.swing.Button
-import scala.swing.Component
-import scala.swing.FileChooser
-import scala.swing.GridPanel
-import scala.swing.Label
-import scala.swing.MainFrame
-import scala.swing.Panel
-import scala.swing.SimpleSwingApplication
-import scala.swing.Swing
-import scala.swing.TextField
-import scala.swing.event.ButtonClicked
-import ebarrientos.deckStats.load.DeckLoader
-import ebarrientos.deckStats.load.XMLDeckLoader
-import ebarrientos.deckStats.view.show.FormattedStats
-import ebarrientos.deckStats.load.CardLoader
-import ebarrientos.deckStats.view.show.ShowStats
-import ebarrientos.deckStats.load.H2DbLoader
-import scala.swing.FlowPanel
-import ebarrientos.deckStats.load.WeakCachedLoader
-import ebarrientos.deckStats.load.MagicIOLoader
 import scala.concurrent.Future
-import ebarrientos.deckStats.load.ScryCardLoader
+import scala.swing._
+import scala.swing.BorderPanel
+import scala.swing.BorderPanel.Position.{Center, East, West}
+import scala.swing.event.ButtonClicked
+import scala.util.{Failure, Success}
+
+import ebarrientos.deckStats.load.{CardLoader, DeckLoader, H2DbLoader, MagicIOLoader, WeakCachedLoader, XMLDeckLoader}
+import ebarrientos.deckStats.view.show.{FormattedStats, ShowStats}
 import javax.swing.UIManager
-import scala.util.{ Failure, Success }
 
 /** Main interface that shows a selector for the card database, a selector for the deck, and an
   * area for showing the deck stats.
@@ -50,8 +33,9 @@ object SimpleView extends SimpleSwingApplication {
 
 
   lazy val netLoader = MagicIOLoader
-  lazy val dbLoader = new H2DbLoader(netLoader)
-  lazy val cardLoader: CardLoader = new WeakCachedLoader(dbLoader)
+  lazy val dbLoader = new H2DbLoader(xmlLoader)
+  lazy val xmlLoader = new XMLCardLoader("""C:\Users\kdoom\Documents\code\deckInfo\src\main\resources\cards.xml""")
+  lazy val cardLoader: CardLoader = new WeakCachedLoader(new SequenceLoader(dbLoader, /*xmlLoader,*/ netLoader))
   private[this] var deckLoader: Option[DeckLoader] = None
   // What will actually show the information
   lazy val shower: ShowStats = new FormattedStats
