@@ -27,7 +27,6 @@ class MagicAPICardLoader extends CardLoader with LoadUtils with URLUtils {
     * Some with the map that contains all relevant values.
     */
   private[this] def cardMap(name: String): Option[Map[String, String]] = {
-    import scala.io.Source
     import util.parsing.json.JSON
 
 //    val saneName = name replace (" ", "%20")

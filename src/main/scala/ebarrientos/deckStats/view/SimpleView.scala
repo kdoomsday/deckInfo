@@ -6,7 +6,6 @@ import java.awt.Cursor.getDefaultCursor
 import java.awt.Dimension
 import java.util.ResourceBundle
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.future
 import scala.swing.BorderPanel
 import scala.swing.BorderPanel.Position.Center
 import scala.swing.BorderPanel.Position.East
@@ -23,20 +22,18 @@ import scala.swing.Swing
 import scala.swing.TextField
 import scala.swing.event.ButtonClicked
 import ebarrientos.deckStats.load.DeckLoader
-import ebarrientos.deckStats.load.MtgDBCardLoader
 import ebarrientos.deckStats.load.XMLDeckLoader
 import ebarrientos.deckStats.view.show.FormattedStats
 import ebarrientos.deckStats.load.CardLoader
 import ebarrientos.deckStats.view.show.ShowStats
-import ebarrientos.deckStats.load.CachedLoader
 import ebarrientos.deckStats.load.H2DbLoader
 import scala.swing.FlowPanel
 import ebarrientos.deckStats.load.WeakCachedLoader
-import ebarrientos.deckStats.load.MagicAPICardLoader
+import ebarrientos.deckStats.load.MagicIOLoader
 import scala.concurrent.Future
 import ebarrientos.deckStats.load.ScryCardLoader
 import javax.swing.UIManager
-import javax.swing.plaf.nimbus.NimbusLookAndFeel
+import scala.util.{ Failure, Success }
 
 /** Main interface that shows a selector for the card database, a selector for the deck, and an
   * area for showing the deck stats.
@@ -52,14 +49,14 @@ object SimpleView extends SimpleSwingApplication {
   private[this] var mainPanel: Panel = null
 
 
-  lazy val netLoader = new ScryCardLoader
+  lazy val netLoader = MagicIOLoader
   lazy val dbLoader = new H2DbLoader(netLoader)
   lazy val cardLoader: CardLoader = new WeakCachedLoader(dbLoader)
   private[this] var deckLoader: Option[DeckLoader] = None
   // What will actually show the information
   lazy val shower: ShowStats = new FormattedStats
-  
-  
+
+
   UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName)
 
 
@@ -143,7 +140,6 @@ object SimpleView extends SimpleSwingApplication {
   /** Perform the action of loading the deck and showing the stats. */
   private[this] def calculate = {
     import java.awt.Cursor._
-    import scala.concurrent.future
     import scala.concurrent.ExecutionContext.Implicits._
 
     val task = Future {
@@ -155,20 +151,32 @@ object SimpleView extends SimpleSwingApplication {
       }
     }
 
-    task onSuccess {
-      case _ => Swing.onEDT {
-        status.text = text.getString("statusbar.loaded")
-        setCursor(getDefaultCursor())
-      }
-    }
+    task.onComplete { t => t match {
+                       case Success(_) => Swing.onEDT {
+                         status.text = text.getString("statusbar.loaded")
+                         setCursor(getDefaultCursor())
+                       }
+                       case Failure(e) => Swing.onEDT {
+                         e.printStackTrace()
+                         status.text = text.getString("statusbar.error") + e.getMessage()
+                         setCursor(getDefaultCursor())
+                       }
+    }}
 
-    task onFailure {
-      case e: Throwable => Swing.onEDT {
-        e.printStackTrace()
-        status.text = text.getString("statusbar.error") + e.getMessage()
-        setCursor(getDefaultCursor())
-      }
-    }
+    // task onSuccess {
+    //   case _ => Swing.onEDT {
+    //     status.text = text.getString("statusbar.loaded")
+    //     setCursor(getDefaultCursor())
+    //   }
+    // }
+
+    // task onFailure {
+    //   case e: Throwable => Swing.onEDT {
+    //     e.printStackTrace()
+    //     status.text = text.getString("statusbar.error") + e.getMessage()
+    //     setCursor(getDefaultCursor())
+    //   }
+    // }
   }
 
 
