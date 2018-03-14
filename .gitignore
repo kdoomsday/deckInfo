@@ -17,5 +17,8 @@ project/plugins/project/
 .worksheet
 /bin/
 
+# Ensime
+.ensime*
+
 # data
 *.h2.db
