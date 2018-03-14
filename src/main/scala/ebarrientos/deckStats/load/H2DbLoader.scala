@@ -9,6 +9,8 @@ import scala.slick.jdbc.meta.MTable
   * future retrieval.
   */
 class H2DbLoader(val helper: CardLoader) extends CardLoader {
+  def this() = this(NullCardLoader)
+
   val db = Database.forURL("jdbc:h2:cards", driver="org.h2.Driver")
 
   // Check for existence of table, and create if necessary
