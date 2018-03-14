@@ -1,7 +1,5 @@
 package ebarrientos.deckStats.load
 
-import ebarrientos.deckStats.basics.CardType
-import ebarrientos.deckStats.basics.Supertype
 import ebarrientos.deckStats.stringParsing.ManaParser
 import ebarrientos.deckStats.basics.Card
 import ebarrientos.deckStats.load.utils.LoadUtils
@@ -11,9 +9,8 @@ class XMLCardLoader(xmlFile: String) extends CardLoader with LoadUtils {
 	private[this] lazy val cards = scala.xml.XML.load(xmlFile)
 
 
-	def card(name: String): Card = {
+	def card(name: String): Option[Card] = {
 	  // The xml find gives nodeSeq. Names are unique, so head gives only match
-	  // TODO Handle case where card doesn't exist
 	  val seq = (cards \\ "card").filter(x => (x \\ "name").text == name)
 
 	  if (!seq.isEmpty) {
@@ -25,13 +22,16 @@ class XMLCardLoader(xmlFile: String) extends CardLoader with LoadUtils {
 
 		  val (power, toughness) = parsePT((elem \ "pt").text)
 
-		  Card(	ManaParser.parseAll(ManaParser.cost, cost).get,
-		      	name,
-		      	types, supertypes, subtypes,
-		      	text,
-		      	power,
-		      	toughness )
+		  val c = Card(
+	      ManaParser.parseAll(ManaParser.cost, cost).get,
+		    name,
+		    types, supertypes, subtypes,
+		    text,
+		    power,
+		    toughness
+      )
+      Some(c)
 		}
-	  else throw new Exception(name + " not found")
+	  else None
 	}
 }

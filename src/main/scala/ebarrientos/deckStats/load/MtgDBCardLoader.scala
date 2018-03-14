@@ -10,15 +10,7 @@ import ebarrientos.deckStats.load.utils.LoadUtils
  */
 class MtgDBCardLoader extends CardLoader with LoadUtils with URLUtils {
 
-  def card(name: String) = {
-    val map = cardMap(name)
-
-    if (map.isDefined) cardFromMap(name, map.get)
-    else {
-      throw new Exception("Couldn't load card: " + name)
-      // TODO Localize exceptions
-    }
-  }
+  def card(name: String): Option[Card] = cardMap(name).map(m => cardFromMap(name, m))
 
 
   private[this] def cardMap(name: String): Option[Map[String, Any]] = {

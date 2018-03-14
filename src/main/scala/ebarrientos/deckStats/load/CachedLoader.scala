@@ -9,11 +9,11 @@ class CachedLoader(private val l: CardLoader) extends CardLoader {
   private[this] val map = HashMap[String, Card]()
 
 
-  def card(name: String): Card =
-    if (map contains name) map(name)
+  def card(name: String): Option[Card] =
+    if (map contains name) map.get(name)
     else {
-      val card = l.card(name)
-      map(name) = card
-      card
+      val oCard = l.card(name)
+      oCard.foreach(map(name) = _)
+      oCard
     }
 }

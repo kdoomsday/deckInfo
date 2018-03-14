@@ -20,14 +20,14 @@ class H2DbLoader(val helper: CardLoader) extends CardLoader {
   }
 
 
-  def card(name: String): Card = db.withSession { implicit session =>
+  def card(name: String): Option[Card] = db.withSession { implicit session =>
     val c = cards.filter(_.name === name).firstOption
 
     c match {
-      case Some(card) => card
+      case Some(card) => Some(card)
       case None => {
         val loaded = helper.card(name)
-        cards += loaded
+        loaded.foreach { c => cards += c }
         loaded
       }
     }

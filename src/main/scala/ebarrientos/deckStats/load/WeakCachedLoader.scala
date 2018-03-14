@@ -7,11 +7,11 @@ import ebarrientos.deckStats.basics.Card
 class WeakCachedLoader(val helper: CardLoader) extends CardLoader {
   private[this] lazy val map = new WeakHashMap[String, Card]
 
-  def card(name: String): Card = {
-    if (map.contains(name)) map(name)
+  def card(name: String): Option[Card] = {
+    if (map.contains(name)) Some(map(name))
     else {
       val c = helper.card(name)
-      map(name) = c
+      c foreach(card => map(name) = card)
       c
     }
   }

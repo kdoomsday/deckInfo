@@ -1,22 +1,15 @@
 package ebarrientos.deckStats.load
 
 import ebarrientos.deckStats.basics.Card
-import scala.util.control.Exception
 import ebarrientos.deckStats.load.utils.LoadUtils
 import ebarrientos.deckStats.load.utils.URLUtils
 
 /** Cardloader that gets card info from http://stegriff.co.uk/ */
 class MagicAPICardLoader extends CardLoader with LoadUtils with URLUtils {
 
-  def card(name: String) = {
+  def card(name: String): Option[Card] = {
     println(s"Loading: $name")
-    val map = cardMap(name)
-
-    if (map.isDefined) cardFromMap(name, map.get)
-    else {
-      throw new Exception("Couldn't load card: " + name)
-      // TODO Localize exceptions
-    }
+    cardMap(name).map(m => cardFromMap(name, m))
   }
 
 
@@ -29,8 +22,6 @@ class MagicAPICardLoader extends CardLoader with LoadUtils with URLUtils {
   private[this] def cardMap(name: String): Option[Map[String, String]] = {
     import util.parsing.json.JSON
 
-//    val saneName = name replace (" ", "%20")
-//    val cardStr = Source.fromURL(s"""http://stegriff.co.uk/host/magic/?name=$saneName""").mkString
     val cardStr = readURL(s"http://stegriff.co.uk/host/magic/?name=$name")
     val parsed = JSON.parseFull(cardStr)
 
@@ -42,6 +33,7 @@ class MagicAPICardLoader extends CardLoader with LoadUtils with URLUtils {
   }
 
 
+  /** Obtener un [[Card]] del mapa. El mapa se asume que SI tiene la carta */
   private[this] def cardFromMap(name: String, map: Map[String, String]): Card = {
     import ebarrientos.deckStats.stringParsing.MagicApiManaParser.{parseAll, cost}
 
