@@ -8,7 +8,7 @@ import scala.slick.jdbc.meta.MTable
 /** Loads a card from DB. If db doesn't contain the card, uses the helper to load and store it for
   * future retrieval.
   */
-class H2DbLoader(val helper: CardLoader) extends CardLoader {
+class H2DbLoader(val helper: CardLoader) extends CardLoader  with StoringLoader {
   def this() = this(NullCardLoader)
 
   val db = Database.forURL("jdbc:h2:cards", driver="org.h2.Driver")
@@ -21,17 +21,25 @@ class H2DbLoader(val helper: CardLoader) extends CardLoader {
     }
   }
 
-
-  def card(name: String): Option[Card] = db.withSession { implicit session =>
-    val c = cards.filter(_.name === name).firstOption
-
-    c match {
-      case Some(card) => Some(card)
-      case None => {
-        val loaded = helper.card(name)
-        loaded.foreach { c => cards += c }
-        loaded
-      }
-    }
+  protected def retrieve(name: String): Option[Card] =db.withSession { implicit session =>
+    cards.filter(_.name === name).firstOption
   }
+
+  protected def store(c: Card): Unit = db.withSession { implicit session =>
+    cards += c
+  }
+
+
+  // def card(name: String): Option[Card] = db.withSession { implicit session =>
+  //   val c = cards.filter(_.name === name).firstOption
+
+  //   c match {
+  //     case Some(card) => Some(card)
+  //     case None => {
+  //       val loaded = helper.card(name)
+  //       loaded.foreach { c => cards += c }
+  //       loaded
+  //     }
+  //   }
+  // }
 }
