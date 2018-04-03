@@ -20,5 +20,8 @@ project/plugins/project/
 # Ensime
 .ensime*
 
+# IntelliJ
+.idea/
+
 # data
 *.h2.db
