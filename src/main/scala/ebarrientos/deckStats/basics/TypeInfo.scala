@@ -48,3 +48,4 @@ object Supertype {
 
 case object Legendary extends Supertype
 case object Basic extends Supertype
+case object Host extends Supertype
