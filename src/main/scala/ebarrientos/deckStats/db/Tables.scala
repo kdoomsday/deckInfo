@@ -1,14 +1,11 @@
 package ebarrientos.deckStats.db
 
-import scala.slick.driver.H2Driver.simple._
-import scala.slick.lifted.TableQuery
-
-import ebarrientos.deckStats.basics.Card
-import ebarrientos.deckStats.basics.Card
-import ebarrientos.deckStats.basics.CardType
-import ebarrientos.deckStats.basics.Supertype
+import ebarrientos.deckStats.basics.{Card, CardType, Supertype}
 import ebarrientos.deckStats.load.utils.LoadUtils
 import ebarrientos.deckStats.stringParsing.ManaParser
+
+import scala.slick.driver.H2Driver.simple._
+import scala.slick.lifted.TableQuery
 
 object DBInfo {
 

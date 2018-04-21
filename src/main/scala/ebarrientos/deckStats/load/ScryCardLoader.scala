@@ -13,6 +13,7 @@ import org.json4s.JsonAST.JArray
 
 /**
  * CardLoader que lee la informaci&oacute;n de http://api.mtgapi.com/v1/card/name/{name}
+ * DEPRECATED La página está caída
  */
 class ScryCardLoader(baseUrl: String = "http://scry.me.uk/api.php?name=")
   extends CardLoader with LoadUtils with URLUtils

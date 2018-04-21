@@ -11,5 +11,19 @@ libraryDependencies ++= Seq(
   "org.scala-lang.modules"   %% "scala-swing"              % "2.0.2",
   "org.scala-lang.modules"   %% "scala-parser-combinators" % "1.0.4",
   "org.scala-lang.modules"   %% "scala-xml"                % "1.1.0",
-  "org.json4s"               %% "json4s-jackson"           % "3.5.3"
+  "org.json4s"               %% "json4s-jackson"           % "3.5.3",
+
+  // Test dependencies
+  "com.lihaoyi" %% "utest" % "0.6.3" % "test"
 )
+
+
+val circeVersion = "0.9.1"
+
+libraryDependencies ++= Seq(
+  "io.circe" %% "circe-core",
+  "io.circe" %% "circe-generic",
+  "io.circe" %% "circe-parser"
+).map(_ % circeVersion)
+
+testFrameworks += new TestFramework("utest.runner.Framework")
