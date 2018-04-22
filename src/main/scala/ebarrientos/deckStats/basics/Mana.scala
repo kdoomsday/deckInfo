@@ -20,19 +20,19 @@ object Mana {
   def asPhyrexian(mana: Mana): Mana = mana match {
     case m @ ColorlessMana(_, properties) => m.copy(properties = properties + Phyrexian)
     case m @ ColoredMana(_, properties) => m.copy(properties = properties + Phyrexian)
-    case m @ HybridMana(_) => ???  // No se como seria este
+    case m @ HybridMana(_) => m // No tiene sentido phyrexianizar hibrido
   }
 }
 
 
 /** Colorless Mana impl. has an amount because it's generally grouped */
-case class ColorlessMana( override val cmc: Int = 1,
+case class ColorlessMana( override val cmc: Int,
     					  					override val properties: Set[ManaProperty] = Set() )
 extends Mana
 {
   override def is(c: Color) = false
   override val isColorless = true
-  override def toString = cmc.toString
+  override def toString: String = "o" + cmc.toString
 }
 
 
@@ -55,7 +55,7 @@ extends Mana
   override def is(c: Color): Boolean = color == c
   override val isColorless: Boolean = false
   override val cmc = 1
-  override def toString = color match {
+  override def toString: String = color match {
     case White => "W"
     case Blue => "U"
     case Black => "B"
@@ -83,7 +83,7 @@ case class HybridMana(options: Set[Mana]) extends Mana {
   /** All properties this hybrid mana has. It's the union of all properties in all mana symbols
     * that conform it.
     */
-  override lazy val properties =
+  override lazy val properties: Set[ManaProperty] =
     options.foldLeft(Set[ManaProperty]())((rs, mana) => rs ++ mana.properties)
 
   override def hasProperty(p: ManaProperty): Boolean =
@@ -91,7 +91,7 @@ case class HybridMana(options: Set[Mana]) extends Mana {
 
 
   /** Converted mana cost. */
-  override def cmc = options.map(_.cmc).max
+  override def cmc: Int = options.map(_.cmc).max
 
-  override def toString = "(" + options.mkString("/") + ")"
+  override def toString: String = "H(" + options.mkString("/") + ")"
 }
