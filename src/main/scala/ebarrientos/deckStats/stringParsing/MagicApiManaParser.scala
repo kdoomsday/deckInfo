@@ -19,7 +19,7 @@ object MagicApiManaParser extends JavaTokenParsers with ParserHelpers {
   def xMana: Parser[Mana] = "X" ^^ (x => XMana())
   def hybrid: Parser[Mana] = rep1sep[Mana](hybText, "or") ^^ (x => HybridMana(x.toSet))
 
-  def hybText: Parser[Mana] = (colorWord | longFormNumber)
+  def hybText: Parser[Mana] = colorWord | longFormNumber
   def colorWord: Parser[Mana] =
     ("White" | "Blue" | "Black" | "Red" | "Green") ^^ (x => ColoredMana(longStr2Color(x)))
 

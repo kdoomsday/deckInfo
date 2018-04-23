@@ -12,7 +12,7 @@ import ebarrientos.deckStats.basics.Color
 trait ParserHelpers {
 
   /** Convert a String to Color */
-  def str2Mana(s: String) = {
+  def str2Mana(s: String): ColoredMana = {
     def str2Color(cs: String): Color = cs match {
       case "W" => White
       case "U" => Blue

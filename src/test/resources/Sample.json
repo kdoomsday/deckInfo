@@ -47,5 +47,42 @@
       "colorIdentity": [
         "W"
       ]
+    },
+    "Wrath of God": {
+      "layout": "normal",
+      "name": "Wrath of God",
+      "manaCost": "{2}{W}{W}",
+      "cmc": 4,
+      "colors": [
+        "White"
+      ],
+      "type": "Sorcery",
+      "types": [
+        "Sorcery"
+      ],
+      "text": "Destroy all creatures. They can't be regenerated.",
+      "imageName": "wrath of god",
+      "colorIdentity": [
+        "W"
+      ]
+    },
+    "Plains": {
+      "layout": "normal",
+      "name": "Plains",
+      "cmc": 0,
+      "type": "Basic Land — Plains",
+      "supertypes": [
+        "Basic"
+      ],
+      "types": [
+        "Land"
+      ],
+      "subtypes": [
+        "Plains"
+      ],
+      "imageName": "plains",
+      "colorIdentity": [
+        "W"
+      ]
     }
 }

@@ -2,14 +2,14 @@ package ebarrientos.deckStats.load
 import ebarrientos.deckStats.basics.{Card, CardType, Mana, Supertype}
 import ebarrientos.deckStats.load.MtgJsonLoader.Carta
 import ebarrientos.deckStats.load.utils.LoadUtils
-import ebarrientos.deckStats.stringParsing.ScryManaParser
+import ebarrientos.deckStats.stringParsing.{MagicApiManaParser, MtgJsonParser, ScryManaParser}
 import io.circe.Decoder.Result
 import io.circe._
 import io.circe.generic.semiauto._
 import io.circe.parser._
 
 class MtgJsonLoader(source: => String) extends CardLoader with LoadUtils {
-  val manaParseFunc: String => Seq[Mana] = ScryManaParser.parseAll(ScryManaParser.cost, _).get
+  val manaParseFunc: String => Seq[Mana] = MtgJsonParser.parseAll(MtgJsonParser.cost, _).get
 
   override def card(name: String): Option[Card] =
     byName(name).fold(_ => None, (result: Result[Carta]) => {
@@ -25,16 +25,16 @@ class MtgJsonLoader(source: => String) extends CardLoader with LoadUtils {
 
   /** Convertir de [[Carta]] a [[Card]] */
   private[this] def toCard(c: Carta): Card = {
-    val cost: Seq[Mana] = manaParseFunc(c.manaCost)
-    val (supertypes, types, subtypes) = parseTypes(buildTypes(c.types, c.`type`, c.subtypes))
-    val (power, toughness) = parsePT(c.power + "/" + c.toughness)
+    val cost: Seq[Mana] = c.manaCost.fold(Seq[Mana]())(manaParseFunc(_))
+    val (supertypes, types, subtypes) = parseTypes(buildTypes(c.types, c.`type`, c.subtypes.getOrElse(Nil)))
+    val (power, toughness) = parsePT(c.power.getOrElse(0) + "/" + c.toughness.getOrElse(0))
     Card(
       cost,
       c.name,
       types,
       supertypes,
       subtypes,
-      c.text,
+      c.text.getOrElse(""),
       power,
       toughness
     )
@@ -54,11 +54,11 @@ object MtgJsonLoader {
     cmc: Int,
     types: List[String],
     `type`: String,
-    subtypes: List[String],
-    text: String,
-    power: String,
-    toughness: String,
-    manaCost: String
+    subtypes: Option[List[String]],
+    text: Option[String],
+    power: Option[String],
+    toughness: Option[String],
+    manaCost: Option[String]
   )
 
   implicit val cartaDecoder: Decoder[Carta]         = deriveDecoder

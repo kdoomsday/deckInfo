@@ -16,7 +16,7 @@ object CardType {
 
   def unapply(t: CardType) = Some(t.toString())
 
-  def isType(s: String) = types.foldLeft(false)((p, n) => p || s == n.toString)
+  def isType(s: String): Boolean = types.foldLeft(false)((p, n) => p || s == n.toString)
 }
 
 case object Creature extends CardType
@@ -43,7 +43,7 @@ object Supertype {
 
   def unapply(st: Supertype) = Some(st.toString)
 
-  def isSupertype(s: String) = supertypes.foldLeft(false)((p, n) => p || s == n.toString())
+  def isSupertype(s: String): Boolean = supertypes.foldLeft(false)((p, n) => p || s == n.toString())
 }
 
 case object Legendary extends Supertype

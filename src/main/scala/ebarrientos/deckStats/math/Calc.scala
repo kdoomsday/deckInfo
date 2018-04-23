@@ -28,17 +28,17 @@ object Calc {
 
 
   /** Average cost of cards that fulfill a condition. */
-  def avgManaCost(deck: Deck, pred: Card => Boolean) =
+  def avgManaCost(deck: Deck, pred: Card => Boolean): Double =
     avg(deck.cards.filter(pred).map(_.cmc))
 
     
   /** Total number of cards. */
-  def count(deck: Deck) = deck.cards.size
+  def count(deck: Deck): Int = deck.cards.size
 
   
   /** Count the number of cards in a deck that match a certain predicate. */
-  def count(deck: Deck, pred: Card => Boolean) =
-    deck.cards.filter(pred).size
+  def count(deck: Deck, pred: Card => Boolean): Int =
+    deck.cards.count(pred)
 
 
   /** Show a mana curve for cards that match a criterion. By default gives manacurve of all nonland
@@ -59,7 +59,7 @@ object Calc {
     * A colored symbol counts once towards it's color. A colorless symbol counts for as much as it
     * represents. A hybrid mana symbol counts once towards each thing it represents.
     */
-  def manaSymbols(d: Deck, criterion: Card => Boolean = (_ => true)): Map[String, Int] = {
+  def manaSymbols(d: Deck, criterion: Card => Boolean = _ => true): Map[String, Int] = {
     def mana2Map(m: Map[String, Int], mana: Mana): Map[String, Int] = mana match {
       case ColorlessMana(cmc, _) => m.updated("C", m("C") + cmc)
       case _: ColoredMana => m.updated(mana.toString, m(mana.toString) + 1)

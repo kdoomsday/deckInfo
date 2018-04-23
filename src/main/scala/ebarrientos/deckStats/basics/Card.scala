@@ -15,11 +15,11 @@ case class Card(	cost: Seq[Mana],
     							power: Int = 0,
     							toughness: Int = 0	)
 {
-	def cmc = cost.map(_.cmc).sum
+	def cmc: Int = cost.map(_.cmc).sum
 
-	def is(color: Color) = cost.exists(mana => mana.is(color))
-	def is(cardType: CardType) = types.contains(cardType)
-	def is(superType: Supertype) = supertypes.contains(superType)
+	def is(color: Color): Boolean = cost.exists(mana => mana.is(color))
+	def is(cardType: CardType): Boolean = types.contains(cardType)
+	def is(superType: Supertype): Boolean = supertypes.contains(superType)
 
-	def isSubType(subtype: String) = subtypes contains subtype
+	def isSubType(subtype: String): Boolean = subtypes contains subtype
 }

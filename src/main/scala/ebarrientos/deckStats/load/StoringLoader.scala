@@ -20,16 +20,14 @@ trait StoringLoader extends CardLoader {
   // En caso de que se consiga con el helper, se almacena y se devuelve
   final def card(name: String): Option[Card] = {
     retrieve(name) match {
-      case oC @ Some(_) ⇒ {
+      case oC @ Some(_) ⇒
         println(s"StoringLoader found $name")
         oC
-      }
-      case None         ⇒ {
+      case None         ⇒
         println(s"Did not find $name, going to helper")
         val oC = helper.card(name)
         oC.foreach(c ⇒ store(c))
         oC
-      }
     }
   }
 }

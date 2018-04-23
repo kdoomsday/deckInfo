@@ -1,6 +1,6 @@
 package ebarrientos.deckStats.view
 
-import ebarrientos.deckStats.load.{ SequenceLoader, XMLCardLoader }
+import ebarrientos.deckStats.load._
 import java.awt.Cursor
 import java.awt.Cursor.{WAIT_CURSOR, getDefaultCursor}
 import java.awt.Dimension
@@ -13,16 +13,16 @@ import scala.swing.BorderPanel
 import scala.swing.BorderPanel.Position.{Center, East, West}
 import scala.swing.event.ButtonClicked
 import scala.util.{Failure, Success}
-
-import ebarrientos.deckStats.load.{CardLoader, DeckLoader, H2DbLoader, MagicIOLoader, WeakCachedLoader, XMLDeckLoader}
 import ebarrientos.deckStats.view.show.{FormattedStats, ShowStats}
 import javax.swing.UIManager
+
+import scala.io.Source
 
 /** Main interface that shows a selector for the card database, a selector for the deck, and an
   * area for showing the deck stats.
   */
 object SimpleView extends SimpleSwingApplication {
-  lazy val text = ResourceBundle.getBundle("locale/text")
+  lazy val text: ResourceBundle = ResourceBundle.getBundle("locale/text")
   lazy val pathDeck = new TextField
   lazy val pathCards = new TextField
   lazy val status = new Label(text.getString("statusbar.default"))
@@ -32,10 +32,12 @@ object SimpleView extends SimpleSwingApplication {
   private[this] var mainPanel: Panel = null
 
 
-  lazy val netLoader = MagicIOLoader
+/*  lazy val netLoader = MagicIOLoader
   lazy val dbLoader = new H2DbLoader(xmlLoader)
   lazy val xmlLoader = new XMLCardLoader("""C:\Users\kdoom\Documents\code\deckInfo\src\main\resources\cards.xml""")
-  lazy val cardLoader: CardLoader = new WeakCachedLoader(new SequenceLoader(dbLoader, /*xmlLoader,*/ netLoader))
+  lazy val cardLoader: CardLoader = new WeakCachedLoader(new SequenceLoader(dbLoader, /*xmlLoader,*/ netLoader))*/
+  lazy val cardLoader: CardLoader =
+    new MtgJsonLoader(Source.fromInputStream(getClass.getClassLoader.getResourceAsStream("AllCards.json")).mkString)
   private[this] var deckLoader: Option[DeckLoader] = None
   // What will actually show the information
   lazy val shower: ShowStats = new FormattedStats
@@ -44,7 +46,7 @@ object SimpleView extends SimpleSwingApplication {
   UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName)
 
 
-  def top = new MainFrame {
+  def top: MainFrame = new MainFrame {
     title = text.getString("main.title")
     size = prefSize
     preferredSize = prefSize
@@ -102,7 +104,7 @@ object SimpleView extends SimpleSwingApplication {
 
 
   /** Execute a block and, in case of error, show in the status bar. */
-  private[this] def actionOrError(block: => Unit) = {
+  private[this] def actionOrError(block: => Unit): Unit = {
     try { block }
     catch {
       case e: Throwable => status.text = s"Error: ${e.getMessage()}"
@@ -111,7 +113,7 @@ object SimpleView extends SimpleSwingApplication {
 
 
   // When the deck is changed
-  private[this] def changeDeck = {
+  private[this] def changeDeck: Unit = {
     actionOrError {
       if (pathDeck.text != "") {
         deckLoader = Some(new XMLDeckLoader(pathDeck.text, cardLoader))
@@ -122,7 +124,7 @@ object SimpleView extends SimpleSwingApplication {
 
 
   /** Perform the action of loading the deck and showing the stats. */
-  private[this] def calculate = {
+  private[this] def calculate: Unit = {
     import java.awt.Cursor._
     import scala.concurrent.ExecutionContext.Implicits._
 
@@ -135,17 +137,17 @@ object SimpleView extends SimpleSwingApplication {
       }
     }
 
-    task.onComplete { t => t match {
-                       case Success(_) => Swing.onEDT {
-                         status.text = text.getString("statusbar.loaded")
-                         setCursor(getDefaultCursor())
-                       }
-                       case Failure(e) => Swing.onEDT {
-                         e.printStackTrace()
-                         status.text = text.getString("statusbar.error") + e.getMessage()
-                         setCursor(getDefaultCursor())
-                       }
-    }}
+    task.onComplete {
+      case Success(_) => Swing.onEDT {
+        status.text = text.getString("statusbar.loaded")
+        setCursor(getDefaultCursor())
+      }
+      case Failure(e) => Swing.onEDT {
+        e.printStackTrace()
+        status.text = text.getString("statusbar.error") + e.getMessage()
+        setCursor(getDefaultCursor())
+      }
+    }
 
     // task onSuccess {
     //   case _ => Swing.onEDT {

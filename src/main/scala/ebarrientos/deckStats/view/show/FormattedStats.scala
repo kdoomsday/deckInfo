@@ -28,7 +28,7 @@ import scalax.chart.api._
 class FormattedStats extends ShowStats {
   private[this] lazy val text = ResourceBundle.getBundle("locale/formattedStats/text")
 
-  lazy val component = buildComponent()
+  lazy val component: GridPanel = buildComponent()
 
   private[this] lazy val avgCostLabel = new Label("")
   private[this] lazy val avgNonlandCostLabel = new Label("")
@@ -42,7 +42,7 @@ class FormattedStats extends ShowStats {
   private[this] val doubleFormat = "%.02f"
 
 
-  def show(d: Deck) = {
+  def show(d: Deck): Unit = {
     val begin = System.currentTimeMillis()
 
     avgCostLabel.text = doubleFormat format Calc.avgManaCost(d)
@@ -132,7 +132,7 @@ class FormattedStats extends ShowStats {
         case (manaString, index) => mappings(index) = mana2Color(manaString)
       }
 
-      override def getItemPaint(row: Int, column: Int) = {
+      override def getItemPaint(row: Int, column: Int): Color = {
         mappings(row)
       }
     }
@@ -176,7 +176,7 @@ class FormattedStats extends ShowStats {
 
 
   /** Align labels right */
-  private[this] def align(labels: Label*)(implicit alignment: Alignment.Value = Alignment.Right) =
+  private[this] def align(labels: Label*)(implicit alignment: Alignment.Value = Alignment.Right): Unit =
     for (label <- labels)
       label.horizontalAlignment = alignment
 }

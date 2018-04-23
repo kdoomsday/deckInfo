@@ -13,7 +13,7 @@ class XMLCardLoader(xmlFile: String) extends CardLoader with LoadUtils {
 	  // The xml find gives nodeSeq. Names are unique, so head gives only match
 	  val seq = (cards \\ "card").filter(x => (x \\ "name").text == name)
 
-	  if (!seq.isEmpty) {
+	  if (seq.nonEmpty) {
 		  val elem = seq.head
 		  val name = (elem \ "name").text
 		  val cost = (elem \ "manacost").text

@@ -20,11 +20,11 @@ case class XMLDeckLoader(definition: Elem, loader: CardLoader) extends DeckLoade
                      card <- maindeck \ "card"
                    } yield ((card \ "@name").text, (card \ "@number").text)
 
-    val cards = cardinfo.par flatMap { info => info match {
+    val cards = cardinfo.par flatMap {
       case (name, number) =>
         val card = loader.card(name)
         (1 to number.toInt).map(_ => card)
-    }}
+    }
 
     Deck(cards.seq.flatten)
   }

@@ -11,12 +11,12 @@ object DBInfo {
 
   /** Table that stores the cards. */
   class Cards(tag: Tag) extends Table[Card](tag, "Cards") {
-    def name = column[String]("name", O.PrimaryKey)
-    def cost = column[String]("cost", O.NotNull)
-    def typeline = column[String]("typeline", O.NotNull)
-    def text = column[String]("text")
-    def power = column[Int]("power")
-    def toughness = column[Int]("toughness")
+    def name:      Column[String] = column("name", O.PrimaryKey)
+    def cost:      Column[String] = column("cost", O.NotNull)
+    def typeline:  Column[String] = column("typeline", O.NotNull)
+    def text:      Column[String] = column("text")
+    def power:     Column[Int]    = column("power")
+    def toughness: Column[Int]    = column("toughness")
 
     def * = (name, cost, typeline, text,power, toughness) <> (mkCard, unappCard _)
 
@@ -38,7 +38,7 @@ object DBInfo {
     private[this] def mkTypeline(
         supertypes: Set[Supertype],
         types: Set[CardType],
-        subtypes: Set[String]) =
+        subtypes: Set[String]): String =
     {
       val t = (supertypes ++ types).mkString(" ")
       val res = if ((subtypes eq null) || subtypes.isEmpty) t
@@ -51,5 +51,5 @@ object DBInfo {
       Some(c.name, c.cost.mkString, mkTypeline(c.supertypes, c.types, c.subtypes), c.text, c.power, c.toughness)
 
   }
-  def cards = TableQuery[Cards]
+  def cards: TableQuery[Cards] = TableQuery[Cards]
 }

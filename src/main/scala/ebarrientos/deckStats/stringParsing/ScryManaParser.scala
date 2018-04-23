@@ -14,7 +14,7 @@ object ScryManaParser extends JavaTokenParsers with ParserHelpers {
   def phyrexian: Parser[Mana] = "Phyrexian " ~> colorWord ^^ (x => Mana.asPhyrexian(x))
   def hybrid: Parser[Mana] = rep1sep[Mana](hybText, "or") ^^ (x => HybridMana(x.toSet))
 
-  def hybText: Parser[Mana] = (colorWord | longFormNumber)
+  def hybText: Parser[Mana] = colorWord | longFormNumber
   def colorWord: Parser[Mana] =
     ("White" | "Blue" | "Black" | "Red" | "Green") ^^ (x => ColoredMana(longStr2Color(x)))
 

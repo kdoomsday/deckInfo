@@ -1,7 +1,8 @@
 package ebarrientos.deckStats.view.show
 
 import ebarrientos.deckStats.basics.Deck
-import scala.swing.TextArea
+
+import scala.swing.{Component, TextArea}
 import ebarrientos.deckStats.math.Calc
 import ebarrientos.deckStats.math.Seqs.encode
 import ebarrientos.deckStats.basics.Land
@@ -11,17 +12,17 @@ import java.awt.Font
 /** Shows stats about a deck as a textual representation. */
 class TextAreaStats extends ShowStats {
   private[this] val linesep = System.getProperty("line.separator")
-  lazy val component = buildComponent
+  lazy val component: Component = buildComponent
 
   /** Construct the component used for showing */
-  private[this] def buildComponent = {
+  private[this] def buildComponent: Component = {
     val area = new TextArea
     area.font = new Font(Font.MONOSPACED, Font.TRUETYPE_FONT, 12)
     area
   }
 
 
-  def show(d: Deck) = {
+  def show(d: Deck): Unit = {
     component.text =
       s"""Avg mana cost: ${Calc.avgManaCost(d)}
       |Avg nonland cost: ${Calc.avgManaCost(d, !_.is(Land))}
@@ -39,7 +40,7 @@ class TextAreaStats extends ShowStats {
 
 
   /** Print the mana curve into the text area. */
-  private[this] def printManaCurve(d: Deck) = {
+  private[this] def printManaCurve(d: Deck): Unit = {
     val encodings = Calc.manaCurve(d)
 
     for ((cost, amount) <- encodings) {
