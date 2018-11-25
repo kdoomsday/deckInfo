@@ -116,7 +116,7 @@ class FormattedStats extends ShowStats {
     import scala.language.implicitConversions
 
     /** To present mana color symbols in the right color. */
-    class ManaBarRenderer(map: Map[String, Int]) extends BarRenderer {
+    class ManaBarRenderer(map: Map[String, Double]) extends BarRenderer {
       def mana2Color(s: String): Color = s match {
         case "W" => Color.white
         case "U" => Color.blue

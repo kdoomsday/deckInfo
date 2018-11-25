@@ -59,17 +59,17 @@ object Calc {
     * A colored symbol counts once towards it's color. A colorless symbol counts for as much as it
     * represents. A hybrid mana symbol counts once towards each thing it represents.
     */
-  def manaSymbols(d: Deck, criterion: Card => Boolean = _ => true): Map[String, Int] = {
-    def mana2Map(m: Map[String, Int], mana: Mana): Map[String, Int] = mana match {
-      case ColorlessMana(cmc, _) => m.updated("C", m("C") + cmc)
-      case _: ColoredMana => m.updated(mana.toString, m(mana.toString) + 1)
-      case HybridMana(opts) => opts.foldLeft(m) { mana2Map(_, _)}
+  def manaSymbols(d: Deck, criterion: Card => Boolean = _ => true): Map[String, Double] = {
+    def mana2Map(m: Map[String, Double], mana: Mana, weight: Double): Map[String, Double] = mana match {
+      case ColorlessMana(cmc, _) => m.updated("C", m("C") + weight*cmc)
+      case _: ColoredMana        => m.updated(mana.toString, m(mana.toString) + weight)
+      case HybridMana(opts)      => opts.foldLeft(m) { mana2Map(_, _, 0.5)}
     }
 
-    val mapCost = Map[String, Int]().withDefaultValue(0)
+    val mapCost = Map[String, Double]().withDefaultValue(0.0)
 
     val symbols = d.cards.filter(criterion).flatMap(c => c.cost)
 
-    symbols.foldLeft(mapCost)(mana2Map)
+    symbols.foldLeft(mapCost)((map, symb) => mana2Map(map, symb, 1.0))
   }
 }
