@@ -12,10 +12,10 @@ import java.awt.Font
 /** Shows stats about a deck as a textual representation. */
 class TextAreaStats extends ShowStats {
   private[this] val linesep = System.getProperty("line.separator")
-  lazy val component: Component = buildComponent
+  lazy val component = buildComponent
 
   /** Construct the component used for showing */
-  private[this] def buildComponent: Component = {
+  private[this] def buildComponent: TextArea = {
     val area = new TextArea
     area.font = new Font(Font.MONOSPACED, Font.TRUETYPE_FONT, 12)
     area

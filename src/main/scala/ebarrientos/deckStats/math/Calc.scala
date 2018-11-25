@@ -31,11 +31,11 @@ object Calc {
   def avgManaCost(deck: Deck, pred: Card => Boolean): Double =
     avg(deck.cards.filter(pred).map(_.cmc))
 
-    
+
   /** Total number of cards. */
   def count(deck: Deck): Int = deck.cards.size
 
-  
+
   /** Count the number of cards in a deck that match a certain predicate. */
   def count(deck: Deck, pred: Card => Boolean): Int =
     deck.cards.count(pred)
