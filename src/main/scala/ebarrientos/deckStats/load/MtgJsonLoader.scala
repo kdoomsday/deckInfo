@@ -7,20 +7,21 @@ import io.circe.Decoder.Result
 import io.circe._
 import io.circe.generic.semiauto._
 import io.circe.parser._
+import scalaz.zio.IO
 
 class MtgJsonLoader(source: => String) extends CardLoader with LoadUtils {
   val manaParseFunc: String => Seq[Mana] = MtgJsonParser.parseAll(MtgJsonParser.cost, _).get
 
-  override def card(name: String): Option[Card] =
-    byName(name).fold(_ => None, (result: Result[Carta]) => {
-      result.fold(_ => None, c => Some(toCard(c)))
-    })
+  override def card(name: String): IO[Exception, Option[Card]] =
+    byName(name).map(_.toOption.map(toCard _))
 
-  private[this] def byName(name: String): Either[ParsingFailure, Result[Carta]] =
-    parse(source).map { json =>
-      json.hcursor
+  private[this] def byName(name: String): IO[ParsingFailure, Result[Carta]] =
+    IO.fromEither {
+      parse(source).map { json =>
+        json.hcursor
           .downField(name)
           .as[Carta]
+      }
     }
 
   /** Convertir de [[Carta]] a [[Card]] */

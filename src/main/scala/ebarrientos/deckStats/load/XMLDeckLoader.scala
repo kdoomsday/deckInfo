@@ -3,6 +3,7 @@ package ebarrientos.deckStats.load
 import java.io.File
 import ebarrientos.deckStats.basics.Deck
 import scala.xml.Elem
+import scalaz.zio.IO
 
 /** Deck loader that loads the information from an XML file. The card loader provides the card
   *  information.
@@ -20,12 +21,12 @@ case class XMLDeckLoader(definition: Elem, loader: CardLoader) extends DeckLoade
                      card <- maindeck \ "card"
                    } yield ((card \ "@name").text, (card \ "@number").text)
 
-    val cards = cardinfo.par flatMap {
+    val cards = cardinfo.flatMap {
       case (name, number) =>
         val card = loader.card(name)
         (1 to number.toInt).map(_ => card)
     }
 
-    Deck(cards.seq.flatten)
+    IO.sequence(cards).map(cs => Deck(cs.flatten))
   }
 }

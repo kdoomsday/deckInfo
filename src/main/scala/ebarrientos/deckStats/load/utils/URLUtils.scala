@@ -1,5 +1,9 @@
 package ebarrientos.deckStats.load.utils
 
+import scala.util.Try
+import scalaz.zio.IO
+
+
 /** Utilities for loaders that utilize URLs. */
 trait URLUtils {
 
@@ -8,4 +12,11 @@ trait URLUtils {
 
   /** Read a URL into a String. Sanitizes the url before making the request.*/
   def readURL(url: String): String = scala.io.Source.fromURL(sanitize(url)).mkString
+
+  /** Read URL into String, wrapping the operation in an IO.
+    * It also uses a Try, so exceptions are caught and must be handled through
+    * the IO.
+    */
+  def ioReadUrl(url: String): IO[Exception, String] =
+    IO.syncException( readURL(url) )
 }

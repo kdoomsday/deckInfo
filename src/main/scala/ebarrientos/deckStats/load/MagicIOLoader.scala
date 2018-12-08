@@ -4,6 +4,7 @@ import ebarrientos.deckStats.basics.{ Card, Mana }
 import ebarrientos.deckStats.load.utils.{ LoadUtils, URLUtils }
 import org.json4s._
 import org.json4s.jackson.JsonMethods._
+import scalaz.zio.IO
 
 
 /** Loader para cargar información de api.magicthegathering.io */
@@ -13,7 +14,7 @@ object MagicIOLoader extends CardLoader with LoadUtils with URLUtils {
   private[this] def url(cardName: String): String =
     s"""https://api.magicthegathering.io/v1/cards?name="$cardName" """
 
-  def card(name: String): Option[Card] = {
+  def card(name: String): IO[Exception, Option[Card]] = {
     def getStr(value: JValue): String = value match {
       case JString(s) => s
       case _          => ""
@@ -42,9 +43,11 @@ object MagicIOLoader extends CardLoader with LoadUtils with URLUtils {
       )
     }
 
-    (parse(readURL(url(name))) \\ "cards") match {
-      case JArray(jobject :: _) => Some(cardFromJobject(jobject))
-      case _                    => None
+    IO.sync {
+      (parse(readURL(url(name))) \\ "cards") match {
+        case JArray(jobject :: _) => Some(cardFromJobject(jobject))
+        case _                    => None
+      }
     }
   }
 

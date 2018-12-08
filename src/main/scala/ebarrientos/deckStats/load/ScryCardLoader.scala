@@ -10,6 +10,7 @@ import org.json4s.JsonAST.JValue
 import org.json4s.JsonAST.JObject
 import org.json4s.JsonAST.JString
 import org.json4s.JsonAST.JArray
+import scalaz.zio.IO
 
 /**
  * CardLoader que lee la informaci&oacute;n de http://api.mtgapi.com/v1/card/name/{name}
@@ -19,7 +20,7 @@ class ScryCardLoader(baseUrl: String = "http://scry.me.uk/api.php?name=")
   extends CardLoader with LoadUtils with URLUtils
 {
   // TODO Manejar cuando no se consigue la carta
-  def card(cardName: String): Option[Card] = {
+  def card(cardName: String): IO[Exception, Option[Card]] = {
     import ebarrientos.deckStats.stringParsing.ScryManaParser.{parseAll, cost}
 
     implicit val json: JValue = loadJson(cardName)
@@ -43,7 +44,7 @@ class ScryCardLoader(baseUrl: String = "http://scry.me.uk/api.php?name=")
         power,
         toughness
     )
-    Some(c)
+    IO.sync(Some(c))
   }
 
 

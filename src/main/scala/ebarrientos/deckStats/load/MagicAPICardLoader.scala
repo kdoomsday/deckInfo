@@ -3,13 +3,14 @@ package ebarrientos.deckStats.load
 import ebarrientos.deckStats.basics.Card
 import ebarrientos.deckStats.load.utils.LoadUtils
 import ebarrientos.deckStats.load.utils.URLUtils
+import scalaz.zio.IO
 
 /** Cardloader that gets card info from http://stegriff.co.uk/ */
 class MagicAPICardLoader extends CardLoader with LoadUtils with URLUtils {
 
-  def card(name: String): Option[Card] = {
+  override def card(name: String): IO[Exception, Option[Card]] = {
     println(s"Loading: $name")
-    cardMap(name).map(m => cardFromMap(name, m))
+    cardMap(name).map(om => om.map(m => cardFromMap(name, m)))
   }
 
 
@@ -19,18 +20,21 @@ class MagicAPICardLoader extends CardLoader with LoadUtils with URLUtils {
     * If there was an error loading, or the card doesn't exist, returns None. Otherwise, returns a
     * Some with the map that contains all relevant values.
     */
-  private[this] def cardMap(name: String): Option[Map[String, String]] = {
+  private[this] def cardMap(name: String): IO[Exception, Option[Map[String, String]]] = {
     import util.parsing.json.JSON
 
-    val cardStr = readURL(s"http://stegriff.co.uk/host/magic/?name=$name")
-    val parsed = JSON.parseFull(cardStr)
-
-    parsed flatMap (m => {
-      val castMap = m.asInstanceOf[Map[String, String]].withDefaultValue("")
-      if (castMap.contains("error")) None
-      else Some(castMap)
-    })
+    for {
+      cardStr <- ioReadUrl(s"http://stegriff.co.uk/host/magic/?name=$name")
+    } yield parsedJson2Map(JSON.parseFull(cardStr))
   }
+
+  /** Convert from maybe a json thing to maybe a map of what was in it */
+  private[this] def parsedJson2Map(parsed: Option[Any]): Option[Map[String, String]] =
+    parsed flatMap (m => {
+                      val castMap = m.asInstanceOf[Map[String, String]].withDefaultValue("")
+                      if (castMap.contains("error")) None
+                      else Some(castMap)
+                    })
 
 
   /** Obtener un [[Card]] del mapa. El mapa se asume que SI tiene la carta */

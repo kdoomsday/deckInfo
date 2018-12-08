@@ -1,6 +1,7 @@
 package ebarrientos.deckStats.load
 
 import ebarrientos.deckStats.basics._
+import scalaz.zio.IO
 import utest._
 
 import scala.io.Source
@@ -17,39 +18,43 @@ object MTGJsonLoaderTest extends TestSuite {
 
   val tests = Tests {
     "Load a creature from the sample" - {
-      val maybeCard = loader.card("Adorable Kitten")
-      assert(maybeCard.isDefined)
-      maybeCard.fold(assert(false)) { kitten =>
-        assert(
-          kitten.name == "Adorable Kitten",
-          kitten.cost == Seq(ColoredMana(White)),
-          kitten.subtypes contains "Cat",
-          kitten.types contains Creature,
-          kitten.power == 1,
-          kitten.toughness == 1
-        )
+      val ioCard: IO[Exception, Option[Card]] = loader.card("Adorable Kitten")
+      for ( maybeCard <- ioCard ) yield {
+        assert(maybeCard.isDefined)
+        maybeCard.fold(assert(false)){ kitten: (Card) =>
+        assert(kitten.name == "Adorable Kitten",
+               kitten.cost == Seq(ColoredMana(White)),
+               kitten.subtypes contains "Cat",
+               kitten.types contains Creature,
+               kitten.power == 1,
+               kitten.toughness == 1)
+        }
       }
     }
 
     "Load a sorcery" - {
-      val maybeWrath = loader.card("Wrath of God")
-      assert(maybeWrath.isDefined)
-      maybeWrath.fold(assert(false)) { wrath =>
-        assert(
-          wrath.cmc == 4,
-          wrath.is(White),
-          wrath.types contains Sorcery
-        )
+      val ioWrath: IO[Exception, Option[Card]] = loader.card("Wrath of God")
+      for ( maybeWrath <- ioWrath ) yield {
+        assert(maybeWrath.isDefined)
+        maybeWrath.fold(assert(false)) { wrath =>
+          assert(
+            wrath.cmc == 4,
+            wrath.is(White),
+            wrath.types contains Sorcery
+          )
+        }
       }
     }
 
     "Land" - {
-      loader.card("Plains").fold(assert(false)) { plains =>
-        assert(
-          plains.cmc == 0,
-          plains.supertypes contains Basic,
-          plains.types contains Land
-        )
+      for (maybePlains <- loader.card("Plains") ) yield {
+        maybePlains.fold(assert(false)) { plains =>
+          assert(
+            plains.cmc == 0,
+            plains.supertypes contains Basic,
+            plains.types contains Land
+          )
+        }
       }
     }
   }

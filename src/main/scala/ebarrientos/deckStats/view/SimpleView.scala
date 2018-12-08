@@ -14,9 +14,11 @@ import scala.swing.BorderPanel.Position.{Center, East, West}
 import scala.swing.event.ButtonClicked
 import scala.util.{Failure, Success}
 import ebarrientos.deckStats.view.show.{FormattedStats, ShowStats}
+import ebarrientos.deckStats.basics.Deck
 import javax.swing.UIManager
 
 import scala.io.Source
+import scalaz.zio.RTS
 
 /** Main interface that shows a selector for the card database, a selector for the deck, and an
   * area for showing the deck stats.
@@ -133,7 +135,7 @@ object SimpleView extends SimpleSwingApplication {
       for (loader <- deckLoader) {
         status.text = text.getString("statusbar.loading")
         setCursor(WAIT_CURSOR)
-        shower.show(loader.load)
+        shower.show(Materializer.load(loader))
       }
     }
 
@@ -169,4 +171,11 @@ object SimpleView extends SimpleSwingApplication {
   // Cursor manipulation functions
   private[this] def setCursor(c: Cursor): Unit = mainPanel.cursor = c
   private[this] def setCursor(cType: Int): Unit = setCursor(Cursor.getPredefinedCursor(cType))
+
+  // Ayudar a extraer los valores de carga de mazos
+  private object Materializer extends RTS {
+    def load(loader: DeckLoader): Deck =
+      unsafeRun(loader.load())
+  }
+
 }
