@@ -12,4 +12,7 @@ object Seqs {
 
     enc(s, Map[T, Int]().withDefaultValue(0))
   }
+
+  def newEncode[T](s: Seq[T]): Map[T, Int] =
+    s.groupBy(e => e).map{ case (e, l) => (e, l.size) }
 }
