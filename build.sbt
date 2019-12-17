@@ -5,7 +5,7 @@ lazy val root = (project in file("."))
     inThisBuild(List(
                   organization := "com.ebarrientos",
                   version := "1.0",
-                  scalaVersion := "2.12.6"
+                  scalaVersion := "2.12.8"
                 )),
 
     libraryDependencies ++= deps,
