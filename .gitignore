@@ -23,5 +23,9 @@ project/plugins/project/
 # IntelliJ
 .idea/
 
+# Metals
+.metals
+.bloop/
+
 # data
 *.h2.db
