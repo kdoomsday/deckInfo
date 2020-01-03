@@ -1,7 +1,7 @@
-name := "deckstatsSBT"
 
-lazy val root = (project in file("."))
+lazy val root = project.in(file("."))
   .settings(
+    name := "deckinfo",
     inThisBuild(List(
                   organization := "com.ebarrientos",
                   version := "1.0",
