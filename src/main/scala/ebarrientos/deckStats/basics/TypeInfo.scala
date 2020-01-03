@@ -19,13 +19,13 @@ object CardType {
   def isType(s: String): Boolean = types.foldLeft(false)((p, n) => p || s == n.toString)
 }
 
-case object Creature extends CardType
-case object Artifact extends CardType
-case object Land extends CardType
-case object Instant extends CardType
-case object Sorcery extends CardType
-case object Tribal extends CardType
-case object Enchantment extends CardType
+case object Creature     extends CardType
+case object Artifact     extends CardType
+case object Land         extends CardType
+case object Instant      extends CardType
+case object Sorcery      extends CardType
+case object Tribal       extends CardType
+case object Enchantment  extends CardType
 case object Planeswalker extends CardType
 
 
@@ -47,5 +47,5 @@ object Supertype {
 }
 
 case object Legendary extends Supertype
-case object Basic extends Supertype
-case object Host extends Supertype
+case object Basic     extends Supertype
+case object Host      extends Supertype

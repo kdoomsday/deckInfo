@@ -5,7 +5,7 @@ case object Phyrexian extends ManaProperty
 case object Snow extends ManaProperty
 
 
-// Common behavior for mana
+/** Common behavior for mana */
 sealed trait Mana {
   def is(c: Color): Boolean
   def isColorless: Boolean
@@ -57,9 +57,9 @@ extends Mana
   override val cmc = 1
   override def toString: String = color match {
     case White => "W"
-    case Blue => "U"
+    case Blue  => "U"
     case Black => "B"
-    case Red => "R"
+    case Red   => "R"
     case Green => "G"
   }
 }
