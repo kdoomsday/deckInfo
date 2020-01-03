@@ -17,7 +17,7 @@ import ebarrientos.deckStats.basics.HybridMana
 
 /** Provides operations to apply to decks of cards to get information. */
 object Calc {
-  // Average of a seq of numbers
+  /** Average of a seq of numbers */
   private[this] def avg(seq: Seq[Int]) =
     seq.foldLeft(0.0)(_ + _) / seq.size
 
