@@ -1,5 +1,6 @@
 
 lazy val root = project.in(file("."))
+  .aggregate(core, swingView)
   .settings(
     name := "deckinfo",
     inThisBuild(List(
@@ -7,15 +8,31 @@ lazy val root = project.in(file("."))
                   version := "1.0",
                   scalaVersion := "2.12.10"
                 )),
+  )
 
-    libraryDependencies ++= deps,
-    libraryDependencies ++= circeDeps,
-    libraryDependencies ++= swingDeps,
-
+// General compiler settings
+lazy val compilerSettings = Seq(
     testFrameworks += new TestFramework("utest.runner.Framework"),
 
     scalacOptions += "-Ypartial-unification",
     addCompilerPlugin("com.olegpy" %% "better-monadic-for" % "0.2.4")
+)
+
+// Core project with types, loaders, calc, etc
+lazy val core = (project in file("core"))
+  .settings(
+    compilerSettings,
+    libraryDependencies ++= deps,
+    libraryDependencies ++= circeDeps
+  )
+
+// project with only the swing ui
+lazy val swingView = (project in file("swingView"))
+  .dependsOn(core)
+  .settings(
+    compilerSettings,
+    libraryDependencies ++= swingDeps,
+    testFrameworks += new TestFramework("utest.runner.Framework")
   )
 
 val zioVersion = "0.3.2"
