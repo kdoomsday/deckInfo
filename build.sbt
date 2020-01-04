@@ -10,6 +10,7 @@ lazy val root = project.in(file("."))
 
     libraryDependencies ++= deps,
     libraryDependencies ++= circeDeps,
+    libraryDependencies ++= swingDeps,
 
     testFrameworks += new TestFramework("utest.runner.Framework"),
 
@@ -17,12 +18,12 @@ lazy val root = project.in(file("."))
     addCompilerPlugin("com.olegpy" %% "better-monadic-for" % "0.2.4")
   )
 
-val zioVersion     = "0.3.2"
+val zioVersion = "0.3.2"
 lazy val deps = Seq(
   "com.typesafe.slick"       %% "slick"                    % "2.1.0",
   "com.h2database"            % "h2"                       % "1.3.148",
-  "com.github.wookietreiber" %% "scala-chart"              % "latest.integration",
-  "org.scala-lang.modules"   %% "scala-swing"              % "2.1.1",
+  // "com.github.wookietreiber" %% "scala-chart"              % "latest.integration",
+  "com.github.wookietreiber" %% "scala-chart"              % "0.5.1",
   "org.scala-lang.modules"   %% "scala-parser-combinators" % "1.0.4",
   "org.scala-lang.modules"   %% "scala-xml"                % "1.1.0",
   "org.json4s"               %% "json4s-jackson"           % "3.5.3",
@@ -30,6 +31,11 @@ lazy val deps = Seq(
 
   // Test dependencies
   "com.lihaoyi" %% "utest" % "0.6.3" % "test"
+)
+
+val scalaSwingVersion = "2.1.1"
+lazy val swingDeps = Seq(
+  "org.scala-lang.modules" %% "scala-swing" % scalaSwingVersion
 )
 
 
