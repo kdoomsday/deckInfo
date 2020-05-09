@@ -18,7 +18,8 @@ import ebarrientos.deckStats.basics.Deck
 import javax.swing.UIManager
 
 import scala.io.Source
-import scalaz.zio.RTS
+import _root_.scala.util.control.Exception
+// import zio.RTS
 
 /** Main interface that shows a selector for the card database, a selector for the deck, and an
   * area for showing the deck stats.
@@ -130,14 +131,24 @@ object SimpleView extends SimpleSwingApplication {
     import java.awt.Cursor._
     import scala.concurrent.ExecutionContext.Implicits._
 
-    val task = Future {
+    val runtime = zio.Runtime.default
+
+    // val task = Future {
+    //   // Handle loading of cards database and such prop
+    //   for (loader <- deckLoader) {
+    //     status.text = text.getString("statusbar.loading")
+    //     setCursor(WAIT_CURSOR)
+    //     shower.show(Materializer.load(loader))
+    //   }
+    // }
+    val task: Future[Deck] =
       // Handle loading of cards database and such prop
-      for (loader <- deckLoader) {
+      deckLoader.fold(Future.failed[Deck](new Exception("No deck")))(dl => {
         status.text = text.getString("statusbar.loading")
         setCursor(WAIT_CURSOR)
-        shower.show(Materializer.load(loader))
-      }
-    }
+        runtime.unsafeRunToFuture(dl.load())
+      })
+
 
     task.onComplete {
       case Success(_) => Swing.onEDT {
@@ -171,11 +182,4 @@ object SimpleView extends SimpleSwingApplication {
   // Cursor manipulation functions
   private[this] def setCursor(c: Cursor): Unit = mainPanel.cursor = c
   private[this] def setCursor(cType: Int): Unit = setCursor(Cursor.getPredefinedCursor(cType))
-
-  // Ayudar a extraer los valores de carga de mazos
-  private object Materializer extends RTS {
-    def load(loader: DeckLoader): Deck =
-      unsafeRun(loader.load())
-  }
-
 }
