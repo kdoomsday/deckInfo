@@ -7,7 +7,7 @@ import ebarrientos.deckStats.basics.Card
 
 import scala.slick.driver.H2Driver
 import scala.slick.jdbc.meta.MTable
-import scalaz.zio.IO
+import zio.IO
 
 /** Loads a card from DB. If db doesn't contain the card, uses the helper to load and store it for
   * future retrieval.
@@ -30,7 +30,7 @@ class H2DbLoader(val helper: CardLoader) extends CardLoader  with StoringLoader 
   }
 
   protected def store(c: Card): IO[Exception, Unit] = db.withSession { implicit session =>
-    IO.sync(cards += c)
+    IO.succeed(cards += c)
   }
 
 

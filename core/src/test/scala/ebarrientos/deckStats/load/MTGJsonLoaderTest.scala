@@ -1,7 +1,7 @@
 package ebarrientos.deckStats.load
 
 import ebarrientos.deckStats.basics._
-import scalaz.zio.IO
+import zio.IO
 import utest._
 
 import scala.io.Source

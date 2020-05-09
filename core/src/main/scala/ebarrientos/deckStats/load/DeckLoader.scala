@@ -1,9 +1,9 @@
 package ebarrientos.deckStats.load
 
 import ebarrientos.deckStats.basics.Deck
-import scalaz.zio.IO
+import zio.IO
 
 /** All deck loaders must implement these methods. */
 trait DeckLoader {
-  def load(): IO[Exception, Deck]
+  def load(): IO[Throwable, Deck]
 }

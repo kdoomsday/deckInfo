@@ -3,12 +3,12 @@ package ebarrientos.deckStats.load
 import ebarrientos.deckStats.basics.Card
 import ebarrientos.deckStats.load.utils.LoadUtils
 import ebarrientos.deckStats.load.utils.URLUtils
-import scalaz.zio.IO
+import zio.IO
 
 /** Cardloader that gets card info from http://stegriff.co.uk/ */
 class MagicAPICardLoader extends CardLoader with LoadUtils with URLUtils {
 
-  override def card(name: String): IO[Exception, Option[Card]] = {
+  override def card(name: String): IO[Throwable, Option[Card]] = {
     println(s"Loading: $name")
     cardMap(name).map(om => om.map(m => cardFromMap(name, m)))
   }
@@ -20,7 +20,7 @@ class MagicAPICardLoader extends CardLoader with LoadUtils with URLUtils {
     * If there was an error loading, or the card doesn't exist, returns None. Otherwise, returns a
     * Some with the map that contains all relevant values.
     */
-  private[this] def cardMap(name: String): IO[Exception, Option[Map[String, String]]] = {
+  private[this] def cardMap(name: String): IO[Throwable, Option[Map[String, String]]] = {
     import util.parsing.json.JSON
 
     for {

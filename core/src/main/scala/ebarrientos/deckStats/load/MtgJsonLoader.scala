@@ -7,7 +7,7 @@ import io.circe.Decoder.Result
 import io.circe._
 import io.circe.generic.semiauto._
 import io.circe.parser._
-import scalaz.zio.IO
+import zio.IO
 
 class MtgJsonLoader(source: => String) extends CardLoader with LoadUtils {
   val manaParseFunc: String => Seq[Mana] = MtgJsonParser.parseAll(MtgJsonParser.cost, _).get

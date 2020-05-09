@@ -31,11 +31,16 @@ lazy val swingView = (project in file("swingView"))
   .dependsOn(core)
   .settings(
     compilerSettings,
-    libraryDependencies ++= swingDeps,
-    testFrameworks += new TestFramework("utest.runner.Framework")
+    libraryDependencies ++= swingDeps
   )
 
-val zioVersion = "0.3.2"
+lazy val cliView = (project in file("cliView"))
+  .dependsOn(core)
+  .settings(
+    compilerSettings
+  )
+
+val zioVersion = "1.0.0-RC18"
 lazy val deps = Seq(
   "com.typesafe.slick"       %% "slick"                    % "2.1.0",
   "com.h2database"            % "h2"                       % "1.3.148",
@@ -44,7 +49,7 @@ lazy val deps = Seq(
   "org.scala-lang.modules"   %% "scala-parser-combinators" % "1.0.4",
   "org.scala-lang.modules"   %% "scala-xml"                % "1.1.0",
   "org.json4s"               %% "json4s-jackson"           % "3.5.3",
-  "org.scalaz"               %% "scalaz-zio"               % zioVersion,
+  "dev.zio"                  %% "zio"                      % zioVersion,
 
   // Test dependencies
   "com.lihaoyi" %% "utest" % "0.6.3" % "test"
@@ -62,3 +67,5 @@ lazy val circeDeps = Seq(
   "io.circe" %% "circe-generic",
   "io.circe" %% "circe-parser"
 ).map(_ % circeVersion)
+
+enablePlugins(JavaAppPackaging)

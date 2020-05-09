@@ -3,7 +3,7 @@ package ebarrientos.deckStats.load
 import java.io.File
 import ebarrientos.deckStats.basics.Deck
 import scala.xml.Elem
-import scalaz.zio.IO
+import zio.IO
 
 /** Deck loader that loads the information from an XML file. The card loader provides the card
   *  information.

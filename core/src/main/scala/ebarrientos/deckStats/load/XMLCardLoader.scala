@@ -5,7 +5,7 @@ import ebarrientos.deckStats.basics.Card
 import ebarrientos.deckStats.load.utils.LoadUtils
 import scala.util.{ Success, Try }
 import scala.xml.Elem
-import scalaz.zio.IO
+import zio.IO
 
 /** CardLoader that takes its info from an XML file. */
 class XMLCardLoader(xmlFile: String) extends CardLoader with LoadUtils {

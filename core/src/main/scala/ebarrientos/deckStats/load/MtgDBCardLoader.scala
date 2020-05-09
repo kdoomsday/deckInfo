@@ -4,17 +4,17 @@ import ebarrientos.deckStats.load.utils.URLUtils
 import ebarrientos.deckStats.basics.Card
 import ebarrientos.deckStats.load.utils.LoadUtils
 import scala.util.parsing.json.JSON
-import scalaz.zio.IO
+import zio.IO
 
 @Deprecated
 /** Ya no funciona la p&aacute;gina, as&iacute; que se recomienda otro loader */
 class MtgDBCardLoader extends CardLoader with LoadUtils with URLUtils {
 
-  def card(name: String): IO[Exception, Option[Card]] =
+  def card(name: String): IO[Throwable, Option[Card]] =
     cardMap(name).map(om => om.map(m => cardFromMap(name, m)))
 
 
-  private[this] def cardMap(name: String): IO[Exception, Option[Map[String, Any]]] = {
+  private[this] def cardMap(name: String): IO[Throwable, Option[Map[String, Any]]] = {
     println(s"Loading: $name")
 
     val unQuotesName = sanitizeName(name)

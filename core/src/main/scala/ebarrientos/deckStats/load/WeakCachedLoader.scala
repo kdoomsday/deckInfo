@@ -4,19 +4,19 @@ import scala.collection.mutable.WeakHashMap
 import ebarrientos.deckStats.basics.Card
 
 import scala.collection.mutable
-import scalaz.zio.IO
+import zio.IO
 
 /** Cached loader that stores cards in a weak hash map, to prevent too much growth. */
 class WeakCachedLoader(val helper: CardLoader) extends CardLoader {
   private[this] lazy val map = new mutable.WeakHashMap[String, Card]
 
-  def card(name: String): IO[Exception, Option[Card]] =
+  def card(name: String): IO[Throwable, Option[Card]] =
     if (map.contains(name))
-      IO.point(map.get(name))
+      IO.succeed(map.get(name))
     else
       for {
         oCard <- helper.card(name)
-        _     <- IO.sync(store(name, oCard))
+        _     <- IO.succeed(store(name, oCard))
       } yield oCard
 
   // Guardar la carta, si existe

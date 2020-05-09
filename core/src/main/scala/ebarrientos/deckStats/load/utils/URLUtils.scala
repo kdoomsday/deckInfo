@@ -1,7 +1,7 @@
 package ebarrientos.deckStats.load.utils
 
 import scala.util.Try
-import scalaz.zio.IO
+import zio.IO
 
 
 /** Utilities for loaders that utilize URLs. */
@@ -17,6 +17,6 @@ trait URLUtils {
     * It also uses a Try, so exceptions are caught and must be handled through
     * the IO.
     */
-  def ioReadUrl(url: String): IO[Exception, String] =
-    IO.syncException( readURL(url) )
+  def ioReadUrl(url: String): IO[Throwable, String] =
+    IO.fromTry( Try(readURL(url)) )
 }

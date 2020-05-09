@@ -10,7 +10,7 @@ import org.json4s.JsonAST.JValue
 import org.json4s.JsonAST.JObject
 import org.json4s.JsonAST.JString
 import org.json4s.JsonAST.JArray
-import scalaz.zio.IO
+import zio.IO
 
 /**
  * CardLoader que lee la informaci&oacute;n de http://api.mtgapi.com/v1/card/name/{name}
@@ -44,7 +44,7 @@ class ScryCardLoader(baseUrl: String = "http://scry.me.uk/api.php?name=")
         power,
         toughness
     )
-    IO.sync(Some(c))
+    IO.succeed(Some(c))
   }
 
 
