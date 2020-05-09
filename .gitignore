@@ -26,6 +26,7 @@ project/plugins/project/
 # Metals
 .metals
 .bloop/
+project/metals.sbt
 
 # data
 *.h2.db
