@@ -149,11 +149,11 @@ object SimpleView extends SimpleSwingApplication {
         runtime.unsafeRunToFuture(dl.load())
       })
 
-
     task.onComplete {
-      case Success(_) => Swing.onEDT {
+      case Success(d) => Swing.onEDT {
         status.text = text.getString("statusbar.loaded")
         setCursor(getDefaultCursor())
+        shower.show(d)
       }
       case Failure(e) => Swing.onEDT {
         e.printStackTrace()
