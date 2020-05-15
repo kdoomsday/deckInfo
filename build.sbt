@@ -40,7 +40,7 @@ lazy val cliView = (project in file("cliView"))
     compilerSettings
   )
 
-val zioVersion = "1.0.0-RC18"
+val zioVersion = "1.0.0-RC18-2"
 lazy val deps = Seq(
   "com.typesafe.slick"       %% "slick"                    % "2.1.0",
   "com.h2database"            % "h2"                       % "1.3.148",

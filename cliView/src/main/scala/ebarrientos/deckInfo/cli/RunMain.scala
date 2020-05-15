@@ -91,7 +91,7 @@ object RunMain extends App {
 
   def printCurve(curve:  Seq[(Int, Int)]) =
     // Task.foreach(curve)((cost, amnt) => putStr(s"$cost: ").andThen(putStrLn('#'*amnt)))
-    ZIO.foreach(curve){ case (cost, amnt) => putStrLn(s"$cost: ${'#'*amnt}") }
+    ZIO.foreach(curve){ case (cost, amnt) => putStrLn(s"$cost: ${"#"*amnt} ($amnt)") }
 
   def printSymbols(symbols: Map[String, Double]) =
     ZIO.foreach(symbols){ case (symbol, amnt) => putStrLn(s"$symbol: $amnt") }
