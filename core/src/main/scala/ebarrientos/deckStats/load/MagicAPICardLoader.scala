@@ -5,7 +5,10 @@ import ebarrientos.deckStats.load.utils.LoadUtils
 import ebarrientos.deckStats.load.utils.URLUtils
 import zio.IO
 
-/** Cardloader that gets card info from http://stegriff.co.uk/ */
+/** Cardloader that gets card info from http://stegriff.co.uk/
+  * @deprecated No longer seems to be working
+  */
+@Deprecated
 class MagicAPICardLoader extends CardLoader with LoadUtils with URLUtils {
 
   override def card(name: String): IO[Throwable, Option[Card]] = {

@@ -12,9 +12,9 @@ object MagicIOLoader extends CardLoader with LoadUtils with URLUtils {
 
   /** Url para la info de una carta especifica */
   private[this] def url(cardName: String): String =
-    s"""https://api.magicthegathering.io/v1/cards?name="$cardName" """
+    s"""https://api.magicthegathering.io/v1/cards?name=$cardName"""
 
-  def card(name: String): IO[Exception, Option[Card]] = {
+  def card(name: String): IO[Throwable, Option[Card]] = {
     def getStr(value: JValue): String = value match {
       case JString(s) => s
       case _          => ""
@@ -43,7 +43,7 @@ object MagicIOLoader extends CardLoader with LoadUtils with URLUtils {
       )
     }
 
-    IO.succeed {
+    IO.effect {
       (parse(readURL(url(name))) \\ "cards") match {
         case JArray(jobject :: _) => Some(cardFromJobject(jobject))
         case _                    => None
