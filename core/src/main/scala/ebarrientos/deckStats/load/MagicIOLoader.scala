@@ -8,7 +8,7 @@ import zio.IO
 import requests.Response
 
 /** Loader para cargar información de api.magicthegathering.io */
-object MagicIOLoader extends CardLoader with LoadUtils {
+object MagicIOLoader extends CardLoader with LoadUtils with URLUtils {
 
   private[this] val baseUrl = "https://api.magicthegathering.io/v1/cards"
 
@@ -47,7 +47,7 @@ object MagicIOLoader extends CardLoader with LoadUtils {
     }
 
     IO.effect {
-      val cardJsonResponse: Response = requests.get(baseUrl, params=Map("name" -> name), readTimeout=20000, connectTimeout=20000)
+      val cardJsonResponse: Response = requests.get(baseUrl, params=Map("name" -> sanitize(name)), readTimeout=20000, connectTimeout=20000)
 
       if (cardJsonResponse.statusCode == 200) {
         (parse(cardJsonResponse.text) \\ "cards") match {

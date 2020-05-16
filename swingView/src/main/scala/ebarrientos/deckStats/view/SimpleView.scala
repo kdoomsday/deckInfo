@@ -39,8 +39,12 @@ object SimpleView extends SimpleSwingApplication {
   lazy val dbLoader = new H2DbLoader(xmlLoader)
   lazy val xmlLoader = new XMLCardLoader("""C:\Users\kdoom\Documents\code\deckInfo\src\main\resources\cards.xml""")
   lazy val cardLoader: CardLoader = new WeakCachedLoader(new SequenceLoader(dbLoader, /*xmlLoader,*/ netLoader))*/
-  lazy val cardLoader: CardLoader =
-    new MtgJsonLoader(Source.fromInputStream(getClass.getClassLoader.getResourceAsStream("AllCards.json")).mkString)
+  // lazy val cardLoader: CardLoader =
+  //   new MtgJsonLoader(Source.fromInputStream(getClass.getClassLoader.getResourceAsStream("AllCards.json")).mkString)
+
+  lazy val cardLoader = new WeakCachedLoader(
+                          new H2DbLoader( new SequenceLoader(MagicIOLoader)) )
+
   private[this] var deckLoader: Option[DeckLoader] = None
   // What will actually show the information
   lazy val shower: ShowStats = new FormattedStats
