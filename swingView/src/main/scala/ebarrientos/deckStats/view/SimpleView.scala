@@ -21,6 +21,10 @@ import scala.io.Source
 import _root_.scala.util.control.Exception
 // import zio.RTS
 
+import pureconfig.generic.auto._
+import pureconfig.ConfigSource
+import ebarrientos.deckStats.config.CoreConfig
+
 /** Main interface that shows a selector for the card database, a selector for the deck, and an
   * area for showing the deck stats.
   */
@@ -42,8 +46,13 @@ object SimpleView extends SimpleSwingApplication {
   // lazy val cardLoader: CardLoader =
   //   new MtgJsonLoader(Source.fromInputStream(getClass.getClassLoader.getResourceAsStream("AllCards.json")).mkString)
 
+  lazy val config = ConfigSource.default.load[CoreConfig].fold(fa => throw new Exception("Failed to load config: " + fa.prettyPrint()), c => c)
+
+  println(config.dbConnectionUrl)
+  println(config.dbDriver)
+
   lazy val cardLoader = new WeakCachedLoader(
-                          new H2DbLoader( new SequenceLoader(MagicIOLoader)) )
+                          new H2DbLoader( new SequenceLoader(MagicIOLoader), config) )
 
   private[this] var deckLoader: Option[DeckLoader] = None
   // What will actually show the information

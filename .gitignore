@@ -29,4 +29,4 @@ project/plugins/project/
 project/metals.sbt
 
 # data
-*.h2.db
+*.h2.db*

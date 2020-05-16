@@ -51,6 +51,7 @@ lazy val deps = Seq(
   "org.json4s"               %% "json4s-jackson"           % "3.5.3",
   "dev.zio"                  %% "zio"                      % zioVersion,
   "com.lihaoyi"              %% "requests"                 % "0.5.1",
+  "com.github.pureconfig"    %% "pureconfig"               % "0.12.3",
 
   // Test dependencies
   "com.lihaoyi" %% "utest" % "0.6.3" % "test"
