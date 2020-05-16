@@ -50,6 +50,7 @@ lazy val deps = Seq(
   "org.scala-lang.modules"   %% "scala-xml"                % "1.1.0",
   "org.json4s"               %% "json4s-jackson"           % "3.5.3",
   "dev.zio"                  %% "zio"                      % zioVersion,
+  "com.lihaoyi"              %% "requests"                 % "0.5.1",
 
   // Test dependencies
   "com.lihaoyi" %% "utest" % "0.6.3" % "test"

@@ -5,10 +5,12 @@ import ebarrientos.deckStats.load.utils.{ LoadUtils, URLUtils }
 import org.json4s._
 import org.json4s.jackson.JsonMethods._
 import zio.IO
-
+import requests.Response
 
 /** Loader para cargar información de api.magicthegathering.io */
-object MagicIOLoader extends CardLoader with LoadUtils with URLUtils {
+object MagicIOLoader extends CardLoader with LoadUtils {
+
+  private[this] val baseUrl = "https://api.magicthegathering.io/v1/cards"
 
   /** Url para la info de una carta especifica */
   private[this] def url(cardName: String): String =
@@ -21,6 +23,7 @@ object MagicIOLoader extends CardLoader with LoadUtils with URLUtils {
     }
     def getInt(value: JValue): Int = value match {
       case JInt(num) => num.toInt
+      case JString(txt) if (txt matches "[0-9]+") => txt.toInt
       case _         => 0
     }
 
@@ -44,11 +47,17 @@ object MagicIOLoader extends CardLoader with LoadUtils with URLUtils {
     }
 
     IO.effect {
-      (parse(readURL(url(name))) \\ "cards") match {
-        case JArray(jobject :: _) => Some(cardFromJobject(jobject))
-        case _                    => None
+      val cardJsonResponse: Response = requests.get(baseUrl, params=Map("name" -> name), readTimeout=20000, connectTimeout=20000)
+
+      if (cardJsonResponse.statusCode == 200) {
+        (parse(cardJsonResponse.text) \\ "cards") match {
+          case JArray(jobject :: _) => Some(cardFromJobject(jobject))
+          case _                    => None
+        }
+      }
+      else {
+        throw new Exception(s"Error loading card: Status ${cardJsonResponse.statusCode}")
       }
     }
   }
-
 }
