@@ -12,10 +12,6 @@ object MagicIOLoader extends CardLoader with LoadUtils with URLUtils {
 
   private[this] val baseUrl = "https://api.magicthegathering.io/v1/cards"
 
-  /** Url para la info de una carta especifica */
-  private[this] def url(cardName: String): String =
-    s"""https://api.magicthegathering.io/v1/cards?name=$cardName"""
-
   def card(name: String): IO[Throwable, Option[Card]] = {
     def getStr(value: JValue): String = value match {
       case JString(s) => s
@@ -47,7 +43,7 @@ object MagicIOLoader extends CardLoader with LoadUtils with URLUtils {
     }
 
     IO.effect {
-      val cardJsonResponse: Response = requests.get(baseUrl, params=Map("name" -> sanitize(name)), readTimeout=20000, connectTimeout=20000)
+      val cardJsonResponse: Response = requests.get(baseUrl, params=Map("name" -> name), readTimeout=20000, connectTimeout=20000)
 
       if (cardJsonResponse.statusCode == 200) {
         (parse(cardJsonResponse.text) \\ "cards") match {
