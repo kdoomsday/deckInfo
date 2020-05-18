@@ -4,18 +4,17 @@ import ebarrientos.deckStats.load.XMLDeckLoader
 import ebarrientos.deckStats.load.CardLoader
 import ebarrientos.deckStats.load.{ DeckLoader, MtgJsonLoader }
 import scala.io.Source
-import ebarrientos.deckStats.basics.Deck
-import ebarrientos.deckStats.basics.Land
-import ebarrientos.deckStats.basics.Creature
-import ebarrientos.deckStats.basics.Sorcery
-import ebarrientos.deckStats.basics.Instant
-import ebarrientos.deckStats.basics.Artifact
-import ebarrientos.deckStats.basics.Enchantment
-import ebarrientos.deckStats.basics.Planeswalker
+import ebarrientos.deckStats.basics._
 
 import zio.{ App, Task }
 import zio.console._
 import zio.ZIO
+import ebarrientos.deckStats.load.H2DBDoobieLoader
+import ebarrientos.deckStats.load.MagicIOLoader
+
+import pureconfig.generic.auto._
+import pureconfig.ConfigSource
+import ebarrientos.deckStats.config.CoreConfig
 
 /** Entrypoint to the cli interface */
 object RunMain extends App {
@@ -27,8 +26,11 @@ object RunMain extends App {
     for {
       path       <- path(args)
       _          <- putStrLn(s"Path = $path")
-      cardLoader  = new MtgJsonLoader(Source.fromInputStream(getClass.getClassLoader.getResourceAsStream("AllCards.json")).mkString)
+      config     <- ZIO.fromEither(ConfigSource.default.load[CoreConfig])
+      // cardLoader  = new MtgJsonLoader(Source.fromInputStream(getClass.getClassLoader.getResourceAsStream("AllCards.json")).mkString)
+      cardLoader  = new H2DBDoobieLoader(MagicIOLoader, config)
       deckLoader  = new XMLDeckLoader(path, cardLoader)
+      _          <- putStrLn("Loading deck...")
       deck       <- deckLoader.load()
       _          <- printDeck(deck)
     } yield ()
