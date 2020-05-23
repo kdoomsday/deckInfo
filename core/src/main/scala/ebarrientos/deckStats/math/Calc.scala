@@ -1,19 +1,6 @@
 package ebarrientos.deckStats.math
 
-import ebarrientos.deckStats.basics.Deck
-import ebarrientos.deckStats.basics.CardType
-import ebarrientos.deckStats.basics.Card
-import ebarrientos.deckStats.basics.Land
-import ebarrientos.deckStats.basics.Color
-import ebarrientos.deckStats.basics.ColorlessMana
-import ebarrientos.deckStats.basics.ColorlessMana
-import ebarrientos.deckStats.basics.ColorlessMana
-import ebarrientos.deckStats.basics.ColorlessMana
-import ebarrientos.deckStats.basics.Mana
-import ebarrientos.deckStats.basics.ColorlessMana
-import ebarrientos.deckStats.basics.ColoredMana
-import ebarrientos.deckStats.basics.ColoredMana
-import ebarrientos.deckStats.basics.HybridMana
+import ebarrientos.deckStats.basics._
 
 /** Provides operations to apply to decks of cards to get information. */
 object Calc {
@@ -55,15 +42,17 @@ object Calc {
   }
 
 
-  /** Count Mana Symbols in cards in a deck that match a criterion (By default all cards).
-    * A colored symbol counts once towards it's color. A colorless symbol counts for as much as it
-    * represents. A hybrid mana symbol counts once towards each thing it represents.
+  /** Count Mana Symbols in cards in a deck that match a criterion (By default
+    * all cards). A colored symbol counts once towards it's color. A generic mana
+    * symbol counts for as much as it represents. A hybrid mana symbol counts
+    * once towards each thing it represents.
     */
   def manaSymbols(d: Deck, criterion: Card => Boolean = _ => true): Map[String, Double] = {
     def mana2Map(m: Map[String, Double], mana: Mana, weight: Double): Map[String, Double] = mana match {
-      case ColorlessMana(cmc, _) => m.updated("C", m("C") + weight*cmc)
+      case GenericMana(cmc, _) => m.updated("C", m("C") + weight*cmc)
       case _: ColoredMana        => m.updated(mana.toString, m(mana.toString) + weight)
       case HybridMana(opts)      => opts.foldLeft(m) { mana2Map(_, _, 0.5)}
+      case ColorlessMana(props)  => m.updated("C", m("C") + weight * 1)
     }
 
     val mapCost = Map[String, Double]().withDefaultValue(0.0)

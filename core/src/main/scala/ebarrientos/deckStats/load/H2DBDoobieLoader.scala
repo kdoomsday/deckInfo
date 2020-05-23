@@ -14,25 +14,25 @@ import zio.interop.catz._
 import zio.console._
 import ebarrientos.deckStats.load.utils.LoadUtils
 
-import ebarrientos.deckStats.stringParsing.MagicApiManaParser.{parseAll, cost}
+import ebarrientos.deckStats.stringParsing.MtgJsonParser.{parseAll, cost, stringify}
 import ebarrientos.deckStats.basics.Supertype
 import ebarrientos.deckStats.basics.CardType
+import scala.concurrent.ExecutionContext
 
-class H2DBDoobieLoader(val helper: CardLoader, config: CoreConfig)
+class H2DBDoobieLoader(val helper: CardLoader, config: CoreConfig, ec: ExecutionContext)
     extends CardLoader with StoringLoader with LoadUtils
 {
   val xa = Transactor.fromDriverManager[Task](
-    config.dbDriver,     // driver classname
-    config.dbConnectionUrl,     // connect URL (driver-specific)
-    "",                  // user
-    "",                          // password
-    Blocker.liftExecutionContext(ExecutionContexts.synchronous) // just for testing
+    config.dbDriver,        // driver classname
+    config.dbConnectionUrl, // connect URL (driver-specific)
+    "",                     // user
+    "",                     // password
+    Blocker.liftExecutionContext(ec)
   )
 
   val cons: Console.Service = zio.console.Console.Service.live
 
   override protected def retrieve(name: String): Task[Option[Card]] =
-    // cardsDDL.flatMap(_ => queryCard(name)).transact(xa).map(toCard _)
     for {
       _     <- cardsDDL.transact(xa)
       _     <- cons.putStrLn(s"DDL created, searching for $name")
@@ -47,7 +47,7 @@ class H2DBDoobieLoader(val helper: CardLoader, config: CoreConfig)
   private def queryCard(name: String) =
     sql"""
       select name, cost, typeline, text, power, toughness
-      from CARDS
+      from cards
       where name = $name
     """.query[(String, String, String, String, Int, Int)].option
 
@@ -61,8 +61,8 @@ class H2DBDoobieLoader(val helper: CardLoader, config: CoreConfig)
 
   private def storeCard(c: Card) =
     sql"""
-      insert into Cards(name, cost, typeline, text, power, toughness)
-      values (${c.name}, ${c.cost.mkString}, ${mkTypeline(c)}, ${c.text}, ${c.power}, ${c.toughness})
+      INSERT INTO cards(name, cost, typeline, text, power, toughness)
+      VALUES (${c.name}, ${stringify(c.cost)}, ${mkTypeline(c)}, ${c.text}, ${c.power}, ${c.toughness})
     """.update
 
 
@@ -83,22 +83,14 @@ class H2DBDoobieLoader(val helper: CardLoader, config: CoreConfig)
     mkTypeline(c.supertypes, c.types, c.subtypes)
 
   private val cardsDDL =
-    sql"""|Create table IF NOT EXISTS CARDS(
-          |  name varchar(100) NOT NULL,
-          |  cost varchar(100),
-          |  typeline varchar(150),
-          |  text varchar(200),
-          |  power int,
-          |  toughness int);
-    """.stripMargin.update.run
+    sql"""Create table IF NOT EXISTS cards (
+            name VARCHAR(100) NOT NULL,
+            cost VARCHAR(100),
+            typeline VARCHAR(150),
+            text VARCHAR(200),
+            power INT,
+            toughness INT);""".update.run
 
-  // Crear la tabla inicialmente si no existe
-  // zio.Runtime.default.unsafeRunSync {
-  //   for {
-  //     _ <- putStr("Initializing DDL")
-  //     _ <- cardsDDL.transact(xa)
-  //     _ <- putStr("Done initializing DDL")
-  //   } yield ()
-  // }
+  def initTable() = cardsDDL.transact(xa)
 }
 

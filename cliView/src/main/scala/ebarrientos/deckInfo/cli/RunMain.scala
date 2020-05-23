@@ -27,6 +27,7 @@ object RunMain extends App {
       path       <- path(args)
       _          <- putStrLn(s"Path = $path")
       config     <- ZIO.fromEither(ConfigSource.default.load[CoreConfig])
+      _          <- putStrLn("Config loaded...")
       // cardLoader  = new MtgJsonLoader(Source.fromInputStream(getClass.getClassLoader.getResourceAsStream("AllCards.json")).mkString)
       cardLoader  = new H2DBDoobieLoader(MagicIOLoader, config)
       deckLoader  = new XMLDeckLoader(path, cardLoader)
