@@ -32,16 +32,16 @@ object MtgJsonParserTest extends TestSuite {
       * - assertMana(ColoredMana(Green), p("{G}"))
     }
 
-    "Colorless mana" - {
-      * - assertMana(ColorlessMana(0),  p("{0}"))
-      * - assertMana(ColorlessMana(1),  p("{1}"))
-      * - assertMana(ColorlessMana(3),  p("{3}"))
-      * - assertMana(ColorlessMana(16), p("{16}"))
+    "Generic mana" - {
+      * - assertMana(GenericMana(0),  p("{0}"))
+      * - assertMana(GenericMana(1),  p("{1}"))
+      * - assertMana(GenericMana(3),  p("{3}"))
+      * - assertMana(GenericMana(16), p("{16}"))
     }
 
     "Hybrid mana" - {
       "colors" - assertMana(HybridMana(Set(ColoredMana(Black), ColoredMana(Green))), p("{B/G}"))
-      "mixed"  - assertMana(HybridMana(Set(ColoredMana(White), ColorlessMana(2))),   p("{W/2}"))
+      "mixed"  - assertMana(HybridMana(Set(ColoredMana(White), GenericMana(2))),   p("{W/2}"))
     }
 
     "Phyrexian mana" - {
@@ -55,8 +55,12 @@ object MtgJsonParserTest extends TestSuite {
     }
 
     "Multiple mana" - {
-      * - assertManaList(Seq(ColoredMana(Black), ColorlessMana(1)), p("{1}{B}"))
+      * - assertManaList(Seq(ColoredMana(Black), GenericMana(1)), p("{1}{B}"))
       * - assertManaList(Seq(ColoredMana(White), ColoredMana(Blue)), p("{W}{U}"))
+    }
+
+    "Snow mana" - {
+      * - assertManaList(Seq(GenericMana(1, Set(Snow))), p("{S}"))
     }
   }
 }

@@ -18,27 +18,36 @@ sealed trait Mana {
 
 object Mana {
   def asPhyrexian(mana: Mana): Mana = mana match {
-    case m @ ColorlessMana(_, properties) => m.copy(properties = properties + Phyrexian)
+    case m @ GenericMana(_, properties) => m.copy(properties = properties + Phyrexian)
     case m @ ColoredMana(_, properties) => m.copy(properties = properties + Phyrexian)
     case m @ HybridMana(_) => m // No tiene sentido phyrexianizar hibrido
+    case m @ ColorlessMana(properties) => m.copy(properties + Phyrexian)
   }
 }
 
 
-/** Colorless Mana impl. has an amount because it's generally grouped */
-case class ColorlessMana( override val cmc: Int,
-    					  					override val properties: Set[ManaProperty] = Set() )
-extends Mana
+/** Generic Mana, meaning mana with no requirements */
+case class GenericMana( override val cmc: Int,
+    					  				override val properties: Set[ManaProperty] = Set() )
+  extends Mana
 {
   override def is(c: Color) = false
   override val isColorless = true
   override def toString: String = "o" + cmc.toString
 }
 
+case class ColorlessMana(override val properties: Set[ManaProperty]) extends Mana {
+  override def is(c: Color): Boolean = false
+  override def isColorless: Boolean = true
+  override def cmc: Int = 1
+  override def hasProperty(p: ManaProperty): Boolean = false
+  override def toString: String = "C"
+}
+
 
 /** Represents X costs. */
 class XMana(properties: Set[ManaProperty] = Set())
-  extends ColorlessMana(0, properties)
+  extends GenericMana(0, properties)
 {
   override def toString = "X"
 }

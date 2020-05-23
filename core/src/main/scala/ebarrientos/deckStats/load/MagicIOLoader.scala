@@ -25,9 +25,8 @@ object MagicIOLoader extends CardLoader with LoadUtils with URLUtils {
 
     // Construir la carta a partir del jobject correspondiente ya extraido de la lista
     def cardFromJobject(j: JValue): Card = {
-      import ebarrientos.deckStats.stringParsing.MagicApiManaParser.{parseAll, cost}
+      import ebarrientos.deckStats.stringParsing.MtgJsonParser.{parseAll, cost}
 
-      val name = getStr(j \\ "name")
       val manaCost: Seq[Mana] = parseAll(cost, getStr(j \\ "manaCost")).get
       val (supertypes, types, subTypes) = parseTypes(getStr(j \\ "type"))
       Card(
