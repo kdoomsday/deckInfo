@@ -23,9 +23,7 @@ trait StoringLoader extends CardLoader {
   final def card(name: String): Task[Option[Card]] = {
     for {
       ocard    <- retrieve(name)
-      _        <- console.putStrLn(s"Got $ocard from main loader")
       oResCard <- fetchIfNecessary(ocard, name)
-      _        <- console.putStrLn(s"Got $oResCard from helper")
     } yield oResCard
   }
 
