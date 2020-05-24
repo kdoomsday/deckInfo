@@ -15,6 +15,9 @@ import ebarrientos.deckStats.load.MagicIOLoader
 import pureconfig.generic.auto._
 import pureconfig.ConfigSource
 import ebarrientos.deckStats.config.CoreConfig
+import scala.concurrent.ExecutionContext
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
 
 /** Entrypoint to the cli interface */
 object RunMain extends App {
@@ -29,9 +32,10 @@ object RunMain extends App {
       config     <- ZIO.fromEither(ConfigSource.default.load[CoreConfig])
       _          <- putStrLn("Config loaded...")
       // cardLoader  = new MtgJsonLoader(Source.fromInputStream(getClass.getClassLoader.getResourceAsStream("AllCards.json")).mkString)
-      cardLoader  = new H2DBDoobieLoader(MagicIOLoader, config)
+      ec          = ExecutionContext.fromExecutorService(Executors.newCachedThreadPool())
+      cardLoader  = new H2DBDoobieLoader(MagicIOLoader, config, ec)
       deckLoader  = new XMLDeckLoader(path, cardLoader)
-      _          <- putStrLn("Loading deck...")
+      _          <- putStrLn("Loading deck...\n")
       deck       <- deckLoader.load()
       _          <- printDeck(deck)
     } yield ()
