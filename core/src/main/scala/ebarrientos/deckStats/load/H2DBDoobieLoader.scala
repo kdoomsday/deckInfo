@@ -34,11 +34,8 @@ class H2DBDoobieLoader(val helper: CardLoader, config: CoreConfig, ec: Execution
 
   override protected def retrieve(name: String): Task[Option[Card]] =
     for {
-      _     <- cardsDDL.transact(xa)
-      _     <- cons.putStrLn(s"DDL created, searching for $name")
       ocard <- queryCard(name).transact(xa)
       res    = toCard(ocard)
-      _     <- cons.putStrLn(s"Card queried: $res")
     } yield res
 
   override protected def store(c: Card): Task[Unit] =
@@ -92,5 +89,8 @@ class H2DBDoobieLoader(val helper: CardLoader, config: CoreConfig, ec: Execution
             toughness INT);""".update.run
 
   def initTable() = cardsDDL.transact(xa)
+
+  // Guarantee the cards table exists before anything else happens
+  zio.Runtime.default.unsafeRun(initTable())
 }
 
