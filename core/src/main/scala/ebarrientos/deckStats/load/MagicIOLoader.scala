@@ -23,6 +23,26 @@ object MagicIOLoader extends CardLoader with LoadUtils with URLUtils {
       case _         => 0
     }
 
+    /** In an array of results, find the one that fully matches the expected name.
+      * This is important because teh API finds partial matches (e.g. when
+      * searching for 'Wasteland' a result will come in for 'Wasteland Scorpion'
+      */
+    def findObject(arr: JArray): Option[JValue] = {
+      def fo(l: List[JValue]): Option[JValue] =
+        l match {
+          case jobject :: rest =>
+            if (getStr(jobject \ "name") == name)
+              Some(jobject)
+            else
+              fo(rest)
+
+          case Nil =>
+            None
+        }
+
+      fo(arr.arr)
+    }
+
     // Construir la carta a partir del jobject correspondiente ya extraido de la lista
     def cardFromJobject(j: JValue): Card = {
       import ebarrientos.deckStats.stringParsing.MtgJsonParser.{parseAll, cost}
@@ -46,8 +66,8 @@ object MagicIOLoader extends CardLoader with LoadUtils with URLUtils {
 
       if (cardJsonResponse.statusCode == 200) {
         (parse(cardJsonResponse.text) \\ "cards") match {
-          case JArray(jobject :: _) => Some(cardFromJobject(jobject))
-          case _                    => None
+          case arr @ JArray(_) => findObject(arr).map(cardFromJobject _) // Some(cardFromJobject(jobject))
+          case _               => None
         }
       }
       else {
