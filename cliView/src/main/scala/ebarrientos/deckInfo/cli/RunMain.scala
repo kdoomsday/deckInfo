@@ -70,8 +70,8 @@ object RunMain extends App {
       arts   = Calc.count(d, c => c.is(Artifact))
       enchs  = Calc.count(d, c => c.is(Enchantment))
       walker = Calc.count(d, c => c.is(Planeswalker))
-      permanents    = creats + arts + enchs + walker
       nonPermanents = sorcs + insts
+      permanents    = cards - (lands + nonPermanents)
       nonLands      = permanents + nonPermanents
       _ <- putStrLn(s"""|Permanents: $permanents
                         |Non premanents: $nonPermanents
@@ -86,7 +86,7 @@ object RunMain extends App {
                         |               $nonLands""".stripMargin)
       _ <- putStrLn("")
 
-      curve = Calc.manaCurve(d, c => true)
+      curve = Calc.manaCurve(d)
       _ <- printCurve(curve)
       _ <- putStrLn("")
 
