@@ -29,6 +29,6 @@ case class XMLDeckLoader(definition: Elem, loader: CardLoader) extends DeckLoade
         (1 to number.toInt).map(_ => card)
     }
 
-    IO.collectAll(cards).map(cs => Deck(cs.flatten))
+    IO.collectAllParN(4)(cards).map(cs => Deck(cs.flatten))
   }
 }
