@@ -49,9 +49,9 @@ object Calc {
     */
   def manaSymbols(d: Deck, criterion: Card => Boolean = _ => true): Map[String, Double] = {
     def mana2Map(m: Map[String, Double], mana: Mana, weight: Double): Map[String, Double] = mana match {
-      case GenericMana(cmc, _) => m.updated("C", m("C") + weight*cmc)
+      case GenericMana(cmc, _)   => m.updated("C", m("C") + weight*cmc)
       case _: ColoredMana        => m.updated(mana.toString, m(mana.toString) + weight)
-      case HybridMana(opts)      => opts.foldLeft(m) { mana2Map(_, _, 0.5)}
+      case HybridMana(opts)      => opts.foldLeft(m) { mana2Map(_, _, 0.5)}    // We count both sides of hybrid as half the amount
       case ColorlessMana(props)  => m.updated("C", m("C") + weight * 1)
     }
 
