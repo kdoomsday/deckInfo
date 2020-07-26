@@ -13,8 +13,6 @@ lazy val root = project.in(file("."))
 // General compiler settings
 lazy val compilerSettings = Seq(
     testFrameworks += new TestFramework("utest.runner.Framework"),
-
-    // scalacOptions += "-Ypartial-unification",
     // addCompilerPlugin("com.olegpy" %% "better-monadic-for" % "0.2.4")
 )
 
