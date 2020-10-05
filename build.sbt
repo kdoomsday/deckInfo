@@ -30,9 +30,15 @@ lazy val cliView = (project in file("cliView"))
     compilerSettings
   )
 
-val zioVersion = "1.0.0-RC18-2"
+lazy val web = (project in file("web"))
+  .dependsOn(core)
+  .settings(
+    libraryDependencies ++= http4sDeps
+  )
+
+val zioVersion     = "1.0.0-RC18-2"
 val zioCatsVersion = "2.0.0.0-RC13"
-val doobieVersion = "0.8.8"
+val doobieVersion  = "0.8.8"
 
 lazy val deps = Seq(
   "com.typesafe.slick"       %% "slick"                    % "3.3.2",
@@ -54,10 +60,18 @@ lazy val deps = Seq(
 )
 
 val circeVersion = "0.13.0"
-lazy val circeDeps = Seq(
+lazy val circeDeps = Seq (
   "io.circe" %% "circe-core",
   "io.circe" %% "circe-generic",
   "io.circe" %% "circe-parser"
 ).map(_ % circeVersion)
+
+val http4sVersion  = "0.21.5"
+lazy val http4sDeps = Seq (
+  "org.http4s"               %% "http4s-blaze-server",
+  "org.http4s"               %% "http4s-blaze-client",
+  "org.http4s"               %% "http4s-circe",
+  "org.http4s"               %% "http4s-dsl"
+).map(_ % http4sVersion)
 
 enablePlugins(JavaAppPackaging)
