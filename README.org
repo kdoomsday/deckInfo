@@ -25,3 +25,7 @@ Rebase de deckStats porque apareció la página, además de cambiar el proyecto 
 ** Cálculo de información de un Mazo
    Esto se puede lograr mediante [[file:src/main/scala/ebarrientos/deckStats/math/Calc.scala::package ebarrientos.deckStats.math][ebarrientos.deckStats.math.Calc]]. Ofrece métodos
    para conseguir costos, cantidades, promedios, etc.
+** Llamados de prueba                                                  :verb:
+   template http://localhost:8080
+*** Get a card
+    get /card/Plains

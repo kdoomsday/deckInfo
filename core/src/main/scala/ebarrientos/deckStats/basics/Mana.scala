@@ -1,6 +1,6 @@
 package ebarrientos.deckStats.basics
 
-sealed class ManaProperty
+sealed trait ManaProperty
 case object Phyrexian extends ManaProperty
 case object Snow extends ManaProperty
 
@@ -99,7 +99,7 @@ case class HybridMana(options: Set[Mana]) extends Mana {
     options.exists(mana => mana.hasProperty(p))
 
 
-  /** Converted mana cost. */
+  /** Converted mana cost. Max of cost of all options */
   override def cmc: Int = options.map(_.cmc).max
 
   override def toString: String = "H(" + options.mkString("/") + ")"

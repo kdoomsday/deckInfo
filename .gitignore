@@ -27,6 +27,7 @@ project/plugins/project/
 .metals
 .bloop/
 project/metals.sbt
+project/project
 .sbt-hydra-history
 
 # data
