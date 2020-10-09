@@ -1,6 +1,7 @@
 package com.ebarrientos.deckInfo.web
 
 import cats.effect._
+import cats.implicits._
 import org.http4s._
 import org.http4s.dsl.Http4sDsl
 import org.http4s.implicits._
@@ -8,9 +9,6 @@ import org.http4s.implicits._
 import circe._
 import io.circe.generic.auto._
 import io.circe.syntax._
-// import circe._
-// import io.circe.generic.semiauto._
-// import io.circe.syntax._
 
 import zio.Task
 import zio.interop.catz._
@@ -47,7 +45,20 @@ object QueryRoutes {
     }
   }
 
-  val queryApp: HttpApp[Task] = queryCardService.orNotFound
+  private val queryCardService2 = HttpRoutes.of[Task] {
+    case GET -> Root / "card2" / name => {
+      val res = for {
+        l <- loader
+        c <- l.card(name)
+        resp = c.map(card => Ok(card.asJson)).getOrElse(BadRequest(s"Unknown card $name"))
+      } yield resp
+
+      res.absorbWith(s => new Throwable("Error: " + s.toString()))
+         .flatten
+    }
+  }
+
+  val queryApp: HttpApp[Task] = (queryCardService <+> queryCardService2).orNotFound
 }
 
 private object RoutesObjects {
@@ -62,6 +73,4 @@ private object RoutesObjects {
 
   /** Carta que indica que nada se consiguio */
   val nullCard: Card = Card(Seq(), "Not found", Set())
-
-  // implicit val cardencoder: Encoder[Card] = deriveEncoder
 }
