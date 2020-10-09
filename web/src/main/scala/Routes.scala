@@ -42,7 +42,8 @@ object QueryRoutes {
         card = c.getOrElse(nullCard)
       } yield Ok(card.asJson)
 
-      res.absorbWith(s => new Throwable("Error: " + s.toString())).flatten
+      res.absorbWith(s => new Throwable("Error: " + s.toString()))
+         .flatten
     }
   }
 
