@@ -51,13 +51,15 @@ lazy val deps = Seq(
   "com.h2database"          % "h2"                       % "1.3.148",
   "org.scala-lang.modules" %% "scala-parser-combinators" % "1.1.2",
   "org.scala-lang.modules" %% "scala-xml"                % "2.0.0-M1",
-  "org.json4s"             %% "json4s-jackson"           % "3.7.0-M4",
+  // "org.json4s"             %% "json4s-jackson"           % "3.7.0-M4",
+  "org.json4s"             %% "json4s-native"           % "3.7.0-M4",
   "dev.zio"                %% "zio"                      % zioVersion,
   "dev.zio"                %% "zio-interop-cats"         % zioCatsVersion,
   "com.lihaoyi"            %% "requests"                 % "0.5.1",
   "com.github.pureconfig"  %% "pureconfig"               % "0.12.3",
   "org.tpolecat"           %% "doobie-core"              % doobieVersion,
   "org.tpolecat"           %% "doobie-h2"                % doobieVersion,
+
   // Test dependencies
   "com.lihaoyi"            %% "utest"                    % "0.7.2" % "test"
 )

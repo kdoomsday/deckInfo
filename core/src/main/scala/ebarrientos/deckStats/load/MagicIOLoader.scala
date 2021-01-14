@@ -3,7 +3,7 @@ package ebarrientos.deckStats.load
 import ebarrientos.deckStats.basics.{ Card, Mana }
 import ebarrientos.deckStats.load.utils.{ LoadUtils, URLUtils }
 import org.json4s._
-import org.json4s.jackson.JsonMethods._
+import org.json4s.native.JsonMethods._
 import zio.IO
 import requests.Response
 
