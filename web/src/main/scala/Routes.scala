@@ -62,7 +62,7 @@ object QueryRoutes {
   def queryApp(blocker: Blocker): HttpApp[Task] =
     (queryCardService
       <+> queryCardService2
-      <+> fileService(FileService.Config(".", blocker))).orNotFound
+      <+> fileService(FileService.Config("site", blocker))).orNotFound
 }
 
 private object RoutesObjects {
