@@ -25,6 +25,7 @@ project/plugins/project/
 
 # IntelliJ
 .idea/
+*.iml
 
 # Metals
 .metals
@@ -32,6 +33,9 @@ project/plugins/project/
 project/metals.sbt
 project/project
 .sbt-hydra-history
+
+# VS Code
+.vscode/
 
 # data
 *.db
