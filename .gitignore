@@ -33,6 +33,7 @@ project/plugins/project/
 project/metals.sbt
 project/project
 .sbt-hydra-history
+.bsp
 
 # VS Code
 .vscode/
