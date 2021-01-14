@@ -25,6 +25,7 @@ project/plugins/project/
 
 # IntelliJ
 .idea/
+*.iml
 
 # Metals
 .metals
