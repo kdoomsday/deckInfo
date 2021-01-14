@@ -1,6 +1,6 @@
 lazy val root = project
   .in(file("."))
-  .aggregate(core, cliView)
+  .aggregate(core, cliView, web, playWeb)
   .settings(
     name := "deckinfo",
     inThisBuild(
@@ -35,9 +35,12 @@ lazy val cliView = (project in file("cliView"))
 lazy val web = (project in file("web"))
   .dependsOn(core)
   .settings(
-    libraryDependencies ++= http4sDeps,
-    addCompilerPlugin("com.olegpy" %% "better-monadic-for" % "0.3.1")
+    libraryDependencies ++= http4sDeps
   )
+
+lazy val playWeb = (project in file("playWeb"))
+  .dependsOn(core)
+  .enablePlugins(PlayScala)
 
 val zioVersion     = "1.0.3"
 val zioCatsVersion = "2.2.0.1"
