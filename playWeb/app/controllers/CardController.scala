@@ -21,17 +21,19 @@ import play.api.libs.json.Json
 import io.circe.generic.auto._
 import io.circe.syntax._
 import play.api.http.Writeable
+import play.api.libs.circe.Circe
 
 class CardController @Inject() (
     val controllerComponents: ControllerComponents
-) extends BaseController {
+) extends BaseController
+    with Circe {
 
   def card(name: String) = Action { implicit request: Request[AnyContent] =>
     val res = for {
-        l   <- CardController.loader
-        c   <- l.card(name)
-        card = c.getOrElse(CardController.nullCard)
-    } yield Ok(card.asJson.toString())
+      l   <- CardController.loader
+      c   <- l.card(name)
+      card = c.getOrElse(CardController.nullCard)
+    } yield Ok(card.asJson)
 
     zio.Runtime.default.unsafeRun(res)
   }
