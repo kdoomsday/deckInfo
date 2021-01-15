@@ -24,7 +24,8 @@ import play.api.http.Writeable
 import play.api.libs.circe.Circe
 
 class CardController @Inject() (
-    val controllerComponents: ControllerComponents
+    val controllerComponents: ControllerComponents,
+    runner: ZioRunner
 ) extends BaseController
     with Circe {
 
@@ -35,7 +36,7 @@ class CardController @Inject() (
       card = c.getOrElse(CardController.nullCard)
     } yield Ok(card.asJson)
 
-    zio.Runtime.default.unsafeRun(res)
+    runner.run(res)
   }
 }
 
