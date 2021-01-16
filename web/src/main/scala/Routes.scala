@@ -70,6 +70,7 @@ object QueryRoutes {
   def queryApp(blocker: Blocker): HttpApp[Task] =
     (queryCardService
       <+> queryCardService2
+      <+> twirlRoutes
       <+> fileService(FileService.Config("site", blocker))).orNotFound
 }
 
