@@ -1,6 +1,6 @@
 lazy val root = project
   .in(file("."))
-  .aggregate(core, cliView, web)
+  .aggregate(core, cliView, web, playWeb)
   .settings(
     name := "deckinfo",
     inThisBuild(
@@ -39,6 +39,16 @@ lazy val web = (project in file("web"))
     libraryDependencies ++= http4sDeps
   )
 
+lazy val playWeb = (project in file("playWeb"))
+  .dependsOn(core)
+  .enablePlugins(PlayScala)
+  .settings(
+    libraryDependencies ++= Seq(
+      guice,
+      "com.dripower" %% "play-circe" % "2812.0"
+    )
+  )
+
 val zioVersion     = "1.0.3"
 val zioCatsVersion = "2.2.0.1"
 val doobieVersion  = "0.8.8"
@@ -48,7 +58,8 @@ lazy val deps = Seq(
   "com.h2database"          % "h2"                       % "1.3.148",
   "org.scala-lang.modules" %% "scala-parser-combinators" % "1.1.2",
   "org.scala-lang.modules" %% "scala-xml"                % "2.0.0-M1",
-  "org.json4s"             %% "json4s-jackson"           % "3.7.0-M4",
+  // "org.json4s"             %% "json4s-jackson"           % "3.7.0-M4",
+  "org.json4s"             %% "json4s-native"            % "3.7.0-M4",
   "dev.zio"                %% "zio"                      % zioVersion,
   "dev.zio"                %% "zio-interop-cats"         % zioCatsVersion,
   "com.lihaoyi"            %% "requests"                 % "0.5.1",
@@ -59,9 +70,9 @@ lazy val deps = Seq(
   "com.lihaoyi"            %% "utest"                    % "0.7.2" % "test"
 )
 
-val circeVersion    = "0.13.0"
+val circeVersion = "0.13.0"
 
-lazy val circeDeps  = Seq(
+lazy val circeDeps = Seq(
   "io.circe" %% "circe-core",
   "io.circe" %% "circe-generic",
   "io.circe" %% "circe-parser"

@@ -5,7 +5,7 @@ import ebarrientos.deckStats.load.utils.LoadUtils
 import ebarrientos.deckStats.basics.Card
 
 import org.json4s._
-import org.json4s.jackson.JsonMethods._
+import org.json4s.native.JsonMethods._
 import org.json4s.JsonAST.JValue
 import org.json4s.JsonAST.JObject
 import org.json4s.JsonAST.JString
