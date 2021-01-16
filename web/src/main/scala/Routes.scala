@@ -6,6 +6,7 @@ import org.http4s._
 import org.http4s.dsl.Http4sDsl
 import org.http4s.implicits._
 import org.http4s.server.staticcontent._
+import org.http4s.twirl._
 
 import circe._
 import io.circe.generic.auto._
@@ -58,10 +59,18 @@ object QueryRoutes {
     }
   }
 
+  // Twirl routes
+  private val twirlRoutes = HttpRoutes.of[Task] {
+    case GET -> Root / "index" => {
+      Ok(deckInfo.html.index(Seq(1, 2, 3)))
+    }
+  }
+
   // val queryApp: HttpApp[Task] = (queryCardService <+> queryCardService2).orNotFound
   def queryApp(blocker: Blocker): HttpApp[Task] =
     (queryCardService
       <+> queryCardService2
+      <+> twirlRoutes
       <+> fileService(FileService.Config("site", blocker))).orNotFound
 }
 

@@ -33,6 +33,7 @@ lazy val cliView = (project in file("cliView"))
   )
 
 lazy val web = (project in file("web"))
+  .enablePlugins(SbtTwirl)
   .dependsOn(core)
   .settings(
     libraryDependencies ++= http4sDeps
@@ -77,13 +78,14 @@ lazy val circeDeps = Seq(
   "io.circe" %% "circe-parser"
 ).map(_ % circeVersion)
 
-val http4sVersion  = "0.21.5"
+val http4sVersion   = "0.21.15"
 
 lazy val http4sDeps = Seq(
   "org.http4s" %% "http4s-blaze-server",
   "org.http4s" %% "http4s-blaze-client",
   "org.http4s" %% "http4s-circe",
-  "org.http4s" %% "http4s-dsl"
+  "org.http4s" %% "http4s-dsl",
+  "org.http4s" %% "http4s-twirl"
 ).map(_ % http4sVersion)
 
 enablePlugins(JavaAppPackaging)
