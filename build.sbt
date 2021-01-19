@@ -1,3 +1,6 @@
+/************
+ * PROJECTS *
+ ************/
 lazy val root = project
   .in(file("."))
   .aggregate(core, cliView, web, playWeb)
@@ -49,6 +52,10 @@ lazy val playWeb = (project in file("playWeb"))
     )
   )
 
+
+/****************
+ * DEPENDENCIES *
+ ****************/
 val zioVersion     = "1.0.3"
 val zioCatsVersion = "2.2.0.1"
 val doobieVersion  = "0.8.8"
