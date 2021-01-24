@@ -1,5 +1,14 @@
 @()
 
-@template("Index") {
+@template("Index", Seq("deck.js")) {
     <h1>Welcome!</h1>
+
+    <input type="file" id="filechooser" />
+    <div id="deck"/>
+
+    <script type="text/javascript">
+        $('input#filechooser').change(function() {
+            loadDeck($(this).val());
+        });
+    </script>
 }

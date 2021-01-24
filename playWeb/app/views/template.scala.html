@@ -1,9 +1,14 @@
-@(title: String)(body: Html)
+@(title: String, scriptPaths: Seq[String] = Nil)(body: Html)
 
 <!DOCTYPE html>
 <head>
     <title>@title</title>
     <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/main.css")">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    @for(path <- scriptPaths) {
+        <script type="text/javascript" src="assets/js/@path"></script>
+    }
 </head>
 <body>
     @body
