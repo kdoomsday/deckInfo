@@ -1,9 +1,12 @@
-@()
+@()(implicit request: RequestHeader)
+
+@import helper._
 
 @template("Index", Seq("deck.js")) {
     <h1>Welcome!</h1>
 
     <form id="deckForm" enctype="multipart/form-data">
+        @CSRF.formField
         <input type="file" name="deck" id="deck" />
     </form>
 
