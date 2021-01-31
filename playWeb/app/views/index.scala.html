@@ -1,5 +1,22 @@
-@()
+@()(implicit request: RequestHeader)
 
-@template("Index") {
+@import helper._
+
+@template("Index", Seq("deck.js")) {
     <h1>Welcome!</h1>
+
+    <form id="deckForm" enctype="multipart/form-data">
+        @CSRF.formField
+        <input type="file" name="deck" id="deck" />
+    </form>
+
+    <button id="upload_btn">Upload</button>
+
+    <div id="deck"></div>
+
+    <script type="text/javascript">
+     $('#upload_btn').click(loadDeck);
+    </script>
+
+    <div id="response"/>
 }

@@ -12,4 +12,8 @@ class ApplicationController @Inject() (
   def index() = Action { implicit request: Request[AnyContent] =>
     Ok(views.html.index())
   }
+
+  def deckStats(deck: String) = Action { implicit request: Request[AnyContent] =>
+    Ok(views.html.index())
+  }
 }
