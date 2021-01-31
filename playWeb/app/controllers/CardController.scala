@@ -50,13 +50,10 @@ class CardController @Inject() (
   // }
   def deckStats = Action(parse.multipartFormData) { implicit request =>
     log.info("Call into deckStats")
-    println("Console Call into deckStats")
 
     request.body.file("deck").map { content =>
       val fileSize = content.fileSize
       val res = DeckObject(fileSize)
-
-      println(res.asJson.toString)
 
       Ok(res.asJson)
     }
