@@ -3,12 +3,17 @@
 @template("Index", Seq("deck.js")) {
     <h1>Welcome!</h1>
 
-    <input type="file" id="filechooser" />
-    <div id="deck"/>
+    <form id="deckForm" enctype="multipart/form-data">
+        <input type="file" name="deck" id="deck" />
+    </form>
+
+    <button id="upload_btn">Upload</button>
+
+    <div id="deck"></div>
 
     <script type="text/javascript">
-        $('input#filechooser').change(function() {
-            loadDeck($(this).val());
-        });
+     $('#upload_btn').click(loadDeck);
     </script>
+
+    <div id="response"/>
 }

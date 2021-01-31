@@ -14,6 +14,7 @@ import scala.concurrent.ExecutionContext
 import java.util.concurrent.Executors
 import ebarrientos.deckStats.load.MagicIOLoader
 import ebarrientos.deckStats.load.H2DBDoobieLoader
+import models.DeckObject
 import pureconfig.error.ConfigReaderFailures
 import ebarrientos.deckStats.load.CardLoader
 import ebarrientos.deckStats.basics.Card
@@ -22,12 +23,16 @@ import io.circe.generic.auto._
 import io.circe.syntax._
 import play.api.http.Writeable
 import play.api.libs.circe.Circe
+import play.api.Logger
+import com.fasterxml.jackson.core.PrettyPrinter
 
 class CardController @Inject() (
     val controllerComponents: ControllerComponents,
     runner: ZioRunner
 ) extends BaseController
     with Circe {
+
+  val log = Logger(getClass())
 
   def card(name: String) = Action { implicit request: Request[AnyContent] =>
     val res = for {
@@ -37,6 +42,25 @@ class CardController @Inject() (
     } yield Ok(card.asJson)
 
     runner.run(res)
+  }
+
+
+  // def deckStats(deck: String) = Action { implicit request: Request[AnyContent] =>
+  //   Ok(views.html.deck(deck.length()))
+  // }
+  def deckStats = Action(parse.multipartFormData) { implicit request =>
+    log.info("Call into deckStats")
+    println("Console Call into deckStats")
+
+    request.body.file("deck").map { content =>
+      val fileSize = content.fileSize
+      val res = DeckObject(fileSize)
+
+      println(res.asJson.toString)
+
+      Ok(res.asJson)
+    }
+    .getOrElse(BadRequest("Missing deck"))
   }
 }
 
