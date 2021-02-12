@@ -25,6 +25,13 @@ import play.api.http.Writeable
 import play.api.libs.circe.Circe
 import play.api.Logger
 import com.fasterxml.jackson.core.PrettyPrinter
+import ebarrientos.deckStats.load.XMLDeckLoader
+import java.io.File
+import ebarrientos.deckStats.load.DeckLoader
+import ebarrientos.deckStats.math.Calc
+import ebarrientos.deckStats.basics.Land
+import java.nio.file.Paths
+import java.nio.file.Files
 
 class CardController @Inject() (
     val controllerComponents: ControllerComponents,
@@ -45,19 +52,37 @@ class CardController @Inject() (
   }
 
 
-  // def deckStats(deck: String) = Action { implicit request: Request[AnyContent] =>
-  //   Ok(views.html.deck(deck.length()))
-  // }
+  /** Service for querying info about a deck loaded as an xml file */
   def deckStats = Action(parse.multipartFormData) { implicit request =>
     log.info("Call into deckStats")
 
-    request.body.file("deck").map { content =>
-      val fileSize = content.fileSize
-      val res = DeckObject(fileSize)
+    // val file = Files.createTempFile("~/tmp.xml", null, null)
+    // request.body.moveTo(file, replace = true)
+    // val res = for {
+    //   deckLoader <- CardController.xmlDeckLoader(file.toFile())
+    //   deck <- deckLoader.load
+    //   (avg, avgNL) = (Calc.avgManaCost(deck), Calc.avgManaCost(deck, _.is(Land)))
+    //   deckObject = DeckObject(avg, avgNL)
+    // } yield Ok(deckObject.asJson)
 
-      Ok(res.asJson)
+
+    request.body.file("deck").map { content =>
+      val file = Paths.get(content.filename).getFileName()
+      content.ref.moveTo(Paths.get(s"/tmp/$file"), replace = true)
+
+      log.debug(s"Got file $file")
+
+      val res = for {
+        deckLoader <- CardController.xmlDeckLoader(file.toFile())
+        deck <- deckLoader.load
+        (avg, avgNL) = (Calc.avgManaCost(deck), Calc.avgManaCost(deck, _.is(Land)))
+        deckObject = DeckObject(avg, avgNL)
+      } yield Ok(deckObject.asJson)
+
+      runner.run(res)
     }
     .getOrElse(BadRequest("Missing deck"))
+
   }
 }
 
@@ -71,6 +96,9 @@ private object CardController {
       cardLoader = new H2DBDoobieLoader(MagicIOLoader, config, ec)
     } yield cardLoader
   }
+
+  def xmlDeckLoader(f: File): ZIO[Any, ConfigReaderFailures, XMLDeckLoader]  =
+    loader.map(l => new XMLDeckLoader(f, l))
 
   /** Carta que indica que nada se consiguio */
   val nullCard: Card = Card(Seq(), "Not found", Set())
