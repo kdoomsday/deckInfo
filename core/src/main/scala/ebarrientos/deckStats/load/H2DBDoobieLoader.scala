@@ -88,6 +88,7 @@ class H2DBDoobieLoader(val helper: CardLoader, config: CoreConfig, ec: Execution
             power INT,
             toughness INT);""".update.run
 
+  /** Initialize the cards table for the database */
   def initTable() = cardsDDL.transact(xa)
 
   // Guarantee the cards table exists before anything else happens
