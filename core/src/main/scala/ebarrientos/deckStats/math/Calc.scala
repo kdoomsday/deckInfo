@@ -1,7 +1,6 @@
 package ebarrientos.deckStats.math
 
 import ebarrientos.deckStats.basics._
-import models.DeckObject
 
 /** Provides operations to apply to decks of cards to get information. */
 object Calc {
@@ -62,13 +61,4 @@ object Calc {
 
     symbols.foldLeft(mapCost)((map, symb) => mana2Map(map, symb, 1.0))
   }
-
-  /** Full calculations
-    *
-    * @param d The deck
-    * @return [[DeckObject]] with the corresponding values
-    */
-  def fullCalc(d: Deck): DeckObject =
-    DeckObject(avgManaCost(d),
-               avgCMCNonLands = avgManaCost(d, c => !c.types.contains(Land)))
 }

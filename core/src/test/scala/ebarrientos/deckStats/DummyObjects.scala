@@ -57,4 +57,17 @@ object DummyObjects {
                         Set(),
                         "t: Add 2 generic mana to your mana pool",
                         0, 0)
+
+  val heartOfGold = Card(Seq(ColoredMana(White),
+                             ColoredMana(Blue),
+                             ColoredMana(Black),
+                             ColoredMana(Red),
+                             ColoredMana(Green)),
+                         "The Heart of Gold",
+                         Set(Artifact),
+                         Set(Legendary),
+                         Set(),
+                         """|(5): Flip a coin. Heads, you win the game.
+                            |Tails you lose the game""".stripMargin,
+                         0, 0)
 }
