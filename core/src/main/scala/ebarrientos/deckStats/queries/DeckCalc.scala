@@ -2,6 +2,7 @@ package ebarrientos.deckStats.queries
 
 import ebarrientos.deckStats.math.Calc._
 import ebarrientos.deckStats.basics._
+import ebarrientos.deckStats.math.Calc
 
 object DeckCalc {
 
@@ -14,12 +15,7 @@ object DeckCalc {
     // Calculate the counts, by grouping and counting
     def counts(): TypeCounts = {
       val mapcount =
-        d.cards
-          .flatMap(_.types)
-          .groupBy(identity)
-          .map { case (ct, s) =>
-            (ct, s.size)
-          }
+        Calc.groupedCount(d, _.types)
 
       TypeCounts(
         mapcount.getOrElse(Land, 0),

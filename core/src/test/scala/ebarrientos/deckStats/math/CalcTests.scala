@@ -31,6 +31,23 @@ object CalcTests extends TestSuite {
                Calc.avgManaCost(deck, _.types.contains(Land))     == 0.0,
                Calc.avgManaCost(deck, _.types.contains(Artifact)) == 4.0)
       }
+
+      test("Grouping seq") {
+        val ctypes = Calc.groupedCount(deck, _.types)
+        assert(ctypes(Creature) == 5,
+               ctypes(Land)     == 1,
+               ctypes(Artifact) == 2)
+      }
+
+      test("Grouping seq filter") {
+        val manaCurve = Calc.groupedCount1(deck, _.cmc, !_.is(Land))
+        assert(manaCurve(0) == 0,
+               manaCurve(1) == 2,
+               manaCurve(2) == 2,
+               manaCurve(3) == 1,
+               manaCurve(4) == 0,
+               manaCurve(5) == 1)
+      }
     }
   }
 }
