@@ -9,7 +9,9 @@ import scala.concurrent.ExecutionContext
 import ebarrientos.deckStats.basics.Creature
 import ebarrientos.deckStats.basics.Legendary
 import zio.IO
+import ebarrientos.deckStats.DummyObjects
 
+/** Tests for [[H2DBDoobieLoader]] */
 object H2DBDoobieLoaderTest extends TestSuite {
   val ec = ExecutionContext.fromExecutorService(Executors.newFixedThreadPool(1))
 
@@ -30,19 +32,18 @@ object H2DBDoobieLoaderTest extends TestSuite {
     }
 
     "Storing and loading finds it" - {
-      val arthur = Card(Seq(), "Arthur", Set(Creature), Set(Legendary), Set("Homeowner"), "Awesome", 42, 42)
       val testLoader = new CardLoader() {
-        override def card(name: String) = IO { Some(arthur) }
+        override def card(name: String) = IO { Some(DummyObjects.arthur) }
       }
 
       val la = new H2DBDoobieLoader(testLoader, config, ec)
       val lb = new H2DBDoobieLoader(NullCardLoader, config, ec)
 
-      val res = la.card("Arthur").andThen(lb.card("Arthur"))
+      val res = la.card("Arthur Dent").andThen(lb.card("Arthur Dent"))
       val ores = r.unsafeRun(res)
 
       assert(ores.isDefined)
-      assert(ores.get == arthur)
+      assert(ores.get == DummyObjects.arthur)
     }
 
   }
