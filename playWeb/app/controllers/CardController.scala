@@ -14,7 +14,7 @@ import scala.concurrent.ExecutionContext
 import java.util.concurrent.Executors
 import ebarrientos.deckStats.load.MagicIOLoader
 import ebarrientos.deckStats.load.H2DBDoobieLoader
-import models.DeckObject
+import ebarrientos.deckStats.queries.{ DeckObject, DeckCalc }
 import pureconfig.error.ConfigReaderFailures
 import ebarrientos.deckStats.load.CardLoader
 import ebarrientos.deckStats.basics.Card
@@ -32,6 +32,8 @@ import ebarrientos.deckStats.math.Calc
 import ebarrientos.deckStats.basics.Land
 import java.nio.file.Paths
 import java.nio.file.Files
+import play.api.mvc.MultipartFormData
+import play.api.mvc.Result
 
 class CardController @Inject() (
     val controllerComponents: ControllerComponents,
@@ -68,16 +70,19 @@ class CardController @Inject() (
 
     request.body.file("deck").map { content =>
       val file = Paths.get(content.filename).getFileName()
-      content.ref.moveTo(Paths.get(s"/tmp/$file"), replace = true)
+      val realFile = Paths.get(s"/tmp/$file")
+      content.ref.moveTo(realFile, replace = true)
 
       log.debug(s"Got file $file")
 
-      val res = for {
-        deckLoader <- CardController.xmlDeckLoader(file.toFile())
-        deck <- deckLoader.load
-        (avg, avgNL) = (Calc.avgManaCost(deck), Calc.avgManaCost(deck, _.is(Land)))
-        deckObject = DeckObject(avg, avgNL)
-      } yield Ok(deckObject.asJson)
+      val res: ZIO[Any,Serializable,Result] =
+        for {
+          deckLoader <- CardController.xmlDeckLoader(realFile.toFile())
+          deck       <- deckLoader.load()
+          // (avg, avgNL) = (Calc.avgManaCost(deck), Calc.avgManaCost(deck, _.is(Land)))
+          deckObject  = DeckCalc.fullCalc(deck)
+          // deckObject = DeckObject(avg, avgNL)
+        } yield Ok(deckObject.asJson)
 
       runner.run(res)
     }
