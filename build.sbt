@@ -10,7 +10,7 @@ lazy val root = project
       List(
         organization := "com.ebarrientos",
         version := "1.0",
-        scalaVersion := "2.13.2"
+        scalaVersion := "2.13.5"
       )
     ),
     addCompilerPlugin("com.olegpy" %% "better-monadic-for" % "0.3.1")
