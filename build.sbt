@@ -26,7 +26,8 @@ lazy val core = (project in file("core"))
   .settings(
     compilerSettings,
     libraryDependencies ++= deps,
-    libraryDependencies ++= circeDeps
+    libraryDependencies ++= circeDeps,
+    libraryDependencies ++= testDeps
   )
 
 lazy val cliView = (project in file("cliView"))
@@ -46,10 +47,12 @@ lazy val playWeb = (project in file("playWeb"))
   .dependsOn(core)
   .enablePlugins(PlayScala)
   .settings(
+    compilerSettings,
     libraryDependencies ++= Seq(
       guice,
       "com.dripower" %% "play-circe" % "2812.0"
-    )
+    ),
+    libraryDependencies ++= testDeps
   )
 
 
@@ -59,6 +62,7 @@ lazy val playWeb = (project in file("playWeb"))
 val zioVersion     = "1.0.3"
 val zioCatsVersion = "2.2.0.1"
 val doobieVersion  = "0.8.8"
+val utestVersion   = "0.7.2"
 
 lazy val deps = Seq(
   "com.typesafe.slick"     %% "slick"                    % "3.3.2",
@@ -73,8 +77,11 @@ lazy val deps = Seq(
   "com.github.pureconfig"  %% "pureconfig"               % "0.12.3",
   "org.tpolecat"           %% "doobie-core"              % doobieVersion,
   "org.tpolecat"           %% "doobie-h2"                % doobieVersion,
+)
+
+lazy val testDeps = Seq(
   // Test dependencies
-  "com.lihaoyi"            %% "utest"                    % "0.7.2" % "test"
+  "com.lihaoyi" %% "utest" % utestVersion % "test"
 )
 
 val circeVersion = "0.13.0"
