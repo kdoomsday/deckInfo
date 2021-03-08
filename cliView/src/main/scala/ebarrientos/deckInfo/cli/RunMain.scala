@@ -46,7 +46,7 @@ object RunMain extends App {
     Task {
       if (args.length == 0) {
         println("Usage: run <path/to/deck>")
-        "/home/doomsday/Dropbox/decks/Experimental/Rock/The Rock .cod"
+        "/home/doomsday/Dropbox/decks/Rock/The Rock X.cod"
       }
       else {
         args(0)
