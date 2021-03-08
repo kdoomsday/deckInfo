@@ -18,10 +18,13 @@ import ebarrientos.deckStats.stringParsing.MtgJsonParser.{parseAll, cost, string
 import ebarrientos.deckStats.basics.Supertype
 import ebarrientos.deckStats.basics.CardType
 import scala.concurrent.ExecutionContext
+import org.slf4j.LoggerFactory
 
 class H2DBDoobieLoader(val helper: CardLoader, config: CoreConfig, ec: ExecutionContext)
     extends CardLoader with StoringLoader with LoadUtils
 {
+  val log = LoggerFactory.getLogger(getClass())
+
   val xa = Transactor.fromDriverManager[Task](
     config.dbDriver,        // driver classname
     config.dbConnectionUrl, // connect URL (driver-specific)
@@ -32,21 +35,25 @@ class H2DBDoobieLoader(val helper: CardLoader, config: CoreConfig, ec: Execution
 
   val cons: Console.Service = zio.console.Console.Service.live
 
+
   override protected def retrieve(name: String): Task[Option[Card]] =
     for {
       ocard <- queryCard(name).transact(xa)
-      res    = toCard(ocard)
-    } yield res
+    } yield toCard(ocard)
+
 
   override protected def store(c: Card): Task[Unit] =
     for (_ <- storeCard(c).run.transact(xa)) yield ()
 
-  private def queryCard(name: String) =
+
+  private def queryCard(name: String) = {
+    log.debug("Querying for cardName = {}", name)
     sql"""
       select name, cost, typeline, text, power, toughness
       from cards
       where name = $name
     """.query[(String, String, String, String, Int, Int)].option
+  }
 
   /** Card from query result */
   private def toCard(oc: Option[(String, String, String, String, Int, Int)]): Option[Card] =
@@ -56,11 +63,14 @@ class H2DBDoobieLoader(val helper: CardLoader, config: CoreConfig, ec: Execution
       Card(parsedCost, name, types, supertypes, subTypes, text, power, toughness)
     }
 
+  /** Query to store a card in the DB
+    *
+    * @param c The {{Card}}
+    */
   private def storeCard(c: Card) =
-    sql"""
-      INSERT INTO cards(name, cost, typeline, text, power, toughness)
-      VALUES (${c.name}, ${stringify(c.cost)}, ${mkTypeline(c)}, ${c.text}, ${c.power}, ${c.toughness})
-    """.update
+    sql"""|INSERT INTO cards(name, cost, typeline, text, power, toughness)
+          |VALUES (${c.name}, ${stringify(c.cost)}, ${mkTypeline(c)}, ${c.text},
+          |        ${c.power}, ${c.toughness})""".stripMargin.update
 
 
   /** Build a typeline from it's component information */

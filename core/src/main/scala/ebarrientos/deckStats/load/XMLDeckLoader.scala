@@ -5,15 +5,19 @@ import ebarrientos.deckStats.basics.{ Deck, Card }
 import scala.xml.Elem
 import zio.IO
 import java.awt.CardLayout
+import zio.ZIO
+import org.slf4j.LoggerFactory
 
 /** Deck loader that loads the information from an XML file. The card loader provides the card
   *  information.
   */
-case class XMLDeckLoader(definition: Elem, loader: CardLoader) extends DeckLoader {
+case class XMLDeckLoader(definition: Elem, loader: CardLoader, parallelFactor: Int = 4) extends DeckLoader {
   def this(file: File, loader: CardLoader) = this(scala.xml.XML.loadFile(file), loader)
   def this(path: String, loader: CardLoader) = this(new File(path), loader)
 
-  def load = {
+  val log = LoggerFactory.getLogger(getClass())
+
+  override def load(): ZIO[Any,Throwable,Deck] = {
     // This will throw a NoSuchElementException if there is no main deck
     val maindeck = (definition \\ "zone").filter(n => (n \ "@name").text == "main").head
 
@@ -23,12 +27,14 @@ case class XMLDeckLoader(definition: Elem, loader: CardLoader) extends DeckLoade
         card <- maindeck \ "card"
       } yield ((card \ "@name").text, (card \ "@number").text)
 
+    log.debug("Found {} distinct cards", cardinfo.size)
+
     val cards: Seq[IO[Throwable, Option[Card]]] = cardinfo.flatMap {
       case (name, number) =>
         val card = loader.card(name)
         (1 to number.toInt).map(_ => card)
     }
 
-    IO.collectAllParN(4)(cards).map(cs => Deck(cs.flatten))
+    IO.collectAllParN(parallelFactor)(cards).map(cs => Deck(cs.flatten))
   }
 }
