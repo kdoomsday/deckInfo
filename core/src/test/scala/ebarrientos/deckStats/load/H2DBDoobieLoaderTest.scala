@@ -21,23 +21,27 @@ object H2DBDoobieLoaderTest extends TestSuite {
 
   val loader = new H2DBDoobieLoader(NullCardLoader, config, ec)
 
+  /** Loader that always returns the same single card */
+  val testLoader = new CardLoader() {
+    override def card(name: String) = IO { Some(DummyObjects.arthur) }
+  }
+
   val r = zio.Runtime.default
 
-  // r.unsafeRun(loader.initTable())
-
   val tests = Tests {
-
-    "Load on empty produces empty" - {
+    test("Load on empty produces empty") {
       assert( r.unsafeRun(loader.initTable().andThen(loader.card("Whatever"))).isEmpty )
     }
 
-    "Storing and loading finds it" - {
-      val testLoader = new CardLoader() {
-        override def card(name: String) = IO { Some(DummyObjects.arthur) }
-      }
-
+    test("Storing and loading a card finds it") {
       val la = new H2DBDoobieLoader(testLoader, config, ec)
       val lb = new H2DBDoobieLoader(NullCardLoader, config, ec)
+
+      /* We use la to store it. Then lb goes to retrieve it and it should
+       * already be in the db so it should find it.
+       * We use lb with a fallback that is guaranteed to fail to show that it
+       * does not get it from that
+       */
 
       val res = la.card("Arthur Dent").andThen(lb.card("Arthur Dent"))
       val ores = r.unsafeRun(res)
