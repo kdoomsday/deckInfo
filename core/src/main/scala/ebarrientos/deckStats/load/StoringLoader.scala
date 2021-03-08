@@ -4,7 +4,6 @@ import ebarrientos.deckStats.basics.Card
 import zio.IO
 import zio.Task
 
-
 /** Comportamiento de [[CardLoader]] que permite almacenar la información de una
   * carta obtenida por otro loader para que la próxima vez no sea necesario
   * buscarla nuevamente
@@ -30,15 +29,22 @@ trait StoringLoader extends CardLoader {
   /** If ocard is not defined, fecth with helper. Then, if fetch is successful,
     * store. In all cases, if there is a card it will be returned
     */
-  private[this] def fetchIfNecessary(ocard: Option[Card], name: String): Task[Option[Card]] =
+  private[this] def fetchIfNecessary(
+      ocard: Option[Card],
+      name: String
+  ): Task[Option[Card]] =
     ocard match {
       case o @ Some(_) => Task.succeed(o)
-      case None    =>
-        helper.card(name).flatMap(hc => hc match {
-          case Some(c) =>
-            store(c).map(_ => Option(c))
-          case None =>
-            Task.succeed(None)
-        })
+      case None        =>
+        helper
+          .card(name)
+          .flatMap(hc =>
+            hc match {
+              case Some(c) =>
+                store(c) >>> Task.succeed(Option(c))
+              case None    =>
+                Task.succeed(None)
+            }
+          )
     }
 }
