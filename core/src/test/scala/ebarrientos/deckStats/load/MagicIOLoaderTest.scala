@@ -17,6 +17,8 @@ object MagicIOLoaderTest extends TestSuite {
             log.debug(s"Name=${dc.name}. Types=$typesStr")
 
             assert(dc.power == 2)
+            assert(dc.toughness == 1)
+            assert(dc.text.startsWith("At the beginning"))
             assert(dc.types.contains(Creature))
             assert(dc.subtypes contains "Human")
             assert(dc.subtypes contains "Wizard")
