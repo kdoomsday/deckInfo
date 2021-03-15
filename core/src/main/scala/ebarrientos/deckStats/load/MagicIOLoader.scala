@@ -61,9 +61,9 @@ object MagicIOLoader extends CardLoader with LoadUtils with URLUtils {
         types,
         supertypes,
         subTypes,
-        getStr(j \\ "text"),
-        getInt(j \\ "power"),
-        getInt(j \\ "toughness")
+        getStr(j \ "text"),
+        getInt(j \ "power"),
+        getInt(j \ "toughness")
       )
     }
 
