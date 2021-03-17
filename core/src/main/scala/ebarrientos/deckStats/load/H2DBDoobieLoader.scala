@@ -48,11 +48,11 @@ class H2DBDoobieLoader(val helper: CardLoader, config: CoreConfig, ec: Execution
 
   private def queryCard(name: String) = {
     log.debug("Querying for cardName = {}", name)
-    sql"""
-      select name, cost, typeline, text, power, toughness
-      from cards
-      where name = $name
-    """.query[(String, String, String, String, Int, Int)].option
+    sql"""|select name, cost, typeline, text, power, toughness
+          |from cards
+          |where name = $name"""
+      .stripMargin
+      .query[(String, String, String, String, Int, Int)].option
   }
 
   /** Card from query result */
@@ -67,10 +67,12 @@ class H2DBDoobieLoader(val helper: CardLoader, config: CoreConfig, ec: Execution
     *
     * @param c The {{Card}}
     */
-  private def storeCard(c: Card) =
+  private def storeCard(c: Card): Update0 =
     sql"""|INSERT INTO cards(name, cost, typeline, text, power, toughness)
           |VALUES (${c.name}, ${stringify(c.cost)}, ${mkTypeline(c)}, ${c.text},
-          |        ${c.power}, ${c.toughness})""".stripMargin.update
+          |        ${c.power}, ${c.toughness})"""
+      .stripMargin
+      .update
 
 
   /** Build a typeline from it's component information */
