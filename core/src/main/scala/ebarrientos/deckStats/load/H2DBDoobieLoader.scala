@@ -42,7 +42,7 @@ class H2DBDoobieLoader(val helper: CardLoader, config: CoreConfig, ec: Execution
 
 
   override protected def store(c: Card): Task[Unit] =
-    for (_ <- storeCard(c).run.transact(xa)) yield ()
+    storeCard(c).run.transact(xa) andThen Task.unit
 
 
   private def queryCard(name: String) = {
