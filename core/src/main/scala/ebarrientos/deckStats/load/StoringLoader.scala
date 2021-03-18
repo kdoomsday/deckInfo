@@ -9,6 +9,7 @@ import zio.Task
   * buscarla nuevamente
   */
 trait StoringLoader extends CardLoader {
+  /** @return CardLoader to use to fetch cards that are not in the store */
   def helper: CardLoader
 
   val console = zio.console.Console.Service.live
