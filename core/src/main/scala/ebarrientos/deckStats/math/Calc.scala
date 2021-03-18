@@ -25,13 +25,13 @@ object Calc {
     deck.cards.count(pred)
 
   /** Count cards per group
-    * {{groupFunc}} gives what will we be grouping by. The results of the
+    * [[groupFunc]] gives what will we be grouping by. The results of the
     * function will be the keys of the resulting Map
-    * {{cardFilter}} determines which cards will be counted
+    * [[cardFilter]] determines which cards will be counted
     *
     * Examples:
-    * {{{groupedCount(deck, _.cmc, !_.is(Land))}}} -> Mana curve
-    * {{{groupedCount(deck, _.types}}}             -> Counts for each card type
+    * [[groupedCount(deck, _.cmc, !_.is(Land))]] -> Mana curve
+    * [[groupedCount(deck, _.types}]]            -> Counts for each card type
     *
     * @param deck       The deck
     * @param groupFunc  Grouping function
