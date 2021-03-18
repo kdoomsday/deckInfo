@@ -37,9 +37,8 @@ class H2DBDoobieLoader(val helper: CardLoader, config: CoreConfig, ec: Execution
 
 
   override protected def retrieve(name: String): Task[Option[Card]] =
-    for {
-      ocard <- queryCard(name).transact(xa)
-    } yield toCard(ocard)
+    for (ocard <- queryCard(name).transact(xa))
+    yield toCard(ocard)
 
 
   override protected def store(c: Card): Task[Unit] =
@@ -93,10 +92,10 @@ class H2DBDoobieLoader(val helper: CardLoader, config: CoreConfig, ec: Execution
 
   private val cardsDDL =
     sql"""Create table IF NOT EXISTS cards (
-            name VARCHAR(100) NOT NULL,
+            name VARCHAR(100) NOT NULL PRIMARY KEY,
             cost VARCHAR(100),
             typeline VARCHAR(150),
-            text VARCHAR(200),
+            text VARCHAR(2000),
             power INT,
             toughness INT);""".update.run
 
