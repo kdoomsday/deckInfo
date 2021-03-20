@@ -6,20 +6,20 @@ package ebarrientos.deckStats.basics
  * they're not creatures.
  * If queried, noncreatures will return zero for both these values.
  */
-case class Card(	cost: Seq[Mana],
-    							name: String,
-    							types: Set[CardType],
-    							supertypes: Set[Supertype] = Set(),
-    							subtypes: Set[String] = Set(),
-    							text: String = "",
-    							power: Int = 0,
-    							toughness: Int = 0	)
+case class Card( cost: Seq[Mana],
+                 name: String,
+                 types: Set[CardType],
+                 supertypes: Set[Supertype] = Set(),
+                 subtypes: Set[String] = Set(),
+                 text: String = "",
+                 power: Int = 0,
+                 toughness: Int = 0  )
 {
-	def cmc: Int = cost.map(_.cmc).sum
+  def cmc: Int = cost.map(_.cmc).sum
 
-	def is(color: Color): Boolean = cost.exists(mana => mana.is(color))
-	def is(cardType: CardType): Boolean = types.contains(cardType)
-	def is(superType: Supertype): Boolean = supertypes.contains(superType)
+  def is(color: Color): Boolean = cost.exists(mana => mana.is(color))
+  def is(cardType: CardType): Boolean = types.contains(cardType)
+  def is(superType: Supertype): Boolean = supertypes.contains(superType)
 
-	def isSubType(subtype: String): Boolean = subtypes contains subtype
+  def isSubType(subtype: String): Boolean = subtypes contains subtype
 }

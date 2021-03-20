@@ -1,3 +1,6 @@
+# Archivo con notas para pruebas
+Devel.org
+
 *.class
 *.log
 
@@ -12,6 +15,8 @@ src_managed/
 project/boot/
 project/plugins/project/
 
+.project
+
 # Scala-IDE specific
 .scala_dependencies
 .worksheet
@@ -22,11 +27,18 @@ project/plugins/project/
 
 # IntelliJ
 .idea/
+*.iml
 
 # Metals
 .metals
 .bloop/
 project/metals.sbt
+project/project
+.sbt-hydra-history
+.bsp
+
+# VS Code
+.vscode/
 
 # data
-*.h2.db
+*.db
