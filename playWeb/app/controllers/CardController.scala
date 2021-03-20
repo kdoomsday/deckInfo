@@ -14,7 +14,7 @@ import scala.concurrent.ExecutionContext
 import java.util.concurrent.Executors
 import ebarrientos.deckStats.load.MagicIOLoader
 import ebarrientos.deckStats.load.H2DBDoobieLoader
-import ebarrientos.deckStats.queries.{ DeckObject, DeckCalc }
+import ebarrientos.deckStats.queries.{ DeckCalc, DeckObject }
 import pureconfig.error.ConfigReaderFailures
 import ebarrientos.deckStats.load.CardLoader
 import ebarrientos.deckStats.basics.Card
@@ -44,7 +44,7 @@ class CardController @Inject() (
   val log = Logger(getClass())
 
   def card(name: String) = Action { implicit request: Request[AnyContent] =>
-    val res = for {
+    val res: ZIO[Any,Serializable,Result] = for {
       l   <- CardController.loader
       c   <- l.card(name)
       card = c.getOrElse(CardController.nullCard)
@@ -52,7 +52,6 @@ class CardController @Inject() (
 
     runner.run(res)
   }
-
 
   /** Service for querying info about a deck loaded as an xml file */
   def deckStats = Action(parse.multipartFormData) { implicit request =>
@@ -62,32 +61,34 @@ class CardController @Inject() (
     // request.body.moveTo(file, replace = true)
     // val res = for {
     //   deckLoader <- CardController.xmlDeckLoader(file.toFile())
-    //   deck <- deckLoader.load
+    //   deck <- deckLoader.load()
     //   (avg, avgNL) = (Calc.avgManaCost(deck), Calc.avgManaCost(deck, _.is(Land)))
     //   deckObject = DeckObject(avg, avgNL)
     // } yield Ok(deckObject.asJson)
 
+    val r = request
+      .body
+      .file("deck")
+      .map { content =>
+        val file     = Paths.get(content.filename).getFileName()
+        val realFile = Paths.get(s"/tmp/$file")
+        content.ref.moveTo(realFile, replace = true)
 
-    request.body.file("deck").map { content =>
-      val file = Paths.get(content.filename).getFileName()
-      val realFile = Paths.get(s"/tmp/$file")
-      content.ref.moveTo(realFile, replace = true)
+        log.debug(s"Got file $file")
 
-      log.debug(s"Got file $file")
+        val res: ZIO[Any, Serializable, DeckObject] =
+          for {
+            deckLoader <- CardController.xmlDeckLoader(realFile.toFile())
+            deck       <- deckLoader.load()
+            deckObject  = { val dobj = DeckCalc.fullCalc(deck); log.debug(s"=> $dobj" ); dobj }
+          } yield deckObject
 
-      val res: ZIO[Any,Serializable,Result] =
-        for {
-          deckLoader <- CardController.xmlDeckLoader(realFile.toFile())
-          deck       <- deckLoader.load()
-          // (avg, avgNL) = (Calc.avgManaCost(deck), Calc.avgManaCost(deck, _.is(Land)))
-          deckObject  = DeckCalc.fullCalc(deck)
-          // deckObject = DeckObject(avg, avgNL)
-        } yield Ok(deckObject.asJson)
+        runner.run(res)
+      }
+      .getOrElse(BadRequest("Missing deck"))
 
-      runner.run(res)
-    }
-    .getOrElse(BadRequest("Missing deck"))
-
+    log.debug("r: $r")
+    Ok("Done")
   }
 }
 
@@ -102,7 +103,8 @@ private object CardController {
     } yield cardLoader
   }
 
-  def xmlDeckLoader(f: File): ZIO[Any, ConfigReaderFailures, XMLDeckLoader]  =
+  /** Deck loader to process deck requests. Depends on the loader */
+  def xmlDeckLoader(f: File): ZIO[Any, ConfigReaderFailures, XMLDeckLoader] =
     loader.map(l => new XMLDeckLoader(f, l))
 
   /** Carta que indica que nada se consiguio */
