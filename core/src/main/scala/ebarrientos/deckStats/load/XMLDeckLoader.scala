@@ -43,7 +43,8 @@ case class XMLDeckLoader(
     }
 
     log.debug("Collect all results into list of maybe cards")
-    val tmp1: IO[Throwable, Seq[Option[Card]]] = IO.collectAllParN(parallelFactor)(cards)
+    // val tmp1: IO[Throwable, Seq[Option[Card]]] = IO.collectAllParN(parallelFactor)(cards)
+    val tmp1: IO[Throwable, Seq[Option[Card]]] = IO.collectAll(cards)
 
     log.debug("Map into a deck")
     tmp1.map(cs => Deck(cs.flatten))
