@@ -2,14 +2,15 @@ package ebarrientos.deckStats.load
 
 import ebarrientos.deckStats.config.CoreConfig
 import ebarrientos.deckStats.basics.Card
-import zio.Task
 import utest._
 import java.util.concurrent.Executors
 import scala.concurrent.ExecutionContext
 import ebarrientos.deckStats.basics.Creature
 import ebarrientos.deckStats.basics.Legendary
-import zio.IO
 import ebarrientos.deckStats.DummyObjects
+import zio.{ ZIO, IO, Task }
+import zio.duration._
+import zio.clock._
 
 /** Tests for [[H2DBDoobieLoader]] */
 object H2DBDoobieLoaderTest extends TestSuite {
@@ -37,9 +38,9 @@ object H2DBDoobieLoaderTest extends TestSuite {
       val la = new H2DBDoobieLoader(testLoader, config, ec)
       val lb = new H2DBDoobieLoader(NullCardLoader, config, ec)
 
-      /* We use la to store it. Then lb goes to retrieve it and it should
+      /* We use <la> to store it. Then <lb> goes to retrieve it and it should
        * already be in the db so it should find it.
-       * We use lb with a fallback that is guaranteed to fail to show that it
+       * We use <lb> with a fallback that is guaranteed to fail to show that it
        * does not get it from that
        */
 
@@ -48,6 +49,25 @@ object H2DBDoobieLoaderTest extends TestSuite {
 
       assert(ores.isDefined)
       assert(ores.get == DummyObjects.arthur)
+    }
+
+    test("Parallel load works correctly") {
+      val slowLoader = new CardLoader() {
+        override def card(name: String) =
+          IO { Some(DummyObjects.ford) }
+            .delay(500.millis)
+            .provide(r.environment)
+      }
+
+      val loader = new H2DBDoobieLoader(slowLoader, config, ec)
+
+      val calls = List.fill(5)(DummyObjects.ford.name)
+
+      val z = ZIO.foreachParN(3)(calls)(name => loader.card(name))
+      val res: List[Option[Card]] = r.unsafeRun(z)
+
+      res.map(oc => oc.fold(assert(1==0))
+                           (c => assert(c == DummyObjects.ford)))
     }
 
   }
