@@ -33,7 +33,7 @@ class H2DBDoobieLoader(val helper: CardLoader, config: CoreConfig, ec: Execution
     Blocker.liftExecutionContext(ec)
   )
 
-  val cons: Console.Service = zio.console.Console.Service.live
+  // val cons: Console.Service = zio.console.Console.Service.live
 
 
   override protected def retrieve(name: String): Task[Option[Card]] =
