@@ -14,15 +14,24 @@ import zio.interop.catz._
 import zio.console._
 import ebarrientos.deckStats.load.utils.LoadUtils
 
-import ebarrientos.deckStats.stringParsing.MtgJsonParser.{parseAll, cost, stringify}
+import ebarrientos.deckStats.stringParsing.MtgJsonParser.{
+  cost,
+  parseAll,
+  stringify
+}
 import ebarrientos.deckStats.basics.Supertype
 import ebarrientos.deckStats.basics.CardType
 import scala.concurrent.ExecutionContext
 import org.slf4j.LoggerFactory
+import zio.ZIO
 
-class H2DBDoobieLoader(val helper: CardLoader, config: CoreConfig, ec: ExecutionContext)
-    extends CardLoader with StoringLoader with LoadUtils
-{
+class H2DBDoobieLoader(
+    val helper: CardLoader,
+    config: CoreConfig,
+    ec: ExecutionContext
+) extends CardLoader
+    with StoringLoader
+    with LoadUtils {
   val log = LoggerFactory.getLogger(getClass())
 
   val xa = Transactor.fromDriverManager[Task](
@@ -33,17 +42,22 @@ class H2DBDoobieLoader(val helper: CardLoader, config: CoreConfig, ec: Execution
     Blocker.liftExecutionContext(ec)
   )
 
-  // val cons: Console.Service = zio.console.Console.Service.live
-
-
   override protected def retrieve(name: String): Task[Option[Card]] =
     for (ocard <- queryCard(name).transact(xa))
-    yield toCard(ocard)
-
+      yield toCard(ocard)
 
   override protected def store(c: Card): Task[Unit] =
-    storeCard(c).run.transact(xa) andThen Task.unit
-
+    Task { log.debug(s"Store '${c.name}") }
+      .andThen(
+        storeCard(c)
+          .run
+          .attemptSql
+          .transact(xa)
+          .map(
+            _.fold(e => log.warn(s"Error storing card '${c.name}'", e), _ => ())
+          )
+      )
+      .andThen(Task.unit)
 
   private def queryCard(name: String) = {
     log.debug("Querying for cardName = {}", name)
@@ -51,15 +65,27 @@ class H2DBDoobieLoader(val helper: CardLoader, config: CoreConfig, ec: Execution
           |from cards
           |where name = $name"""
       .stripMargin
-      .query[(String, String, String, String, Int, Int)].option
+      .query[(String, String, String, String, Int, Int)]
+      .option
   }
 
   /** Card from query result */
-  private def toCard(oc: Option[(String, String, String, String, Int, Int)]): Option[Card] =
+  private def toCard(
+      oc: Option[(String, String, String, String, Int, Int)]
+  ): Option[Card] =
     oc map { case (name, manaCost, typeLine, text, power, toughness) =>
       val (supertypes, types, subTypes) = parseTypes(typeLine)
-      val parsedCost = parseAll(cost, manaCost).get
-      Card(parsedCost, name, types, supertypes, subTypes, text, power, toughness)
+      val parsedCost                    = parseAll(cost, manaCost).get
+      Card(
+        parsedCost,
+        name,
+        types,
+        supertypes,
+        subTypes,
+        text,
+        power,
+        toughness
+      )
     }
 
   /** Query to store a card in the DB
@@ -73,16 +99,16 @@ class H2DBDoobieLoader(val helper: CardLoader, config: CoreConfig, ec: Execution
       .stripMargin
       .update
 
-
   /** Build a typeline from it's component information */
   private[this] def mkTypeline(
-        supertypes: Set[Supertype],
-        types: Set[CardType],
-        subtypes: Set[String]): String =
-  {
-    val t = (supertypes ++ types).mkString(" ")
-    val res = if ((subtypes eq null) || subtypes.isEmpty) t
-              else t + " - " + subtypes.mkString(" ")
+      supertypes: Set[Supertype],
+      types: Set[CardType],
+      subtypes: Set[String]
+  ): String = {
+    val t   = (supertypes ++ types).mkString(" ")
+    val res =
+      if ((subtypes eq null) || subtypes.isEmpty) t
+      else t + " - " + subtypes.mkString(" ")
     res
   }
 
@@ -105,4 +131,3 @@ class H2DBDoobieLoader(val helper: CardLoader, config: CoreConfig, ec: Execution
   // Guarantee the cards table exists before anything else happens
   zio.Runtime.default.unsafeRun(initTable())
 }
-
