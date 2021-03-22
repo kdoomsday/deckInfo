@@ -1,6 +1,3 @@
-# Archivo con notas para pruebas
-Devel.org
-
 *.class
 *.log
 
@@ -40,5 +37,9 @@ project/project
 # VS Code
 .vscode/
 
+# Archivo con notas para pruebas
+Devel.org
+
 # data
 *.db
+*.org_archive
