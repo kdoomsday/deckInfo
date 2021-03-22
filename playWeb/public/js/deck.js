@@ -15,7 +15,7 @@ function loadDeck() {
             // console.log(data);
             // var json = $.parseJSON(data);
             // $('#response').append('<p>' + json.filesize + '</p>');
-            $('#response').append('<p>' + data.avgManaCost + '</p>');
+            $('#response').append('<p>' + data.avgCMC + '</p>');
         },
 
         error: function(errorData) {

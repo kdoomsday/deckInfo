@@ -83,12 +83,12 @@ class CardController @Inject() (
             deckObject  = { val dobj = DeckCalc.fullCalc(deck); log.debug(s"=> $dobj" ); dobj }
           } yield deckObject
 
-        runner.run(res)
+        Ok(runner.run(res).asJson)
       }
       .getOrElse(BadRequest("Missing deck"))
 
-    log.debug("r: $r")
-    Ok("Done")
+    log.debug(s"r: $r")
+    r
   }
 }
 
