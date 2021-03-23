@@ -31,7 +31,8 @@ object DeckCalc {
     DeckObject(
       avgManaCost(d),
       avgCMCNonLands = avgManaCost(d, c => !c.types.contains(Land)),
-      counts()
+      counts(),
+      Calc.manaCurve(d).map(CurvePoint.apply _)
     )
   }
 }

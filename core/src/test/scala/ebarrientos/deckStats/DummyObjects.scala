@@ -7,6 +7,7 @@ import ebarrientos.deckStats.basics.{Artifact, Creature, Land}
 import ebarrientos.deckStats.basics.{Black, Blue, Green, Red, White}
 import ebarrientos.deckStats.load.CardLoader
 import zio.IO
+import ebarrientos.deckStats.basics.HybridMana
 
 /** Dummy objects to use in tests */
 object DummyObjects {
@@ -24,7 +25,7 @@ object DummyObjects {
   )
 
   val trillian = Card(
-    Seq(ColoredMana(Blue)),
+    Seq(HybridMana(Set(ColoredMana(Blue), ColoredMana(Red)))),
     "Tricia McMillan",
     Set(Creature),
     Set(Legendary),

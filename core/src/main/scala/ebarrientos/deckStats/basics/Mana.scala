@@ -79,7 +79,7 @@ extends Mana
  * Hybrid Mana implementation. Contains a set of options that describe it.
  */
 case class HybridMana(options: Set[Mana]) extends Mana {
-  def this(opts: List[Mana]) = this(opts.toSet)
+  def this(opts: Seq[Mana]) = this(opts.toSet)
 
   // It *is* of a color if at least one of the options is
   override def is(c: Color): Boolean =
