@@ -4,6 +4,7 @@ import utest._
 import ebarrientos.deckStats.basics.Deck
 import ebarrientos.deckStats.DummyObjects._
 import ebarrientos.deckStats.queries.DeckCalc
+import ebarrientos.deckStats.queries.CurvePoint
 
 object DeckCalcTests extends TestSuite {
   val d1 = Deck(Seq(arthur, trillian))
@@ -14,9 +15,10 @@ object DeckCalcTests extends TestSuite {
     "Simple deck full calcs" - {
       val res = DeckCalc.fullCalc(d1)
 
-      assert(res.avgCMC == res.avgCMCNonLands)
-      assert(res.avgCMC == 1.0)
-      assert(res.counts.creatures == 2)
+      assert(res.avgCMC == res.avgCMCNonLands,
+             res.avgCMC == 1.0,
+             res.counts.creatures == 2,
+             res.manaCurve.contains(CurvePoint(1, 2)))
     }
 
     "Full deck full calcs" - {
@@ -30,6 +32,10 @@ object DeckCalcTests extends TestSuite {
       assert(res.counts.lands == 1)
       assert(res.counts.artifacts == 2)
       assert(res.counts.enchantments == 0)
+
+      assert(res.manaCurve.contains(CurvePoint(1, 2)),
+             res.manaCurve.contains(CurvePoint(2, 2)),
+             res.manaCurve.contains(CurvePoint(5, 1)))
     }
   }
 }
