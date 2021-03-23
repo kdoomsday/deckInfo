@@ -57,15 +57,6 @@ class CardController @Inject() (
   def deckStats = Action(parse.multipartFormData) { implicit request =>
     log.info("Call into deckStats")
 
-    // val file = Files.createTempFile("~/tmp.xml", null, null)
-    // request.body.moveTo(file, replace = true)
-    // val res = for {
-    //   deckLoader <- CardController.xmlDeckLoader(file.toFile())
-    //   deck <- deckLoader.load()
-    //   (avg, avgNL) = (Calc.avgManaCost(deck), Calc.avgManaCost(deck, _.is(Land)))
-    //   deckObject = DeckObject(avg, avgNL)
-    // } yield Ok(deckObject.asJson)
-
     val r = request
       .body
       .file("deck")
