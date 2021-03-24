@@ -2,7 +2,7 @@
 
 @import helper._
 
-@template("Index", Seq("deck.js")) {
+@template("Index", Seq("deck.js"), Seq("https://cdn.jsdelivr.net/npm/chart.js@2.8.0")) {
     <h1>Welcome!</h1>
 
     <form id="deckForm" enctype="multipart/form-data">
@@ -19,4 +19,6 @@
     </script>
 
     <div id="response"/>
+
+    <canvas id="manaCurve"></canvas>
 }
