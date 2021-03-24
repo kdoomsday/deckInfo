@@ -75,9 +75,11 @@ object Calc {
     // Compare tuples only by the first element.
     def lt(a: Tuple2[Int, Int], b: Tuple2[Int, Int]) = a._1 < b._1
 
-    val map =
-      Seqs.encode(d.cards.filter(criterion) map (_.cmc)).withDefault { x => 0 }
-
+    val map = d
+      .cards
+      .groupBy(c => c.cmc)
+      .map { case (cmc, cs) => (cmc, cs.length) }
+      .withDefault(_ => 0)
     map.toSeq.sortWith(lt)
   }
 
