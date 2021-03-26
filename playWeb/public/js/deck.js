@@ -28,6 +28,7 @@ function loadDeck() {
 
 /** Display Avg costs */
 function avgCosts(data) {
+    $('#response').empty();
     $('#response').append('<p>Avg cmc: ' + data.avgCMC + '</p>');
     $('#response').append('<p>Avg nonLands: ' + data.avgCMCNonLands + '</p>');
 }
@@ -35,19 +36,16 @@ function avgCosts(data) {
 /** Display the mana curve */
 function manaCurve(data) {
     var ctx = document.getElementById('manaCurve').getContext('2d');
+    var chartData = fixMCHoles(data.manaCurve);
     var myChart = new Chart(ctx, {
         type: 'bar',
         data: {
-            labels: ['1', '2', '3', '4', '5'],
+            labels: chartData.labels,
             datasets: [{
                 label: 'Mana Curve',
-                data: [data.manaCurve[0].amount,
-                       data.manaCurve[1].amount,
-                       data.manaCurve[2].amount,
-                       data.manaCurve[3].amount,
-                       data.manaCurve[4].amount],
-                backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                borderColor: 'rgba(255, 99, 132, 1)',
+                data: chartData.curve,
+                backgroundColor: 'rgba(100, 100, 100, 0.2)',
+                borderColor: 'rgba(100, 100, 100, 1)',
                 borderWidth: 1
             }]
         },
@@ -61,4 +59,30 @@ function manaCurve(data) {
             }
         }
     });
+}
+
+/** Fill in holes in the mana curve
+  * Returns the fixed mana curve and labels
+  */
+function fixMCHoles(curve) {
+    var res    = [];
+    var labels = [];
+    var cp = 0;
+
+    for (var i in curve) {
+        while (curve[i].cost > cp) {
+            res.push(0);
+            labels.push(cp);
+            cp += 1;
+        }
+
+        labels.push(cp);
+        res.push(curve[i].amount);
+        cp += 1;
+    }
+
+    return {
+        "curve": res,
+        "labels": labels
+    };
 }
