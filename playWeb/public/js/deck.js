@@ -43,8 +43,8 @@ function manaCurve(data) {
             datasets: [{
                 label: 'Mana Curve',
                 data: chartData.curve,
-                backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                borderColor: 'rgba(255, 99, 132, 1)',
+                backgroundColor: 'rgba(100, 100, 100, 0.2)',
+                borderColor: 'rgba(100, 100, 100, 1)',
                 borderWidth: 1
             }]
         },
