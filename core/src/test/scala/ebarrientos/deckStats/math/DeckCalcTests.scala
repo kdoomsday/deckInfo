@@ -36,6 +36,8 @@ object DeckCalcTests extends TestSuite {
       assert(res.manaCurve.contains(CurvePoint(1, 2)),
              res.manaCurve.contains(CurvePoint(2, 2)),
              res.manaCurve.contains(CurvePoint(5, 1)))
+
+      assert(!res.manaCurve.contains(CurvePoint(0, 1)))
     }
   }
 }

@@ -48,6 +48,13 @@ object CalcTests extends TestSuite {
                manaCurve(4) == 0,
                manaCurve(5) == 1)
       }
+
+      test("Default Mana Curve") {
+        val curve: Seq[(Int, Int)] = Calc.manaCurve(deck)
+        assert(curve contains (1, 2),
+               curve contains (2, 2),
+               !curve.contains(0 -> 1))
+      }
     }
   }
 }

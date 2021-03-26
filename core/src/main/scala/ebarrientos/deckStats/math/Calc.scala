@@ -77,6 +77,7 @@ object Calc {
 
     val map = d
       .cards
+      .filter(criterion)
       .groupBy(c => c.cmc)
       .map { case (cmc, cs) => (cmc, cs.length) }
       .withDefault(_ => 0)
