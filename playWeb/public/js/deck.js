@@ -28,6 +28,7 @@ function loadDeck() {
 
 /** Display Avg costs */
 function avgCosts(data) {
+    $('#response').empty();
     $('#response').append('<p>Avg cmc: ' + data.avgCMC + '</p>');
     $('#response').append('<p>Avg nonLands: ' + data.avgCMCNonLands + '</p>');
 }
