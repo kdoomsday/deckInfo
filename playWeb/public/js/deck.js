@@ -2,7 +2,7 @@
 function loadDeck() {
     let fd = new FormData(document.getElementById('deckForm'));
 
-    $('#myalerts').hide();
+    hideAll();
     $.ajax({
         url: '/deck',
         type: 'POST',
@@ -18,6 +18,7 @@ function loadDeck() {
             // $('#response').append('<p>' + json.filesize + '</p>');
             avgCosts(data);
             manaCurve(data);
+            showAll();
         },
 
         error: function(errorData) {
@@ -29,11 +30,22 @@ function loadDeck() {
     });
 }
 
+function hideAll() {
+    // $('.deckdata').hide();
+    $('#deckinfo').hide();
+}
+function showAll() {
+    // $('.deckdata').show();
+    $('#deckinfo').show();
+}
+
 /** Display Avg costs */
 function avgCosts(data) {
-    $('#response').empty();
-    $('#response').append('<p>Avg cmc: ' + data.avgCMC + '</p>');
-    $('#response').append('<p>Avg nonLands: ' + data.avgCMCNonLands + '</p>');
+    // $('#response').empty();
+    // $('#response').append('<p>Avg cmc: ' + data.avgCMC + '</p>');
+    // $('#response').append('<p>Avg nonLands: ' + data.avgCMCNonLands + '</p>');
+    $('#avgCMC').val(data.avgCMC);
+    $('#avgCMCNonLands').val(data.avgCMCNonLands);
 }
 
 /** Display the mana curve */

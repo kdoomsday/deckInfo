@@ -35,12 +35,28 @@
             </div>
         </div>
 
-        <div id="deck">
-            <div class="row">
-                <div id="response"></div>
-            </div>
-            <div class="row">
-                <canvas id="manaCurve"></canvas>
+        <!-- Deck Info -->
+        <div id="deckinfo" class="card">
+            <div class="card-body" >
+                <div class="row" id="averages">
+                    <div class="col col-6">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">Avg CMC</span>
+                            <div id="response"></div>
+                            <input type="text" class="form-control" id="avgCMC" readonly>
+                        </div>
+                    </div>
+                    <div class="col col-6">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">Avg CMC NonLands</span>
+                            <div id="response"></div>
+                            <input type="text" class="form-control" id="avgCMCNonLands" readonly>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <canvas id="manaCurve"></canvas>
+                </div>
             </div>
         </div>
 
@@ -74,6 +90,7 @@
          });
 
          $('#myalerts').hide();
+         hideAll();
      });
     </script>
 }
