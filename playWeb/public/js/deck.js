@@ -13,37 +13,28 @@ function loadDeck() {
         contentType: false,
 
         success: function(data) {
-            // console.log(data);
-            // var json = $.parseJSON(data);
-            // $('#response').append('<p>' + json.filesize + '</p>');
             avgCosts(data);
             manaCurve(data);
             showAll();
         },
 
         error: function(errorData) {
-            // alert('Error loading deck: ' + errorData.responseText);
-            // $('#response').append('<p>' + errorData.responseText + '</p>');
             $('#myalerts').append(errorData.responseText);
             $('#myalerts').show();
         }
     });
 }
 
+// Hide and show deck info
 function hideAll() {
-    // $('.deckdata').hide();
     $('#deckinfo').hide();
 }
 function showAll() {
-    // $('.deckdata').show();
     $('#deckinfo').show();
 }
 
 /** Display Avg costs */
 function avgCosts(data) {
-    // $('#response').empty();
-    // $('#response').append('<p>Avg cmc: ' + data.avgCMC + '</p>');
-    // $('#response').append('<p>Avg nonLands: ' + data.avgCMCNonLands + '</p>');
     $('#avgCMC').val(data.avgCMC);
     $('#avgCMCNonLands').val(data.avgCMCNonLands);
 }
