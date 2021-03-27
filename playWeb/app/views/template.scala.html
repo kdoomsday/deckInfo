@@ -6,6 +6,9 @@
     <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/bootstrap.min.css")">
     <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/main.css")">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
+    @body
 
     @for(path <- scriptPaths) {
         <script type="text/javascript" src="assets/js/@path"></script>
@@ -14,7 +17,4 @@
     @for(path <- remoteScripts) {
         <script type="text/javascript" src="@path"></script>
     }
-</head>
-<body>
-    @body
 </body>

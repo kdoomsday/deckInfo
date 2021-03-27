@@ -14,11 +14,13 @@
 
     <div id="deck"></div>
 
-    <script type="text/javascript">
-     $('#upload_btn').click(loadDeck);
-    </script>
-
     <div id="response"></div>
 
     <canvas id="manaCurve"></canvas>
+
+    <script type="text/javascript">
+     $(document).ready(function() {
+         $('#upload_btn').click(loadDeck);
+     });
+    </script>
 }
