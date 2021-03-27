@@ -7,9 +7,23 @@
 
     <div class="container-fluid">
         <div class="row">
-            <div class="input-group col-10">
-                <label class="input-group-btn">
-                    <span class="btn btn-primary">
+            <div class="input-group col">
+                <div class="mb-3 input-group-prepend">
+                    <button id="upload_btn"
+                            type="button"
+                            class="btn btn-primary">
+                        Upload
+                    </button>
+                </div>
+
+                <input type="text"
+                       class="form-control"
+                       readonly
+                       placeholder="Deck file"
+                       aria-described-by="upload_btn">
+
+                <label class="input-group-append mb-3">
+                    <span class="btn btn-secondary">
                         Browse
                         <form id="deckForm" enctype="multipart/form-data">
                             @CSRF.formField
@@ -17,15 +31,6 @@
                         </form>
                     </span>
                 </label>
-                <input type="text" class="form-control" readonly>
-            </div>
-
-            <div class="col">
-                <button id="upload_btn"
-                        type="button"
-                        class="btn btn-primary">
-                    Upload
-                </button>
             </div>
         </div>
 
@@ -50,13 +55,13 @@
 
          // Handle file select event
          $(':file').on('fileselect', function(event, numFiles, label) {
-
              var input = $(this).parents('.input-group').find(':text'),
                  log = numFiles > 1 ? numFiles + ' files selected' : label;
 
-             if( input.length ) {
+             if ( input.length ) {
                  input.val(log);
-             } else {
+             }
+             else {
                  if( log ) alert(log);
              }
 
