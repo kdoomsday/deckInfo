@@ -60,7 +60,6 @@ function manaCurve(data) {
         data: {
             labels: chartData.labels,
             datasets: [{
-                label: 'Mana Curve',
                 data: chartData.curve,
                 backgroundColor: 'rgba(100, 100, 100, 0.2)',
                 borderColor: 'rgba(100, 100, 100, 1)',
@@ -74,7 +73,13 @@ function manaCurve(data) {
                         beginAtZero: true
                     }
                 }]
-            }
+            },
+            title: {
+                display: true,
+                position: 'bottom',
+                text: 'Mana Curve'
+            },
+            legend: { display: false }
         }
     });
 }
