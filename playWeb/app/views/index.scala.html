@@ -5,22 +5,62 @@
 @template("Index", Seq("deck.js"), Seq("https://cdn.jsdelivr.net/npm/chart.js@2.8.0")) {
     <h1>Welcome!</h1>
 
-    <form id="deckForm" enctype="multipart/form-data">
-        @CSRF.formField
-        <input type="file" name="deck" id="deck" />
-    </form>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="input-group col-10">
+                <label class="input-group-btn">
+                    <span class="btn btn-primary">
+                        Browse
+                        <form id="deckForm" enctype="multipart/form-data">
+                            @CSRF.formField
+                            <input type="file" name="deck" id="deck" style="display:none" />
+                        </form>
+                    </span>
+                </label>
+                <input type="text" class="form-control" readonly>
+            </div>
 
-    <button id="upload_btn">Upload</button>
+            <div class="col">
+                <button id="upload_btn"
+                        type="button"
+                        class="btn btn-primary">
+                    Upload
+                </button>
+            </div>
+        </div>
 
-    <div id="deck"></div>
+        <div id="deck"></div>
 
-    <div id="response"></div>
+        <div id="response"></div>
 
-    <canvas id="manaCurve"></canvas>
+        <canvas id="manaCurve"></canvas>
+    </div>
 
     <script type="text/javascript">
+     // This code will attach `fileselect` event to all file inputs on the page
+     $(document).on('change', ':file', function() {
+         var input = $(this),
+             numFiles = input.get(0).files ? input.get(0).files.length : 1,
+             label = input.val().replace(/\\/g, '/').replace(/.*\//, '');
+         input.trigger('fileselect', [numFiles, label]);
+     });
+
      $(document).ready(function() {
          $('#upload_btn').click(loadDeck);
+
+         // Handle file select event
+         $(':file').on('fileselect', function(event, numFiles, label) {
+
+             var input = $(this).parents('.input-group').find(':text'),
+                 log = numFiles > 1 ? numFiles + ' files selected' : label;
+
+             if( input.length ) {
+                 input.val(log);
+             } else {
+                 if( log ) alert(log);
+             }
+
+         });
      });
     </script>
 }
