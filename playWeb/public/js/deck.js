@@ -35,6 +35,9 @@ function avgCosts(data) {
 
 /** Display the mana curve */
 function manaCurve(data) {
+    // Clear the canvas for reuploads
+    $('#manaCurve').replaceWith('<canvas id="manaCurve"></canvas>');
+
     var ctx = document.getElementById('manaCurve').getContext('2d');
     var chartData = fixMCHoles(data.manaCurve);
     var myChart = new Chart(ctx, {
