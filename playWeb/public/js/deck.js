@@ -2,6 +2,7 @@
 function loadDeck() {
     let fd = new FormData(document.getElementById('deckForm'));
 
+    $('#myalerts').hide();
     $.ajax({
         url: '/deck',
         type: 'POST',
@@ -21,7 +22,9 @@ function loadDeck() {
 
         error: function(errorData) {
             // alert('Error loading deck: ' + errorData.responseText);
-            $('#response').append('<p>' + errorData.responseText + '</p>');
+            // $('#response').append('<p>' + errorData.responseText + '</p>');
+            $('#myalerts').append(errorData.responseText);
+            $('#myalerts').show();
         }
     });
 }

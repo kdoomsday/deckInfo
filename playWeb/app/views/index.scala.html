@@ -2,10 +2,11 @@
 
 @import helper._
 
-@template("Index", Seq("deck.js"), Seq("https://cdn.jsdelivr.net/npm/chart.js@2.8.0")) {
-    <h1>Welcome!</h1>
-
+@template("DeckInfo", Seq("deck.js"), Seq("https://cdn.jsdelivr.net/npm/chart.js@2.8.0")) {
     <div class="container-fluid">
+        <h1>Load your deck</h1>
+
+        <!-- Deck loading bar -->
         <div class="row">
             <div class="input-group col">
                 <div class="mb-3 input-group-prepend">
@@ -34,11 +35,16 @@
             </div>
         </div>
 
-        <div id="deck"></div>
+        <div id="deck">
+            <div class="row">
+                <div id="response"></div>
+            </div>
+            <div class="row">
+                <canvas id="manaCurve"></canvas>
+            </div>
+        </div>
 
-        <div id="response"></div>
-
-        <canvas id="manaCurve"></canvas>
+        <div class="alert alert-warning" id="myalerts" role="alert"></div>
     </div>
 
     <script type="text/javascript">
@@ -66,6 +72,8 @@
              }
 
          });
+
+         $('#myalerts').hide();
      });
     </script>
 }
