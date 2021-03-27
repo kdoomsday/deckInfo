@@ -2,6 +2,7 @@
 function loadDeck() {
     let fd = new FormData(document.getElementById('deckForm'));
 
+    hideAll();
     $.ajax({
         url: '/deck',
         type: 'POST',
@@ -17,20 +18,34 @@ function loadDeck() {
             // $('#response').append('<p>' + json.filesize + '</p>');
             avgCosts(data);
             manaCurve(data);
+            showAll();
         },
 
         error: function(errorData) {
             // alert('Error loading deck: ' + errorData.responseText);
-            $('#response').append('<p>' + errorData.responseText + '</p>');
+            // $('#response').append('<p>' + errorData.responseText + '</p>');
+            $('#myalerts').append(errorData.responseText);
+            $('#myalerts').show();
         }
     });
 }
 
+function hideAll() {
+    // $('.deckdata').hide();
+    $('#deckinfo').hide();
+}
+function showAll() {
+    // $('.deckdata').show();
+    $('#deckinfo').show();
+}
+
 /** Display Avg costs */
 function avgCosts(data) {
-    $('#response').empty();
-    $('#response').append('<p>Avg cmc: ' + data.avgCMC + '</p>');
-    $('#response').append('<p>Avg nonLands: ' + data.avgCMCNonLands + '</p>');
+    // $('#response').empty();
+    // $('#response').append('<p>Avg cmc: ' + data.avgCMC + '</p>');
+    // $('#response').append('<p>Avg nonLands: ' + data.avgCMCNonLands + '</p>');
+    $('#avgCMC').val(data.avgCMC);
+    $('#avgCMCNonLands').val(data.avgCMCNonLands);
 }
 
 /** Display the mana curve */
@@ -45,7 +60,6 @@ function manaCurve(data) {
         data: {
             labels: chartData.labels,
             datasets: [{
-                label: 'Mana Curve',
                 data: chartData.curve,
                 backgroundColor: 'rgba(100, 100, 100, 0.2)',
                 borderColor: 'rgba(100, 100, 100, 1)',
@@ -59,7 +73,13 @@ function manaCurve(data) {
                         beginAtZero: true
                     }
                 }]
-            }
+            },
+            title: {
+                display: true,
+                position: 'bottom',
+                text: 'Mana Curve'
+            },
+            legend: { display: false }
         }
     });
 }
