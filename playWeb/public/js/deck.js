@@ -80,18 +80,14 @@ function manaCurve(data) {
 function countsChart(data) {
     $('#counts').replaceWith('<canvas id="counts"></canvas>');
 
-    var labs = ['Lands', 'Creatures', 'Instants', 'Sorceries',
-                'Planeswalkers', 'Artifacts', 'Enchantments'];
+    var labs = [];
+    var counts = [];
+    for (var i in data.counts) {
+        labs.push(data.counts[i].name);
+        counts.push(data.counts[i].count);
+    }
+
     var colors = ["#703716", "#1b5918", "#bb0606", "#071084", "#a08924", "#8e8c83", "#669ae2"];
-    var c = [
-        data.counts.lands,
-        data.counts.creatures,
-        data.counts.instants,
-        data.counts.sorceries,
-        data.counts.planeswalkers,
-        data.counts.artifacts,
-        data.counts.enchantments
-    ];
 
     var ctx = document.getElementById('counts').getContext('2d');
     var myChart = new Chart(ctx, {
@@ -99,7 +95,7 @@ function countsChart(data) {
         data: {
             labels: labs,
             datasets: [{
-                data: c,
+                data: counts,
                 backgroundColor: colors
             }],
         },

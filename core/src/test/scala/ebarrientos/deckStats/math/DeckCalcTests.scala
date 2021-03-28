@@ -5,6 +5,7 @@ import ebarrientos.deckStats.basics.Deck
 import ebarrientos.deckStats.DummyObjects._
 import ebarrientos.deckStats.queries.DeckCalc
 import ebarrientos.deckStats.queries.CurvePoint
+import ebarrientos.deckStats.queries.CountObject
 
 object DeckCalcTests extends TestSuite {
   val d1 = Deck(Seq(arthur, trillian))
@@ -17,7 +18,7 @@ object DeckCalcTests extends TestSuite {
 
       assert(res.avgCMC == res.avgCMCNonLands,
              res.avgCMC == 1.0,
-             res.counts.creatures == 2,
+             res.counts.contains(CountObject("Creature", 2)),
              res.manaCurve.contains(CurvePoint(1, 2)))
     }
 
@@ -28,10 +29,13 @@ object DeckCalcTests extends TestSuite {
       assert(res.avgCMCNonLands == 14.0/6.0)
 
       // Counts
-      assert(res.counts.creatures == 5)
-      assert(res.counts.lands == 1)
-      assert(res.counts.artifacts == 2)
-      assert(res.counts.enchantments == 0)
+      assert(res.counts.contains(CountObject("Creature", 5)),
+             res.counts.contains(CountObject("Land", 1)),
+             res.counts.contains(CountObject("Artifact", 2)))
+
+      // Symbols
+      assert(res.manaSymbols.contains(CountObject("W", 2)),
+             res.manaSymbols.contains(CountObject("R", 3.5)))
 
       assert(res.manaCurve.contains(CurvePoint(1, 2)),
              res.manaCurve.contains(CurvePoint(2, 2)),
