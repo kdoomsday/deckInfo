@@ -6,21 +6,26 @@ package ebarrientos.deckStats.queries
   * @param avgCMCNonLands Avg mana cost not counting lands
   * @param counts         [[TypeCounts]] with card type counts for the deck
   */
-case class DeckObject(avgCMC: Double, avgCMCNonLands: Double, counts: TypeCounts, manaCurve: Seq[CurvePoint])
-
-case class TypeCounts(
-    lands: Int,
-    creatures: Int,
-    instants: Int,
-    sorceries: Int,
-    planeswalkers: Int,
-    artifacts: Int,
-    enchantments: Int
+case class DeckObject(
+    avgCMC        : Double,
+    avgCMCNonLands: Double,
+    counts        : Seq[CountObject],
+    manaSymbols   : Seq[CountObject],
+    manaCurve     : Seq[CurvePoint]
 )
+
+/** Encapsulates a category and it's count
+  *
+  * @param name  Category name
+  * @param count Count
+  */
+case class CountObject(name: String, count: Double)
 
 /** A point in a (mana)curve */
 case class CurvePoint(cost: Int, amount: Int)
+
 object CurvePoint {
+
   /** CurvePoint from a Tuple2
     *
     * @param cp Tuple2 as (cost, amount)

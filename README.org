@@ -1,27 +1,43 @@
 #+TITLE:DeckInfo
 
-Rebase de deckStats porque apareció la página, además de cambiar el proyecto a usar sbt.
-* Información General
-** Carga de Mazos
-   El comportamiento para cargar los mazos está en el paquete
-   ~ebarrientos.deckStats.load~, a través de DeckLoader. En general se quiere usar
-   XMLDeckLoader para leer los mazos, que funciona con el formato utilizado por
-   [[https://cockatrice.github.io][Cockatrice]].
-** Carga de información de cartas
-   En el paquete ~ebarrientos.deckStats.load~ también está la carga de
-   información de cartas. Hay múltiples implementaciones dependiendo del origen
-   de la información.
-   - De almacenamiento local
-     - XMLCardLoader :: Cargar desde un XML
-     - H2DbLoader :: Carga desde una base de datos H2Db local
-   - De internet
-     - ScryCardLoader :: /Deprecated/
-     - MagicIOLoader :: Carga desde =api.magicthegathering.io=
-     - MagicAPICardLoader :: Carga desde http://stegriff.co.uk/ /Deprecated/
-   - Otros
-     - WeakCachedLoader :: Caché de información de cartas. Depende de otro en
-       caso de no tener la información almacenada.
-     - MtgJsonLoader :: Carga cartas en el formato de MtgJson
-** Cálculo de información de un Mazo
-   Esto se puede lograr mediante [[file:src/main/scala/ebarrientos/deckStats/math/Calc.scala::package ebarrientos.deckStats.math][ebarrientos.deckStats.math.Calc]]. Ofrece métodos
-   para conseguir costos, cantidades, promedios, etc.
+Project to gain insight into an MTG Deck's statistics.
+Was rebased from *deckStats* because a web page by that name (that also includes
+this functionality) was created.
+* General Information
+** Deck Loading
+   Deck loading behavior is in the ~ebarrientos.deckStats.load~ package, through
+   the ~DeckLoader~ trait. The main implementation is ~XMLDeckLoader~, that uses
+   the [[https://cockatrice.github.io][Cockatrice]] xml format.
+** Loading Card information
+   The ~ebarrientos.deckStats.load~  package also contains classes for loading
+   card information. There are seeral implementations, depending on where it
+   queries information from.
+   - Local storage
+     - XMLCardLoader    :: Load from an XML file.
+     - H2DBDoobieLoader :: Load from an H2DB database
+   - Remote
+     - MagicIOLoader      :: Load from =api.magicthegathering.io=
+     - ScryCardLoader     :: /Deprecated/
+     - MagicAPICardLoader :: Load from http://stegriff.co.uk/ /Deprecated/
+   - Other
+     - WeakCachedLoader :: Card info cache. It requires a helper loader to get
+       information the first time. Useful to avoid loading from remote sources
+       more than once.
+     - MtgJsonLoader    :: Loads cards that are in MtgJson format. It takes the
+       JSon directly and transforms it into a card.
+** Calculating deck information
+   The object [[file:core/src/main/scala/ebarrientos/deckStats/math/Calc.scala::package ebarrientos.deckStats.math][ebarrientos.deckStats.math.Calc]] offers methods for calculating
+   metrics of a deck. It has methods for obtaining averages, counts, etc.
+   Also, [[file:core/src/main/scala/ebarrientos/deckStats/queries/DeckCalc.scala::package ebarrientos.deckStats.queries][ebarrientos.deckStats.queries.DeckCalc]] provides a deck level version
+   that relies internally on ~Calc~.
+* Running
+There are two main runners:
+** Web Based
+Upload a deck through the interface, see your information.
+*** Running
+~sbt playWeb/run~
+** CLI
+Transitional interface meant to prove everything else worked. Shows information
+on the console.
+*** Running
+~sbt cliView/run <path/to/deck>~

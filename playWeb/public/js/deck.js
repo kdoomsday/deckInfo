@@ -13,37 +13,29 @@ function loadDeck() {
         contentType: false,
 
         success: function(data) {
-            // console.log(data);
-            // var json = $.parseJSON(data);
-            // $('#response').append('<p>' + json.filesize + '</p>');
             avgCosts(data);
             manaCurve(data);
+            countsChart(data);
             showAll();
         },
 
         error: function(errorData) {
-            // alert('Error loading deck: ' + errorData.responseText);
-            // $('#response').append('<p>' + errorData.responseText + '</p>');
             $('#myalerts').append(errorData.responseText);
             $('#myalerts').show();
         }
     });
 }
 
+// Hide and show deck info
 function hideAll() {
-    // $('.deckdata').hide();
     $('#deckinfo').hide();
 }
 function showAll() {
-    // $('.deckdata').show();
     $('#deckinfo').show();
 }
 
 /** Display Avg costs */
 function avgCosts(data) {
-    // $('#response').empty();
-    // $('#response').append('<p>Avg cmc: ' + data.avgCMC + '</p>');
-    // $('#response').append('<p>Avg nonLands: ' + data.avgCMCNonLands + '</p>');
     $('#avgCMC').val(data.avgCMC);
     $('#avgCMCNonLands').val(data.avgCMCNonLands);
 }
@@ -61,7 +53,7 @@ function manaCurve(data) {
             labels: chartData.labels,
             datasets: [{
                 data: chartData.curve,
-                backgroundColor: 'rgba(100, 100, 100, 0.2)',
+                backgroundColor: 'rgba(50, 50, 240, 0.8)',
                 borderColor: 'rgba(100, 100, 100, 1)',
                 borderWidth: 1
             }]
@@ -80,6 +72,39 @@ function manaCurve(data) {
                 text: 'Mana Curve'
             },
             legend: { display: false }
+        }
+    });
+}
+
+/** Create the card type counts chart */
+function countsChart(data) {
+    $('#counts').replaceWith('<canvas id="counts"></canvas>');
+
+    var labs = [];
+    var counts = [];
+    for (var i in data.counts) {
+        labs.push(data.counts[i].name);
+        counts.push(data.counts[i].count);
+    }
+
+    var colors = ["#703716", "#1b5918", "#bb0606", "#071084", "#a08924", "#8e8c83", "#669ae2"];
+
+    var ctx = document.getElementById('counts').getContext('2d');
+    var myChart = new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: labs,
+            datasets: [{
+                data: counts,
+                backgroundColor: colors
+            }],
+        },
+        options: {
+            title: {
+                text: "Counts by Card Type",
+                position: "bottom",
+                display: true
+            }
         }
     });
 }

@@ -13,25 +13,23 @@ object DeckCalc {
     */
   def fullCalc(d: Deck): DeckObject = {
     // Calculate the counts, by grouping and counting
-    def counts(): TypeCounts = {
-      val mapcount =
-        Calc.groupedCount(d, _.types)
+    val counts: Seq[CountObject] =
+      Calc
+        .groupedCount(d, _.types)
+        .map { case (t, c) => CountObject(t.toString(), c) }
+        .toSeq
 
-      TypeCounts(
-        mapcount.getOrElse(Land, 0),
-        mapcount.getOrElse(Creature, 0),
-        mapcount.getOrElse(Instant, 0),
-        mapcount.getOrElse(Sorcery, 0),
-        mapcount.getOrElse(Planeswalker, 0),
-        mapcount.getOrElse(Artifact, 0),
-        mapcount.getOrElse(Enchantment, 0)
-      )
-    }
+    val symbolCounts: Seq[CountObject] =
+      Calc
+        .manaSymbols(d)
+        .map { case (symb, count) => CountObject(symb.toString(), count) }
+        .toSeq
 
     DeckObject(
       avgManaCost(d),
       avgCMCNonLands = avgManaCost(d, c => !c.types.contains(Land)),
-      counts(),
+      counts,
+      symbolCounts,
       Calc.manaCurve(d).map(CurvePoint.apply _)
     )
   }
