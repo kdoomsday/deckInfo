@@ -76,26 +76,36 @@ function manaCurve(data) {
     });
 }
 
+/** Transform a list of CountObjects into labels and counts */
+function countsToChartData(countsObj) {
+    const labs = [];
+    const counts = [];
+    for (co of countsObj) {
+        labs.push(co.name);
+        counts.push(co.count);
+    }
+
+    return {
+        "labels": labs,
+        "counts": counts
+    };
+}
+
 /** Create the card type counts chart */
 function countsChart(data) {
     $('#counts').replaceWith('<canvas id="counts"></canvas>');
 
-    var labs = [];
-    var counts = [];
-    for (var i in data.counts) {
-        labs.push(data.counts[i].name);
-        counts.push(data.counts[i].count);
-    }
+    const cd = countsToChartData(data.counts);
 
-    var colors = ["#703716", "#1b5918", "#bb0606", "#071084", "#a08924", "#8e8c83", "#669ae2"];
+    const colors = ["#703716", "#1b5918", "#bb0606", "#071084", "#a08924", "#8e8c83", "#669ae2"];
 
-    var ctx = document.getElementById('counts').getContext('2d');
-    var myChart = new Chart(ctx, {
+    const ctx = document.getElementById('counts').getContext('2d');
+    const myChart = new Chart(ctx, {
         type: 'pie',
         data: {
-            labels: labs,
+            labels: cd.labels,
             datasets: [{
-                data: counts,
+                data: cd.counts,
                 backgroundColor: colors
             }],
         },
