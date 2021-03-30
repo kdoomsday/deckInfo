@@ -37,8 +37,8 @@ function showAll() {
 
 /** Display Avg costs */
 function avgCosts(data) {
-    $('#avgCMC').val(data.avgCMC);
-    $('#avgCMCNonLands').val(data.avgCMCNonLands);
+    $('#avgCMC').val(data.avgCMC.toFixed(2));
+    $('#avgCMCNonLands').val(data.avgCMCNonLands.toFixed(2));
 }
 
 /** Display the mana curve */
