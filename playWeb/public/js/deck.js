@@ -16,6 +16,7 @@ function loadDeck() {
             avgCosts(data);
             manaCurve(data);
             countsChart(data);
+            symbolsChart(data);
             showAll();
         },
 
@@ -143,4 +144,39 @@ function fixMCHoles(curve) {
         "curve": res,
         "labels": labels
     };
+}
+
+/** Mana symbols chart */
+function symbolsChart(data) {
+    $('#symbols').replaceWith('<canvas id="symbols"></canvas>');
+
+    const cd = countsToChartData(data.manaSymbols);
+
+    // const colors = ["#703716", "#1b5918", "#bb0606", "#071084", "#a08924", "#8e8c83", "#669ae2"];
+
+    const ctx = document.getElementById('symbols').getContext('2d');
+    const myChart = new Chart(ctx, {
+        type: 'horizontalBar',
+        data: {
+            labels: cd.labels,
+            datasets: [{
+                data: cd.counts
+                //backgroundColor: colors
+            }],
+        },
+        options: {
+            scales: {
+                xAxes: [{
+                    ticks: {
+                        beginAtZero: true
+                    }
+                }]
+            },
+            title: {
+                text: "Mana Symbol Counts",
+                position: "bottom",
+                display: true
+            }
+        }
+    });
 }
