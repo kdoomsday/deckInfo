@@ -123,19 +123,19 @@ function countsChart(data) {
   * Returns the fixed mana curve and labels
   */
 function fixMCHoles(curve) {
-    var res    = [];
-    var labels = [];
-    var cp = 0;
+    const res    = [];
+    const labels = [];
+    let   cp     = 0;
 
-    for (var i in curve) {
-        while (curve[i].cost > cp) {
+    for (var mc of curve) {
+        while (mc.cost > cp) {
             res.push(0);
             labels.push(cp);
             cp += 1;
         }
 
         labels.push(cp);
-        res.push(curve[i].amount);
+        res.push(mc.amount);
         cp += 1;
     }
 
