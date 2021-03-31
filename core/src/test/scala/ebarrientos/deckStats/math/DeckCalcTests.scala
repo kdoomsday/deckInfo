@@ -6,11 +6,14 @@ import ebarrientos.deckStats.DummyObjects._
 import ebarrientos.deckStats.queries.DeckCalc
 import ebarrientos.deckStats.queries.CurvePoint
 import ebarrientos.deckStats.queries.CountObject
+import ebarrientos.deckStats.basics.DeckEntry
 
 object DeckCalcTests extends TestSuite {
-  val d1 = Deck(Seq(arthur, trillian))
+  val d1 = Deck(Seq(DeckEntry(arthur, 1), DeckEntry(trillian, 1)))
 
-  val d2 = Deck(Seq(arthur, trillian, ford, marvin, zaphod, restaurant, heartOfGold))
+  val d2 = Deck(Seq(DeckEntry(arthur, 1), DeckEntry(trillian, 1),
+                    DeckEntry(ford, 1), DeckEntry(marvin, 1), DeckEntry(zaphod, 1),
+                    DeckEntry(restaurant, 1), DeckEntry(heartOfGold, 1)))
 
   val tests = Tests {
     "Simple deck full calcs" - {

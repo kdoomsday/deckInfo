@@ -6,11 +6,14 @@ import ebarrientos.deckStats.DummyObjects._
 import ebarrientos.deckStats.basics.Creature
 import ebarrientos.deckStats.basics.Artifact
 import ebarrientos.deckStats.basics.Land
+import ebarrientos.deckStats.basics.DeckEntry
 
 object CalcTests extends TestSuite {
 
   val deck = Deck(
-    Seq(arthur, trillian, ford, marvin, zaphod, restaurant, heartOfGold)
+    Seq(DeckEntry(arthur, 1), DeckEntry(trillian, 1), DeckEntry(ford, 1),
+        DeckEntry(marvin, 1), DeckEntry(zaphod, 1), DeckEntry(restaurant, 1),
+        DeckEntry(heartOfGold, 1))
   )
 
   val tests = Tests {
@@ -42,7 +45,7 @@ object CalcTests extends TestSuite {
         avg
       }
 
-      test("manaCost-predicate") {
+      test("manaCost_predicate") {
         assert(
           Calc.avgManaCost(deck, _.types.contains(Creature)) == 9.0 / 5.0,
           Calc.avgManaCost(deck, _.types.contains(Land)) == 0.0,
@@ -68,13 +71,24 @@ object CalcTests extends TestSuite {
       )
     }
 
-    test("Default Mana Curve") {
+    test("defaultManaCurve") {
       val curve: Seq[(Int, Int)] = Calc.manaCurve(deck)
       assert(
         curve.contains(1 -> 2),
         curve.contains(2 -> 2),
         !curve.contains(0 -> 1)
       )
+      curve
+    }
+
+    test("groupedManaCurve") {
+      val classicCurve: Seq[(Int, Int)] = Calc.manaCurve(deck)
+      val groupCurve: Seq[(Int, Int)] =
+        Calc.groupedCount1(deck, groupFunc=_.cmc, cardFilter = !_.is(Land))
+          .toSeq.sortBy(_._1)
+
+      assert(classicCurve == groupCurve)
+      groupCurve
     }
   }
 }

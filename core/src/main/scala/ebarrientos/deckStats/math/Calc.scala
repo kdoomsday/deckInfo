@@ -11,18 +11,25 @@ object Calc {
 
   /** Average mana cost of the whole deck. */
   def avgManaCost(d: Deck): Double =
-    avg(d.cards.map(_.cmc))
+    avgManaCost(d, _ => true)
 
   /** Average cost of cards that fulfill a condition. */
-  def avgManaCost(deck: Deck, pred: Card => Boolean): Double =
-    avg(deck.cards.filter(pred).map(_.cmc))
+  def avgManaCost(deck: Deck, pred: Card => Boolean): Double = {
+    val (copies, sumCmc): (Int, Int) = deck
+      .cards
+      .filter(e => pred(e.card))
+      .foldLeft(0 -> 0) { case ((count, sum), entry: DeckEntry) =>
+        (count + entry.copies, sum + entry.card.cmc)
+      }
+    sumCmc / copies.toDouble
+  }
 
   /** Total number of cards. */
   def count(deck: Deck): Int = deck.cards.size
 
   /** Count the number of cards in a deck that match a certain predicate. */
   def count(deck: Deck, pred: Card => Boolean): Int =
-    deck.cards.count(pred)
+    deck.cards.filter(entry => pred(entry.card)).map(e => e.copies).sum
 
   /** Count cards per group
     * [[groupFunc]] gives what will we be grouping by. The results of the
@@ -47,8 +54,8 @@ object Calc {
   ): Map[A, Int] =
     deck
       .cards
-      .filter(cardFilter)
-      .flatMap(groupFunc)
+      .filter(e => cardFilter(e.card))
+      .flatMap(e => groupFunc(e.card))
       .groupBy(identity)
       .map { case (key, s) =>
         (key, s.size)
@@ -77,8 +84,8 @@ object Calc {
 
     val map = d
       .cards
-      .filter(criterion)
-      .groupBy(c => c.cmc)
+      .filter(e => criterion(e.card))
+      .groupBy(e => e.card.cmc)
       .map { case (cmc, cs) => (cmc, cs.length) }
       .withDefault(_ => 0)
     map.toSeq.sortWith(lt)
@@ -109,7 +116,7 @@ object Calc {
 
     val mapCost = Map[String, Double]().withDefaultValue(0.0)
 
-    val symbols = d.cards.filter(criterion).flatMap(c => c.cost)
+    val symbols = d.cards.filter(e => criterion(e.card)).flatMap(e => e.card.cost)
 
     symbols.foldLeft(mapCost)((map, symb) => mana2Map(map, symb, 1.0))
   }
