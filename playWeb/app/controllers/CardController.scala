@@ -18,7 +18,7 @@ import ebarrientos.deckStats.queries.{ DeckCalc, DeckObject }
 import pureconfig.error.ConfigReaderFailures
 import ebarrientos.deckStats.load.CardLoader
 import ebarrientos.deckStats.basics.Card
-import play.api.libs.json.Json
+// import play.api.libs.json.Json
 import io.circe.generic.auto._
 import io.circe.syntax._
 import play.api.http.Writeable
