@@ -146,13 +146,30 @@ function fixMCHoles(curve) {
     };
 }
 
+/** Color for a mana symbol */
+function symbolColor(context) {
+    const index = context.dataIndex;
+    const label = context.chart.data.labels[index];
+
+    if (label == "W")
+        return "#f4f395";
+    else if (label == "U")
+        return "#0000ff";
+    else if (label == "B")
+        return "#000000";
+    else if (label == "R")
+        return "#ff0000";
+    else if (label == "G")
+        return "#00ff00";
+    else
+        return "#888888";
+}
+
 /** Mana symbols chart */
 function symbolsChart(data) {
     $('#symbols').replaceWith('<canvas id="symbols"></canvas>');
 
     const cd = countsToChartData(data.manaSymbols);
-
-    // const colors = ["#703716", "#1b5918", "#bb0606", "#071084", "#a08924", "#8e8c83", "#669ae2"];
 
     const ctx = document.getElementById('symbols').getContext('2d');
     const myChart = new Chart(ctx, {
@@ -160,8 +177,8 @@ function symbolsChart(data) {
         data: {
             labels: cd.labels,
             datasets: [{
-                data: cd.counts
-                //backgroundColor: colors
+                data: cd.counts,
+                backgroundColor: symbolColor
             }],
         },
         options: {
@@ -176,6 +193,9 @@ function symbolsChart(data) {
                 text: "Mana Symbol Counts",
                 position: "bottom",
                 display: true
+            },
+            legend: {
+                display: false
             }
         }
     });
