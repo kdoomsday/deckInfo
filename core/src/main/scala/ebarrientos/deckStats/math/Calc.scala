@@ -97,13 +97,14 @@ object Calc {
     def mana2Map(
         m: Map[String, Double],
         mana: Mana,
+        count: Int,
         weight: Double
     ): Map[String, Double] = mana match {
-      case GenericMana(cmc, _)  => m.updated("C", m("C") + weight * cmc)
-      case _: ColoredMana       => m.updated(mana.toString, m(mana.toString) + weight)
+      case GenericMana(cmc, _)  => m.updated("C", m("C") + (weight * cmc * count))
+      case _: ColoredMana       => m.updated(mana.toString, m(mana.toString) + weight*count)
       case HybridMana(opts)     =>
         opts.foldLeft(m) {
-          mana2Map(_, _, 0.5)
+          mana2Map(_, _, count, 0.5)
         } // We count both sides of hybrid as half the amount
       case ColorlessMana(props) => m.updated("C", m("C") + weight * 1)
     }
@@ -113,6 +114,8 @@ object Calc {
     val symbols =
       d.cards.filter(e => criterion(e.card)).flatMap(e => e.card.cost)
 
-    symbols.foldLeft(mapCost)((map, symb) => mana2Map(map, symb, 1.0))
+    d.cards.filter(e => criterion(e.card))
+      .flatMap(de => de.card.cost.map(mana => (de.copies, mana)))
+      .foldLeft(mapCost){ case (map, (copies, mana)) => mana2Map(map, mana, copies, 1.0) }
   }
 }

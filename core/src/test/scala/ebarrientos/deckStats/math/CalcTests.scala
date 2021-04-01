@@ -109,5 +109,16 @@ object CalcTests extends TestSuite {
       assert(classicCurve == groupCurve)
       groupCurve
     }
+
+    test("manaSymbols") {
+      val symbols: Map[String,Double] = Calc.manaSymbols(deck)
+      assert(symbols("W") == 3,
+             symbols("U") == 1.5,
+             symbols("B") == 2,
+             symbols("R") == 3.5,
+             symbols("G") == 1,
+             symbols("C") == 4)
+      symbols
+    }
   }
 }
