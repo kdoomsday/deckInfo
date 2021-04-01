@@ -16,6 +16,7 @@ function loadDeck() {
             avgCosts(data);
             manaCurve(data);
             countsChart(data);
+            symbolsChart(data);
             showAll();
         },
 
@@ -36,8 +37,8 @@ function showAll() {
 
 /** Display Avg costs */
 function avgCosts(data) {
-    $('#avgCMC').val(data.avgCMC);
-    $('#avgCMCNonLands').val(data.avgCMCNonLands);
+    $('#avgCMC').val(data.avgCMC.toFixed(2));
+    $('#avgCMCNonLands').val(data.avgCMCNonLands.toFixed(2));
 }
 
 /** Display the mana curve */
@@ -76,26 +77,36 @@ function manaCurve(data) {
     });
 }
 
+/** Transform a list of CountObjects into labels and counts */
+function countsToChartData(countsObj) {
+    const labs = [];
+    const counts = [];
+    for (co of countsObj) {
+        labs.push(co.name);
+        counts.push(co.count);
+    }
+
+    return {
+        "labels": labs,
+        "counts": counts
+    };
+}
+
 /** Create the card type counts chart */
 function countsChart(data) {
     $('#counts').replaceWith('<canvas id="counts"></canvas>');
 
-    var labs = [];
-    var counts = [];
-    for (var i in data.counts) {
-        labs.push(data.counts[i].name);
-        counts.push(data.counts[i].count);
-    }
+    const cd = countsToChartData(data.counts);
 
-    var colors = ["#703716", "#1b5918", "#bb0606", "#071084", "#a08924", "#8e8c83", "#669ae2"];
+    const colors = ["#703716", "#1b5918", "#bb0606", "#071084", "#a08924", "#8e8c83", "#669ae2"];
 
-    var ctx = document.getElementById('counts').getContext('2d');
-    var myChart = new Chart(ctx, {
+    const ctx = document.getElementById('counts').getContext('2d');
+    const myChart = new Chart(ctx, {
         type: 'pie',
         data: {
-            labels: labs,
+            labels: cd.labels,
             datasets: [{
-                data: counts,
+                data: cd.counts,
                 backgroundColor: colors
             }],
         },
@@ -113,19 +124,19 @@ function countsChart(data) {
   * Returns the fixed mana curve and labels
   */
 function fixMCHoles(curve) {
-    var res    = [];
-    var labels = [];
-    var cp = 0;
+    const res    = [];
+    const labels = [];
+    let   cp     = 0;
 
-    for (var i in curve) {
-        while (curve[i].cost > cp) {
+    for (var mc of curve) {
+        while (mc.cost > cp) {
             res.push(0);
             labels.push(cp);
             cp += 1;
         }
 
         labels.push(cp);
-        res.push(curve[i].amount);
+        res.push(mc.amount);
         cp += 1;
     }
 
@@ -133,4 +144,52 @@ function fixMCHoles(curve) {
         "curve": res,
         "labels": labels
     };
+}
+
+/** Color for a mana symbol */
+function symbolColor(context) {
+    const index = context.dataIndex;
+    const label = context.chart.data.labels[index];
+
+    if (label == "W")
+        return "#f4f395";
+    else if (label == "U")
+        return "#0000ff";
+    else if (label == "B")
+        return "#000000";
+    else if (label == "R")
+        return "#ff0000";
+    else if (label == "G")
+        return "#00ff00";
+    else
+        return "#888888";
+}
+
+/** Mana symbols chart */
+function symbolsChart(data) {
+    $('#symbols').replaceWith('<canvas id="symbols"></canvas>');
+
+    const cd = countsToChartData(data.manaSymbols);
+
+    const ctx = document.getElementById('symbols').getContext('2d');
+    const myChart = new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: cd.labels,
+            datasets: [{
+                data: cd.counts,
+                backgroundColor: symbolColor
+            }],
+        },
+        options: {
+            title: {
+                text: "Mana Symbol Counts",
+                position: "bottom",
+                display: true
+            },
+            legend: {
+                position: "left"
+            }
+        }
+    });
 }
