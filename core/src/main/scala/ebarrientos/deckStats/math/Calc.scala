@@ -15,17 +15,18 @@ object Calc {
 
   /** Average cost of cards that fulfill a condition. */
   def avgManaCost(deck: Deck, pred: Card => Boolean): Double = {
-    val (copies, sumCmc): (Int, Int) = deck
-      .cards
-      .filter(e => pred(e.card))
-      .foldLeft(0 -> 0) { case ((count, sum), entry: DeckEntry) =>
-        (count + entry.copies, sum + entry.card.cmc)
-      }
+    val (copies, sumCmc): (Int, Int) =
+      deck
+        .cards
+        .filter(e => pred(e.card))
+        .foldLeft(0 -> 0) { case ((count, sum), entry: DeckEntry) =>
+          (count + entry.copies, sum + (entry.copies * entry.card.cmc))
+        }
     sumCmc / copies.toDouble
   }
 
   /** Total number of cards. */
-  def count(deck: Deck): Int = deck.cards.size
+  def count(deck: Deck): Int = deck.cards.map(_.copies).sum
 
   /** Count the number of cards in a deck that match a certain predicate. */
   def count(deck: Deck, pred: Card => Boolean): Int =
@@ -55,7 +56,8 @@ object Calc {
     deck
       .cards
       .filter(e => cardFilter(e.card))
-      .flatMap(e => groupFunc(e.card))
+      .flatMap(e => Seq.fill(e.copies)(e.card))
+      .flatMap(c => groupFunc(c))
       .groupBy(identity)
       .map { case (key, s) =>
         (key, s.size)
@@ -78,18 +80,10 @@ object Calc {
   def manaCurve(
       d: Deck,
       criterion: Card => Boolean = !_.is(Land)
-  ): Seq[(Int, Int)] = {
-    // Compare tuples only by the first element.
-    def lt(a: Tuple2[Int, Int], b: Tuple2[Int, Int]) = a._1 < b._1
-
-    val map = d
-      .cards
-      .filter(e => criterion(e.card))
-      .groupBy(e => e.card.cmc)
-      .map { case (cmc, cs) => (cmc, cs.length) }
-      .withDefault(_ => 0)
-    map.toSeq.sortWith(lt)
-  }
+  ): Seq[(Int, Int)] =
+    groupedCount1(d, _.cmc, criterion)
+      .toSeq
+      .sortWith((t1, t2) => t1._1 < t2._1)
 
   /** Count Mana Symbols in cards in a deck that match a criterion (By default
     * all cards). A colored symbol counts once towards it's color. A generic mana
@@ -116,7 +110,8 @@ object Calc {
 
     val mapCost = Map[String, Double]().withDefaultValue(0.0)
 
-    val symbols = d.cards.filter(e => criterion(e.card)).flatMap(e => e.card.cost)
+    val symbols =
+      d.cards.filter(e => criterion(e.card)).flatMap(e => e.card.cost)
 
     symbols.foldLeft(mapCost)((map, symb) => mana2Map(map, symb, 1.0))
   }
