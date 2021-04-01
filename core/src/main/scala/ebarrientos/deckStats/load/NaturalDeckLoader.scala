@@ -56,3 +56,7 @@ class NaturalDeckLoader(text: String, loader: CardLoader) extends DeckLoader {
       }
       .getOrElse(Task.succeed(None))
 }
+
+object NaturalDeckLoader {
+  def apply(text: String, loader: CardLoader) = new NaturalDeckLoader(text, loader)
+}
