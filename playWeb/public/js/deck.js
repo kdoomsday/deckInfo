@@ -173,7 +173,7 @@ function symbolsChart(data) {
 
     const ctx = document.getElementById('symbols').getContext('2d');
     const myChart = new Chart(ctx, {
-        type: 'horizontalBar',
+        type: 'pie',
         data: {
             labels: cd.labels,
             datasets: [{
@@ -182,20 +182,13 @@ function symbolsChart(data) {
             }],
         },
         options: {
-            scales: {
-                xAxes: [{
-                    ticks: {
-                        beginAtZero: true
-                    }
-                }]
-            },
             title: {
                 text: "Mana Symbol Counts",
                 position: "bottom",
                 display: true
             },
             legend: {
-                display: false
+                position: "left"
             }
         }
     });
