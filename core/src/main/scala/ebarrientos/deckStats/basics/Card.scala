@@ -15,8 +15,10 @@ case class Card( cost: Seq[Mana],
                  power: Int = 0,
                  toughness: Int = 0  )
 {
-  def cmc: Int = cost.map(_.cmc).sum
+  val cmc: Int = cost.map(_.cmc).sum
+  val manaValue = cmc
 
+  // Property testing methods
   def is(color: Color): Boolean = cost.exists(mana => mana.is(color))
   def is(cardType: CardType): Boolean = types.contains(cardType)
   def is(superType: Supertype): Boolean = supertypes.contains(superType)
