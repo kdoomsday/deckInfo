@@ -10,6 +10,7 @@ import scala.annotation.tailrec
 import ebarrientos.deckStats.basics.CardType
 import ebarrientos.deckStats.basics.Supertype
 import org.slf4j.LoggerFactory
+import ebarrientos.deckStats.stringParsing.MtgJsonParser.{cost, parseAll}
 
 /** Loader para cargar información de api.magicthegathering.io */
 object MagicIOLoader extends CardLoader with LoadUtils with URLUtils {
@@ -51,8 +52,6 @@ object MagicIOLoader extends CardLoader with LoadUtils with URLUtils {
 
     // Construir la carta a partir del jobject correspondiente ya extraido de la lista
     def cardFromJobject(j: JValue): Card = {
-      import ebarrientos.deckStats.stringParsing.MtgJsonParser.{cost, parseAll}
-
       val manaCost: Seq[Mana] = parseAll(cost, getStr(j \\ "manaCost")).get
       val (supertypes, types, subTypes) = parseTypesJson(j)
       Card(

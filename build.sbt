@@ -59,10 +59,11 @@ lazy val playWeb = (project in file("playWeb"))
 /****************
  * DEPENDENCIES *
  ****************/
-val zioVersion     = "1.0.3"
-val zioCatsVersion = "2.2.0.1"
-val doobieVersion  = "0.8.8"
-val utestVersion   = "0.7.2"
+val zioVersion      = "1.0.3"
+val zioCatsVersion  = "2.2.0.1"
+val doobieVersion   = "0.8.8"
+val utestVersion    = "0.7.2"
+val quillVersion    = "3.8.0"
 
 lazy val deps = Seq(
   "com.typesafe.slick"     %% "slick"                    % "3.3.2",
@@ -77,6 +78,9 @@ lazy val deps = Seq(
   "com.github.pureconfig"  %% "pureconfig"               % "0.12.3",
   "org.tpolecat"           %% "doobie-core"              % doobieVersion,
   "org.tpolecat"           %% "doobie-h2"                % doobieVersion,
+  "io.getquill"            %% "quill-jdbc"               % quillVersion,
+  "io.getquill"            %% "quill-jdbc-zio"           % quillVersion
+
 )
 
 lazy val testDeps = Seq(
