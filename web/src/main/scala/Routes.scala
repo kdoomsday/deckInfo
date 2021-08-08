@@ -26,6 +26,9 @@ import pureconfig.generic.auto._
 import pureconfig.error.ConfigReaderFailures
 import ebarrientos.deckStats.load.CardLoader
 import ebarrientos.deckStats.basics.Card
+import ebarrientos.deckStats.load.NaturalDeckLoader
+import ebarrientos.deckStats.queries.DeckCalc
+import ebarrientos.deckStats.basics.Deck
 
 object QueryRoutes {
   private val dsl = new Http4sDsl[Task] {}
@@ -59,6 +62,24 @@ object QueryRoutes {
     }
   }
 
+  private val naturalDeckStats = HttpRoutes.of[Task] {
+    case req @ POST -> Root / "deckN" => {
+      req
+        .bodyText
+        .compile
+        .string
+        .map(text =>
+          RoutesObjects
+            .naturalDeckLoader(text)
+            .flatMap(_.load())
+            .map(deck => DeckCalc.fullCalc(deck))
+            .map(stats => Ok(stats.asJson))
+            .flatten
+        )
+        .flatten
+    }
+  }
+
   // Twirl routes
   private val twirlRoutes = HttpRoutes.of[Task] {
     case GET -> Root / "index" => {
@@ -69,9 +90,10 @@ object QueryRoutes {
   // val queryApp: HttpApp[Task] = (queryCardService <+> queryCardService2).orNotFound
   def queryApp(blocker: Blocker): HttpApp[Task] =
     (queryCardService
-      <+> queryCardService2
-      <+> twirlRoutes
-      <+> fileService(FileService.Config("site", blocker))).orNotFound
+       <+> queryCardService2
+       <+> naturalDeckStats
+       <+> twirlRoutes
+       <+> fileService(FileService.Config("site", blocker))).orNotFound
 }
 
 private object RoutesObjects {
@@ -84,6 +106,14 @@ private object RoutesObjects {
       cardLoader = new H2DBDoobieLoader(MagicIOLoader, config, ec)
     } yield cardLoader
   }
+
+  /** Natural deck loader. Depends on the loader */
+  def naturalDeckLoader(
+      text: String
+  ): ZIO[Any, Throwable, NaturalDeckLoader] =
+    loader
+      .map(l => NaturalDeckLoader(text, l))
+      .absorbWith(f => new Throwable("Error: " + f.toString()))
 
   /** Carta que indica que nada se consiguio */
   val nullCard: Card = Card(Seq(), "Not found", Set())

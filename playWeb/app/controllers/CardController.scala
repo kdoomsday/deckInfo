@@ -14,11 +14,11 @@ import scala.concurrent.ExecutionContext
 import java.util.concurrent.Executors
 import ebarrientos.deckStats.load.MagicIOLoader
 import ebarrientos.deckStats.load.H2DBDoobieLoader
-import ebarrientos.deckStats.queries.{ DeckCalc, DeckObject }
+import ebarrientos.deckStats.queries.{DeckCalc, DeckObject}
 import pureconfig.error.ConfigReaderFailures
 import ebarrientos.deckStats.load.CardLoader
 import ebarrientos.deckStats.basics.Card
-import play.api.libs.json.Json
+// import play.api.libs.json.Json
 import io.circe.generic.auto._
 import io.circe.syntax._
 import play.api.http.Writeable
@@ -34,6 +34,7 @@ import java.nio.file.Paths
 import java.nio.file.Files
 import play.api.mvc.MultipartFormData
 import play.api.mvc.Result
+import ebarrientos.deckStats.load.NaturalDeckLoader
 
 class CardController @Inject() (
     val controllerComponents: ControllerComponents,
@@ -44,7 +45,7 @@ class CardController @Inject() (
   val log = Logger(getClass())
 
   def card(name: String) = Action { implicit request: Request[AnyContent] =>
-    val res: ZIO[Any,Serializable,Result] = for {
+    val res: ZIO[Any, Serializable, Result] = for {
       l   <- CardController.loader
       c   <- l.card(name)
       card = c.getOrElse(CardController.nullCard)
@@ -71,7 +72,9 @@ class CardController @Inject() (
           for {
             deckLoader <- CardController.xmlDeckLoader(realFile.toFile())
             deck       <- deckLoader.load()
-            deckObject  = { val dobj = DeckCalc.fullCalc(deck); log.debug(s"=> $dobj" ); dobj }
+            deckObject  = {
+              val dobj = DeckCalc.fullCalc(deck); log.debug(s"=> $dobj"); dobj
+            }
           } yield deckObject
 
         Ok(runner.run(res).asJson)
@@ -80,6 +83,19 @@ class CardController @Inject() (
 
     log.debug(s"r: $r")
     r
+  }
+
+  /** Load deckStats with a natural deck loader */
+  def naturalDeckStats = Action { implicit request =>
+    val r = request.body.asText
+
+    r.fold(BadRequest("No deck"))(text => {
+      val res = CardController
+        .naturalDeckLoader(text)
+        .flatMap(_.load())
+        .map(deck => DeckCalc.fullCalc(deck))
+      Ok(runner.run(res).asJson)
+    })
   }
 }
 
@@ -97,6 +113,10 @@ private object CardController {
   /** Deck loader to process deck requests. Depends on the loader */
   def xmlDeckLoader(f: File): ZIO[Any, ConfigReaderFailures, XMLDeckLoader] =
     loader.map(l => new XMLDeckLoader(f, l))
+
+  /** Natural deck loader. Depends on the loader */
+  def naturalDeckLoader(text: String) =
+    loader.map(l => NaturalDeckLoader(text, l))
 
   /** Carta que indica que nada se consiguio */
   val nullCard: Card = Card(Seq(), "Not found", Set())

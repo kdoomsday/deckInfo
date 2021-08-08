@@ -9,6 +9,7 @@ GET     /                controllers.ApplicationController.index
 GET     /card/:name      controllers.CardController.card(name: String)
 
 POST    /deck            controllers.CardController.deckStats
+POST    /deckN           controllers.CardController.naturalDeckStats 
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file    controllers.Assets.versioned(path="/public", file: Asset)

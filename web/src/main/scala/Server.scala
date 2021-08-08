@@ -14,7 +14,7 @@ object Server extends App {
   private def mkServer(blocker: Blocker): ZIO[Any, Throwable, Unit] =
     ZIO.runtime[Any].flatMap(implicit rts =>
       BlazeServerBuilder[Task]
-        .bindHttp(8080, "localhost")
+        .bindHttp(9000, "localhost")
         .withHttpApp(QueryRoutes.queryApp(blocker))
         .serve
         .compile
