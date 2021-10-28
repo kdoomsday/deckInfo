@@ -64,7 +64,14 @@ object Calc {
       }
       .withDefaultValue(0)
 
-  /** Same as {{groupedCount}}, but does not require a Seq for the grouping */
+  /**
+    * Same as `groupedCount`, but groups directly by a single attribute
+    *
+    * @param deck       The deck to work on
+    * @param groupFunc  Function by which to group
+    * @param cardFilter Which cards to count. Defaults to all
+    * @return Map from each result of {{groupFunc}} to its count
+    */
   def groupedCount1[A](
       deck: Deck,
       groupFunc: Card => A,
