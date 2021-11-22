@@ -2,7 +2,7 @@ package ebarrientos.deckStats.basics
 
 sealed trait ManaProperty
 case object Phyrexian extends ManaProperty
-case object Snow extends ManaProperty
+case object SnowMana extends ManaProperty
 
 
 /** Common behavior for mana */

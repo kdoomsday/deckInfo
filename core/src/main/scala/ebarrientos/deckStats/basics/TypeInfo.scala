@@ -34,11 +34,11 @@ case object Planeswalker extends CardType
  */
 sealed abstract class Supertype
 object Supertype {
-  private[this] val supertypes = IndexedSeq(Legendary, Basic)
+  private[this] val supertypes = IndexedSeq(Legendary, Basic, Host, Snow)
 
   def apply(s: String): Supertype = {
     supertypes.foreach(x => if (s == x.toString) return x)
-    throw new Exception("Unknown supertype")
+    throw new Exception(s"Unknown supertype: $s")
   }
 
   def unapply(st: Supertype) = Some(st.toString)
@@ -49,3 +49,4 @@ object Supertype {
 case object Legendary extends Supertype
 case object Basic     extends Supertype
 case object Host      extends Supertype
+case object Snow      extends Supertype

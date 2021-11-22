@@ -8,7 +8,7 @@ object Encoders {
   implicit val manaPropertyEncoder: Encoder[ManaProperty] = new Encoder[ManaProperty] {
     def apply(a: ManaProperty): Json = a match {
       case Phyrexian => Json.fromString("{P}")
-      case Snow => Json.fromString("{S}")
+      case SnowMana => Json.fromString("{S}")
     }
   }
 

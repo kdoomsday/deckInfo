@@ -17,7 +17,7 @@ object MtgJsonParser extends JavaTokenParsers with ParserHelpers {
   def color:     Parser[Mana] = ("W" | "U" | "B" | "R" | "G") ^^ (x => str2Mana(x))
   def generic:   Parser[Mana] = wholeNumber ^^ (x => GenericMana(x.toInt))
   def xMana:     Parser[Mana] = "X" ^^ (_ => XMana())
-  def snow:      Parser[Mana] = "S" ^^ (_ => GenericMana(1, Set(Snow)))
+  def snow:      Parser[Mana] = "S" ^^ (_ => GenericMana(1, Set(SnowMana)))
 
 
   /** De secuencia de mana a mana. Si hay 1 elemento se devuelve el elemento.

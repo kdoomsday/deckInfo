@@ -60,7 +60,7 @@ object MtgJsonParserTest extends TestSuite {
     }
 
     "Snow mana" - {
-      * - assertManaList(Seq(GenericMana(1, Set(Snow))), p("{S}"))
+      * - assertManaList(Seq(GenericMana(1, Set(SnowMana))), p("{S}"))
     }
   }
 }
