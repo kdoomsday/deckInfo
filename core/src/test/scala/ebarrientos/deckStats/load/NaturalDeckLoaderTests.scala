@@ -6,6 +6,8 @@ import utest._
 
 import ebarrientos.deckStats.DummyObjects
 import ebarrientos.deckStats.basics.DeckEntry
+import ebarrientos.deckStats.TestHelper
+import zio.Unsafe
 
 object NaturalDeckLoaderTests extends TestSuite {
   val d1 = """|4x Arthur Dent
@@ -18,7 +20,7 @@ object NaturalDeckLoaderTests extends TestSuite {
 
     test("load") {
       val loader = new NaturalDeckLoader(d1, DummyObjects.dummyCardLoader)
-      val deck = zio.Runtime.default.unsafeRun(loader.load())
+      val deck = TestHelper.run(loader.load())
 
       assert(deck.cards contains DeckEntry(DummyObjects.arthur, 4),
              deck.cards contains DeckEntry(DummyObjects.ford, 4),

@@ -27,7 +27,8 @@ lazy val core = (project in file("core"))
     compilerSettings,
     libraryDependencies ++= deps,
     libraryDependencies ++= circeDeps,
-    libraryDependencies ++= testDeps
+    libraryDependencies ++= testDeps,
+    libraryDependencies  += guice
   )
 
 lazy val cliView = (project in file("cliView"))
@@ -59,11 +60,11 @@ lazy val playWeb = (project in file("playWeb"))
 /****************
  * DEPENDENCIES *
  ****************/
-val zioVersion      = "1.0.3"
-val zioCatsVersion  = "2.2.0.1"
+val zioVersion      = "2.0.2"
+val zioCatsVersion  = "3.3.0"
 val doobieVersion   = "0.8.8"
 val utestVersion    = "0.7.2"
-val quillVersion    = "3.8.0"
+val quillVersion    = "4.6.0"
 
 lazy val deps = Seq(
   "com.typesafe.slick"     %% "slick"                    % "3.3.2",

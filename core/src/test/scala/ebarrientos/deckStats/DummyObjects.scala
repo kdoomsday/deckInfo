@@ -6,7 +6,7 @@ import ebarrientos.deckStats.basics.{ColoredMana, GenericMana}
 import ebarrientos.deckStats.basics.{Artifact, Creature, Land}
 import ebarrientos.deckStats.basics.{Black, Blue, Green, Red, White}
 import ebarrientos.deckStats.load.CardLoader
-import zio.IO
+import zio._
 import ebarrientos.deckStats.basics.HybridMana
 
 /** Dummy objects to use in tests */
@@ -99,8 +99,8 @@ object DummyObjects {
 
   /** Dummy deck loader to be used for tests */
   val dummyCardLoader: CardLoader = new CardLoader {
-    def card(name: String): IO[Throwable, Option[Card]] =
-      IO.succeed(name match {
+    def card(name: String): Task[Option[Card]] =
+      ZIO.succeed(name match {
         case "Arthur Dent"                               => Some(arthur)
         case "Tricia McMillan"                           => Some(trillian)
         case "Ford Prefect"                              => Some(ford)

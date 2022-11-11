@@ -1,18 +1,18 @@
 package ebarrientos.deckStats.load
 
 import ebarrientos.deckStats.basics.Card
-import zio.IO
-import zio.Task
+import zio._
+import org.slf4j.LoggerFactory
 
 /** Comportamiento de [[CardLoader]] que permite almacenar la información de una
   * carta obtenida por otro loader para que la próxima vez no sea necesario
   * buscarla nuevamente
   */
 trait StoringLoader extends CardLoader {
+  protected val log = LoggerFactory.getLogger(getClass())
+
   /** @return CardLoader to use to fetch cards that are not in the store */
   def helper: CardLoader
-
-  val console = zio.console.Console.Service.live
 
   /** Obtener la [[Card]] almacenada en esta instancia */
   protected def retrieve(name: String): Task[Option[Card]]
@@ -35,16 +35,20 @@ trait StoringLoader extends CardLoader {
       name: String
   ): Task[Option[Card]] =
     ocard match {
-      case o @ Some(_) => Task.succeed(o)
+      case o @ Some(_) =>
+        log.debug("[{}] was already stored. Using cached information")
+        ZIO.succeed(o)
+
       case None        =>
+        log.info("[{}] was not found. Delegating to underlying loader", name)
         helper
           .card(name)
           .flatMap(hc =>
             hc match {
               case Some(c) =>
-                store(c) >>> Task.succeed(Option(c))
+                for (_ <- store(c)) yield Option(c)
               case None    =>
-                Task.succeed(None)
+                ZIO.succeed(None)
             }
           )
     }

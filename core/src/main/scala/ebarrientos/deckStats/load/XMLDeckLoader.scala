@@ -3,7 +3,7 @@ package ebarrientos.deckStats.load
 import java.io.File
 import ebarrientos.deckStats.basics.{Card, Deck}
 import scala.xml.Elem
-import zio.IO
+import zio.Task
 import java.awt.CardLayout
 import zio.ZIO
 import org.slf4j.LoggerFactory
@@ -15,7 +15,6 @@ import ebarrientos.deckStats.basics.DeckEntry
 case class XMLDeckLoader(
     definition: Elem,
     loader: CardLoader,
-    parallelFactor: Int = 4
 ) extends DeckLoader {
 
   def this(file: File, loader: CardLoader) =
@@ -25,7 +24,7 @@ case class XMLDeckLoader(
 
   val log = LoggerFactory.getLogger(getClass())
 
-  override def load(): ZIO[Any, Throwable, Deck] = {
+  override def load(): Task[Deck] = {
     // This will throw a NoSuchElementException if there is no main deck
     val maindeck =
       (definition \\ "zone").filter(n => (n \ "@name").text == "main").head
@@ -37,7 +36,7 @@ case class XMLDeckLoader(
 
     log.debug("Found {} distinct cards", cardinfo.size)
 
-    val cards: Seq[IO[Throwable, Option[DeckEntry]]] = cardinfo.map {
+    val cards: Seq[Task[Option[DeckEntry]]] = cardinfo.map {
       case (name, number) =>
         val card = loader.card(name)
         // (1 to number.toInt).map(_ => card)
@@ -45,8 +44,8 @@ case class XMLDeckLoader(
     }
 
     log.debug("Collect all results into list of maybe cards")
-    val tmp1: IO[Throwable, Seq[Option[DeckEntry]]] =
-      IO.collectAllParN(parallelFactor)(cards)
+    val tmp1: Task[Seq[Option[DeckEntry]]] =
+      ZIO.collectAllPar(cards)
 
     log.debug("Map into a deck")
     tmp1.map(cs => Deck(cs.flatten))

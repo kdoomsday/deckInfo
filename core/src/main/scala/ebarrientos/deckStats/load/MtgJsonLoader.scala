@@ -7,7 +7,7 @@ import io.circe.Decoder.Result
 import io.circe._
 import io.circe.generic.semiauto._
 import io.circe.parser._
-import zio.IO
+import zio._
 
 class MtgJsonLoader(source: => String) extends CardLoader with LoadUtils {
   val manaParseFunc: String => Seq[Mana] = MtgJsonParser.parseAll(MtgJsonParser.cost, _).get
@@ -16,7 +16,7 @@ class MtgJsonLoader(source: => String) extends CardLoader with LoadUtils {
     byName(name).map(_.toOption.map(toCard _))
 
   private[this] def byName(name: String): IO[ParsingFailure, Result[Carta]] =
-    IO.fromEither {
+    ZIO.fromEither {
       parse(source).map { json =>
         json.hcursor
           .downField(name)

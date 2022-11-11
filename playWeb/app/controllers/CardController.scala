@@ -13,7 +13,6 @@ import ebarrientos.deckStats.config.CoreConfig
 import scala.concurrent.ExecutionContext
 import java.util.concurrent.Executors
 import ebarrientos.deckStats.load.MagicIOLoader
-import ebarrientos.deckStats.load.H2DBDoobieLoader
 import ebarrientos.deckStats.queries.{DeckCalc, DeckObject}
 import pureconfig.error.ConfigReaderFailures
 import ebarrientos.deckStats.load.CardLoader
@@ -35,10 +34,12 @@ import java.nio.file.Files
 import play.api.mvc.MultipartFormData
 import play.api.mvc.Result
 import ebarrientos.deckStats.load.NaturalDeckLoader
+import ebarrientos.deckStats.load.H2DBQuillLoader
+import ebarrientos.deckStats.run
 
 class CardController @Inject() (
     val controllerComponents: ControllerComponents,
-    runner: ZioRunner
+    runner: run.ZioRunner
 ) extends BaseController
     with Circe {
 
@@ -46,7 +47,7 @@ class CardController @Inject() (
 
   def card(name: String) = Action { implicit request: Request[AnyContent] =>
     val res: ZIO[Any, Serializable, Result] = for {
-      l   <- CardController.loader
+      l   <- CardController.loader(runner)
       c   <- l.card(name)
       card = c.getOrElse(CardController.nullCard)
     } yield Ok(card.asJson)
@@ -70,7 +71,7 @@ class CardController @Inject() (
 
         val res: ZIO[Any, Serializable, DeckObject] =
           for {
-            deckLoader <- CardController.xmlDeckLoader(realFile.toFile())
+            deckLoader <- CardController.xmlDeckLoader(realFile.toFile(), runner)
             deck       <- deckLoader.load()
             deckObject  = {
               val dobj = DeckCalc.fullCalc(deck); log.debug(s"=> $dobj"); dobj
@@ -91,7 +92,7 @@ class CardController @Inject() (
 
     r.fold(BadRequest("No deck"))(text => {
       val res = CardController
-        .naturalDeckLoader(text)
+        .naturalDeckLoader(text, runner)
         .flatMap(_.load())
         .map(deck => DeckCalc.fullCalc(deck))
       Ok(runner.run(res).asJson)
@@ -102,21 +103,20 @@ class CardController @Inject() (
 private object CardController {
 
   /** Card loader a usar para servir el contenido */
-  val loader: ZIO[Any, ConfigReaderFailures, CardLoader] = {
+  def loader(runner: run.ZioRunner): ZIO[Any, ConfigReaderFailures, CardLoader] = {
     for {
       config    <- ZIO.fromEither(ConfigSource.default.load[CoreConfig])
-      ec         = ExecutionContext.fromExecutorService(Executors.newCachedThreadPool())
-      cardLoader = new H2DBDoobieLoader(MagicIOLoader, config, ec)
+      cardLoader = new H2DBQuillLoader(MagicIOLoader, config, runner)
     } yield cardLoader
   }
 
   /** Deck loader to process deck requests. Depends on the loader */
-  def xmlDeckLoader(f: File): ZIO[Any, ConfigReaderFailures, XMLDeckLoader] =
-    loader.map(l => new XMLDeckLoader(f, l))
+  def xmlDeckLoader(f: File, runner: run.ZioRunner): ZIO[Any, ConfigReaderFailures, XMLDeckLoader] =
+    loader(runner).map(l => new XMLDeckLoader(f, l))
 
   /** Natural deck loader. Depends on the loader */
-  def naturalDeckLoader(text: String) =
-    loader.map(l => NaturalDeckLoader(text, l))
+  def naturalDeckLoader(text: String, runner: run.ZioRunner) =
+    loader(runner).map(l => NaturalDeckLoader(text, l))
 
   /** Carta que indica que nada se consiguio */
   val nullCard: Card = Card(Seq(), "Not found", Set())

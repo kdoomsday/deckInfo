@@ -5,12 +5,12 @@ import ebarrientos.deckStats.basics.Card
 import ebarrientos.deckStats.load.utils.LoadUtils
 import scala.util.{ Success, Try }
 import scala.xml.Elem
-import zio.IO
+import zio._
 
 /** CardLoader that takes its info from an XML file. */
 class XMLCardLoader(xmlFile: String) extends CardLoader with LoadUtils {
 	private[this] lazy val ioCards: IO[Exception, Elem] =
-    IO.fromEither(et2ee(Try(scala.xml.XML.load(xmlFile)).toEither))
+    ZIO.fromEither(et2ee(Try(scala.xml.XML.load(xmlFile)).toEither))
 
   // Either[Throwable, A] => Either[Exception, A] (just wraps the throwable)
   private[this] def et2ee[A](e: Either[Throwable, A]): Either[Exception, A] =

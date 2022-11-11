@@ -2,7 +2,9 @@ package ebarrientos.deckStats.load
 
 import utest._
 import ebarrientos.deckStats.basics.Creature
+import ebarrientos.deckStats.TestHelper
 import org.slf4j.LoggerFactory
+import zio.Unsafe
 
 object MagicIOLoaderTest extends TestSuite {
   val log = LoggerFactory.getLogger(getClass())
@@ -27,7 +29,7 @@ object MagicIOLoaderTest extends TestSuite {
         }
       )
 
-      zio.Runtime.default.unsafeRun(t)
+      TestHelper.run(t)
     }
   }
 }

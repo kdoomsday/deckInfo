@@ -14,7 +14,7 @@ object XMLDeckLoaderTests extends TestSuite {
     val loader = new XMLDeckLoader(file, DummyObjects.dummyCardLoader)
     val loadedF = loader.load()
 
-    val res = zio.Runtime.default.unsafeRun(loadedF)
+    val res = TestHelper.run(loadedF)
 
     test("numberEntries") {
       assert(res.cards.size == 2)

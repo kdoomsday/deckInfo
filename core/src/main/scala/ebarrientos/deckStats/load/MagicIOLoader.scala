@@ -11,6 +11,7 @@ import ebarrientos.deckStats.basics.CardType
 import ebarrientos.deckStats.basics.Supertype
 import org.slf4j.LoggerFactory
 import ebarrientos.deckStats.stringParsing.MtgJsonParser.{cost, parseAll}
+import zio.ZIO
 
 /** Loader para cargar información de api.magicthegathering.io */
 object MagicIOLoader extends CardLoader with LoadUtils with URLUtils {
@@ -66,7 +67,7 @@ object MagicIOLoader extends CardLoader with LoadUtils with URLUtils {
       )
     }
 
-    IO.effect {
+    ZIO.attempt {
       val cardJsonResponse: Response = requests.get(
         baseUrl,
         params = Map("name" -> name),

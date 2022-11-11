@@ -1,9 +1,7 @@
 package ebarrientos.deckStats.load
 
 import ebarrientos.deckStats.basics.Deck
-import zio.IO
-import zio.UIO
-import zio.Task
+import zio._
 import ebarrientos.deckStats.basics.DeckEntry
 
 /** Deck loader that loads a deck that looks like:
@@ -20,7 +18,7 @@ import ebarrientos.deckStats.basics.DeckEntry
 class NaturalDeckLoader(text: String, loader: CardLoader) extends DeckLoader {
 
   override def load(): Task[Deck] =
-    Task
+    ZIO
       .collectAllPar(
         text
           .split("\n")
@@ -46,7 +44,7 @@ class NaturalDeckLoader(text: String, loader: CardLoader) extends DeckLoader {
   def parseCardDef(odef: Option[(String, String)]): Task[Option[DeckEntry]] =
     odef
       .map { case (copiesS, name) =>
-        if (name == "") Task.succeed(Option.empty)
+        if (name == "") ZIO.succeed(Option.empty)
         else {
           val amount =
             if (copiesS == "") 1
@@ -54,7 +52,7 @@ class NaturalDeckLoader(text: String, loader: CardLoader) extends DeckLoader {
           loader.card(name).map(_.map(c => DeckEntry(c, amount)))
         }
       }
-      .getOrElse(Task.succeed(None))
+      .getOrElse(ZIO.succeed(None))
 }
 
 object NaturalDeckLoader {
