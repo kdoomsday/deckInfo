@@ -91,14 +91,16 @@ class H2DBQuillLoader(val helper: CardLoader, config: CoreConfig, runner: ZioRun
       .run(q)
       .provide(dataSource)
       .map(_.headOption)
+      .catchAll { ex =>
+        ZIO.succeed(log.warn(s"Error loading from DB: ${ex.getMessage}")) *> ZIO.succeed(None)
+      }
   }
 
   protected def store(c: Card): Task[Unit] =
     ctx
       .run(quote { query[Card].insertValue(lift(c)) })
       .provide(dataSource)
-      // .tap(_ => ZIO.succeed(log.info("{} stored", c.name)))
-      .tap(_ => zio.Console.printLine(s"Card ${c.name} stored"))
+      .tap(_ => ZIO.succeed(log.info("{} stored", c.name)))
       .map(_ => ())
 
   /** Attempt to run table creation */
