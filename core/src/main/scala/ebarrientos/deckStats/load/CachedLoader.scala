@@ -10,15 +10,13 @@ import zio._
 class CachedLoader(private val l: CardLoader) extends CardLoader {
   private[this] val map = mutable.HashMap[String, Card]()
 
-
   def card(name: String): Task[Option[Card]] =
     if (map contains name) ZIO.succeed(map.get(name))
     else {
-      val ioCard: Task[Option[Card]] = l.card(name)
       for {
-        oc <- ioCard
+        oc <- l.card(name)
       } yield {
-        for (c <- oc) (map(name) = c)
+        oc.foreach(c => map(name) = c)
         oc
       }
     }

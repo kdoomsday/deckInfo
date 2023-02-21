@@ -8,13 +8,15 @@ import java.awt.CardLayout
 import zio.ZIO
 import org.slf4j.LoggerFactory
 import ebarrientos.deckStats.basics.DeckEntry
+import scala.util.Success
+import scala.util.Failure
 
 /** Deck loader that loads the information from an XML file. The card loader provides the card
-  *  information.
+  * information.
   */
 case class XMLDeckLoader(
     definition: Elem,
-    loader: CardLoader,
+    loader: CardLoader
 ) extends DeckLoader {
 
   def this(file: File, loader: CardLoader) =
@@ -36,18 +38,22 @@ case class XMLDeckLoader(
 
     log.debug("Found {} distinct cards", cardinfo.size)
 
-    val cards: Seq[Task[Option[DeckEntry]]] = cardinfo.map {
-      case (name, number) =>
-        val card = loader.card(name)
-        // (1 to number.toInt).map(_ => card)
-        card.map(maybeCard => maybeCard.map(c => DeckEntry(c, number.toInt)))
+    val cards: Seq[ZIO[Any, Throwable, Option[DeckEntry]]] = cardinfo.map { case (name, number) =>
+      loader
+        .card(name)
+        .tap(c => ZIO.succeed(log.info(s"Got $c from helper loader")))
+        .map(maybeCard => maybeCard.map(c => DeckEntry(c, number.toInt)))
     }
 
     log.debug("Collect all results into list of maybe cards")
-    val tmp1: Task[Seq[Option[DeckEntry]]] =
-      ZIO.collectAllPar(cards)
 
-    log.debug("Map into a deck")
-    tmp1.map(cs => Deck(cs.flatten))
+    ZIO.collectAll(cards)
+      .tap(_ => ZIO.succeed(log.debug("Map into a deck")))
+      .map { cs =>
+        log.debug("Begin get deck entries")
+        val deckEntries = cs.flatten
+        log.debug("Got entries, create deck")
+        Deck(deckEntries)
+      }
   }
 }

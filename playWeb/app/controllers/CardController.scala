@@ -1,41 +1,47 @@
 package controllers
 
-import play.api.mvc.Request
-import play.api.mvc.AnyContent
-import play.mvc.Action
-import play.api.mvc.BaseController
-import play.api.mvc.ControllerComponents
-import javax.inject.Inject
-import zio.ZIO
-import pureconfig.ConfigSource
-import pureconfig.generic.auto._
-import ebarrientos.deckStats.config.CoreConfig
-import scala.concurrent.ExecutionContext
-import java.util.concurrent.Executors
-import ebarrientos.deckStats.load.MagicIOLoader
-import ebarrientos.deckStats.queries.{DeckCalc, DeckObject}
-import pureconfig.error.ConfigReaderFailures
-import ebarrientos.deckStats.load.CardLoader
+import com.fasterxml.jackson.core.PrettyPrinter
+import com.zaxxer.hikari.HikariConfig
+import com.zaxxer.hikari.HikariDataSource
 import ebarrientos.deckStats.basics.Card
-// import play.api.libs.json.Json
+import ebarrientos.deckStats.basics.Land
+import ebarrientos.deckStats.config.CoreConfig
+import ebarrientos.deckStats.load.CardLoader
+import ebarrientos.deckStats.load.DeckLoader
+import ebarrientos.deckStats.load.H2DBQuillLoader
+import ebarrientos.deckStats.load.MagicIOLoader
+import ebarrientos.deckStats.load.NaturalDeckLoader
+import ebarrientos.deckStats.load.XMLDeckLoader
+import ebarrientos.deckStats.math.Calc
+import ebarrientos.deckStats.queries.DeckCalc
+import ebarrientos.deckStats.queries.DeckObject
+import ebarrientos.deckStats.run
 import io.circe.generic.auto._
 import io.circe.syntax._
+import org.h2.jdbcx.JdbcDataSource
+import play.api.Logger
 import play.api.http.Writeable
 import play.api.libs.circe.Circe
-import play.api.Logger
-import com.fasterxml.jackson.core.PrettyPrinter
-import ebarrientos.deckStats.load.XMLDeckLoader
-import java.io.File
-import ebarrientos.deckStats.load.DeckLoader
-import ebarrientos.deckStats.math.Calc
-import ebarrientos.deckStats.basics.Land
-import java.nio.file.Paths
-import java.nio.file.Files
+import play.api.mvc.AnyContent
+import play.api.mvc.BaseController
+import play.api.mvc.ControllerComponents
 import play.api.mvc.MultipartFormData
+import play.api.mvc.Request
 import play.api.mvc.Result
-import ebarrientos.deckStats.load.NaturalDeckLoader
-import ebarrientos.deckStats.load.H2DBQuillLoader
-import ebarrientos.deckStats.run
+import play.mvc.Action
+import pureconfig.ConfigSource
+import pureconfig.error.ConfigReaderFailures
+import pureconfig.generic.auto._
+import zio.ZIO
+
+import java.io.File
+import java.nio.file.Files
+import java.nio.file.Paths
+import java.util.concurrent.Executors
+import javax.inject.Inject
+import javax.sql.DataSource
+import scala.concurrent.ExecutionContext
+import ebarrientos.deckStats.load.CachedLoader
 
 class CardController @Inject() (
     val controllerComponents: ControllerComponents,
@@ -45,10 +51,11 @@ class CardController @Inject() (
 
   val log = Logger(getClass())
 
+  private val loader: CardLoader = runner.run(CardController.loader(runner))
+
   def card(name: String) = Action { implicit request: Request[AnyContent] =>
     val res: ZIO[Any, Serializable, Result] = for {
-      l   <- CardController.loader(runner)
-      c   <- l.card(name)
+      c   <- loader.card(name)
       card = c.getOrElse(CardController.nullCard)
     } yield Ok(card.asJson)
 
@@ -64,18 +71,17 @@ class CardController @Inject() (
       .file("deck")
       .map { content =>
         val file     = Paths.get(content.filename).getFileName()
-        val realFile = Paths.get(s"/tmp/$file")
+        val realFile = Paths.get(s"$file-tmp")
         content.ref.moveTo(realFile, replace = true)
 
-        log.debug(s"Got file $file")
+        log.debug(s"Got file $file and made a temp in $realFile")
 
         val res: ZIO[Any, Serializable, DeckObject] =
           for {
-            deckLoader <- CardController.xmlDeckLoader(realFile.toFile(), runner)
+            deckLoader <- CardController.xmlDeckLoader(realFile.toFile(), loader, runner)
             deck       <- deckLoader.load()
-            deckObject  = {
-              val dobj = DeckCalc.fullCalc(deck); log.debug(s"=> $dobj"); dobj
-            }
+            deckObject  = DeckCalc.fullCalc(deck)
+            _          <- ZIO.succeed(log.debug(s"=> $deckObject"))
           } yield deckObject
 
         Ok(runner.run(res).asJson)
@@ -101,18 +107,21 @@ class CardController @Inject() (
 }
 
 private object CardController {
+  private[this] val log = Logger(classOf[CardController])
 
   /** Card loader a usar para servir el contenido */
   def loader(runner: run.ZioRunner): ZIO[Any, ConfigReaderFailures, CardLoader] = {
     for {
       config    <- ZIO.fromEither(ConfigSource.default.load[CoreConfig])
-      cardLoader = new H2DBQuillLoader(MagicIOLoader, config, runner)
+      ds = dataSource(config)
+      // cardLoader = new H2DBQuillLoader(MagicIOLoader, ds, runner)
+      cardLoader = new CachedLoader(MagicIOLoader)
     } yield cardLoader
   }
 
   /** Deck loader to process deck requests. Depends on the loader */
-  def xmlDeckLoader(f: File, runner: run.ZioRunner): ZIO[Any, ConfigReaderFailures, XMLDeckLoader] =
-    loader(runner).map(l => new XMLDeckLoader(f, l))
+  def xmlDeckLoader(f: File, loader: CardLoader, runner: run.ZioRunner): ZIO[Any, ConfigReaderFailures, XMLDeckLoader] =
+    ZIO.succeed(new XMLDeckLoader(f, loader))
 
   /** Natural deck loader. Depends on the loader */
   def naturalDeckLoader(text: String, runner: run.ZioRunner) =
@@ -120,4 +129,11 @@ private object CardController {
 
   /** Carta que indica que nada se consiguio */
   val nullCard: Card = Card(Seq(), "Not found", Set())
+
+  def dataSource(config: CoreConfig): DataSource = {
+    log.info(s"Starting datasource for ${config.dbConnectionUrl}")
+    val ds = new JdbcDataSource()
+    ds.setURL(config.dbConnectionUrl)
+    ds
+  }
 }

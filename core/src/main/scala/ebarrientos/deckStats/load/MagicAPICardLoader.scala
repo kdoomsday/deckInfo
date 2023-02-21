@@ -24,7 +24,7 @@ class MagicAPICardLoader extends CardLoader with LoadUtils with URLUtils {
     * Some with the map that contains all relevant values.
     */
   private[this] def cardMap(name: String): IO[Throwable, Option[Map[String, String]]] = {
-    import util.parsing.json.JSON
+    import scala.util.parsing.json.JSON
 
     for {
       cardStr <- ioReadUrl(s"http://stegriff.co.uk/host/magic/?name=$name")

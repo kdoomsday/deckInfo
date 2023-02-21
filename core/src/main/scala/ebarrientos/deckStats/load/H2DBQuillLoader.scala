@@ -14,7 +14,8 @@ import ebarrientos.deckStats.basics.Mana
 import ebarrientos.deckStats.basics.CardType
 import ebarrientos.deckStats.basics.Supertype
 import java.util.zip.ZipEntry
-import ebarrientos.deckStats.stringParsing.ManaParser.{cost, parseAll}
+// import ebarrientos.deckStats.stringParsing.ManaParser.{cost, parseAll}
+import ebarrientos.deckStats.stringParsing.MtgJsonParser
 import ebarrientos.deckStats.basics.ColoredMana
 import ebarrientos.deckStats.basics.White
 import ebarrientos.deckStats.basics.ColorlessMana
@@ -29,23 +30,26 @@ import java.nio.file.Path
 import zio.Ref
 import zio.UIO
 import zio.Unsafe
+import ebarrientos.deckStats.stringParsing.MtgJsonParser
 
 /** Card loader using quill to handle database queries
   *
   * @param helper [[CardLoader]] to fetch info if not present in this one
-  * @param config
+  * @param ds [[DataSource]] to use
+  * @param runner [[ZioRunner]] which will be used to ensure tables are initialized
   */
-class H2DBQuillLoader(val helper: CardLoader, config: CoreConfig, runner: ZioRunner)
+class H2DBQuillLoader(override val helper: CardLoader, ds: DataSource, runner: ZioRunner)
     extends CardLoader
     with StoringLoader
     with LoadUtils {
 
   // private val log = LoggerFactory.getLogger(getClass())
+  private val parser = MtgJsonParser
 
 
   /** DataSource layer for the dao */
   private val dataSource: ZLayer[Any, Throwable, DataSource] =
-    ZLayer.fromZIO(H2DBQuillLoader.ds(config))
+    ZLayer.fromZIO(ZIO.succeed(ds))
 
   private val ctx = new H2ZioJdbcContext(LowerCase)
   import ctx._
@@ -53,10 +57,10 @@ class H2DBQuillLoader(val helper: CardLoader, config: CoreConfig, runner: ZioRun
   // Encoders/Decoders
   // Mana
   implicit private val manaDecoder =
-    MappedEncoding[String, Seq[Mana]](costStr => parseAll(cost, costStr).get)
+    MappedEncoding[String, Seq[Mana]](costStr => parser.parseAll(parser.cost, costStr).get)
 
   implicit private val manaEncoder =
-    MappedEncoding[Seq[Mana], String](_.mkString)
+    MappedEncoding[Seq[Mana], String](cost => parser.stringify(cost))
 
   // Card types
   implicit private val cardTypeDecoder =
@@ -85,33 +89,36 @@ class H2DBQuillLoader(val helper: CardLoader, config: CoreConfig, runner: ZioRun
   // End Encoders/Decoders
 
   protected def retrieve(name: String): Task[Option[Card]] = {
-    log.debug("Asked to fetch {}", name)
+    log.debug("Asked to fetch [{}]", name)
     val q = quote { query[Card].filter(c => c.name == lift(name)) }
     ctx
       .run(q)
-      .provide(dataSource)
+      .tap(cs => ZIO.succeed(log.debug(s"Found $cs")))
       .map(_.headOption)
+      .tap(oc => ZIO.succeed(log.debug(s"QUILL >>> $oc")))
       .catchAll { ex =>
         ZIO.succeed(log.warn(s"Error loading from DB: ${ex.getMessage}")) *> ZIO.succeed(None)
       }
+      .provide(dataSource)
   }
 
   protected def store(c: Card): Task[Unit] =
     ctx
       .run(quote { query[Card].insertValue(lift(c)) })
-      .provide(dataSource)
       .tap(_ => ZIO.succeed(log.info("{} stored", c.name)))
       .map(_ => ())
+      .provide(dataSource)
 
   /** Attempt to run table creation */
   private def runInitScripts(): Task[Unit] = {
     def runSingle(path: Path): ZIO[DataSource, Throwable, Unit] = {
+      log.debug(s"Run script: $path")
       val source = scala.io.Source.fromFile(path.toFile())
       val text = source.getLines().mkString("\n")
       source.close()
       val createScript = quote { sql"#${text}".as[Update[Int]] }
       ctx.run(createScript)
-        .map(_ => ())
+        .unit
     }
 
     val scriptsPath = Paths.get("dbInitScripts/")
@@ -124,36 +131,4 @@ class H2DBQuillLoader(val helper: CardLoader, config: CoreConfig, runner: ZioRun
 
   /* Initialize the tables if necessary */
   runner.run(runInitScripts())
-}
-
-object H2DBQuillLoader {
-  private val dsRef: Ref[Option[HikariDataSource]] =
-    Unsafe.unsafe { implicit us =>
-      zio.Runtime.default
-        .unsafe
-        .run(Ref.make(Option.empty[HikariDataSource]))
-        .getOrThrow()
-    }
-
-  def ds(config: CoreConfig): Task[HikariDataSource] = {
-    for {
-      ds <- updateRef(dsRef, config)
-    } yield {
-      ds
-    }
-  }
-
-  private def updateRef(dsr: Ref[Option[HikariDataSource]],
-                        config: CoreConfig): UIO[HikariDataSource] = {
-
-    dsr.modify { ods =>
-      val res = ods.getOrElse {
-        val hc = new HikariConfig()
-        hc.setJdbcUrl(config.dbConnectionUrl)
-        hc.setDriverClassName(config.dbDriver)
-        new HikariDataSource(hc)
-      }
-      (res, Some(res))
-    }
-  }
 }

@@ -13,7 +13,7 @@ case class Card( cost: Seq[Mana],
                  subtypes: Set[String] = Set(),
                  text: String = "",
                  power: Int = 0,
-                 toughness: Int = 0  )
+                 toughness: Int = 0 )
 {
   val cmc: Int = cost.map(_.cmc).sum
   val manaValue = cmc

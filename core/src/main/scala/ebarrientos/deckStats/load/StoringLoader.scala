@@ -36,20 +36,19 @@ trait StoringLoader extends CardLoader {
   ): Task[Option[Card]] =
     ocard match {
       case o @ Some(_) =>
-        log.debug("[{}] was already stored. Using cached information")
+        log.debug("[{}] was already stored. Using cached information", name)
         ZIO.succeed(o)
 
       case None        =>
         log.info("[{}] was not found. Delegating to underlying loader", name)
         helper
           .card(name)
-          .flatMap(hc =>
-            hc match {
-              case Some(c) =>
-                for (_ <- store(c)) yield Option(c)
-              case None    =>
-                ZIO.succeed(None)
-            }
-          )
+          .flatMap {
+            case Some(c) =>
+              store(c) *> ZIO.succeed(Option(c))
+
+            case None    =>
+              ZIO.succeed(None)
+          }
     }
 }

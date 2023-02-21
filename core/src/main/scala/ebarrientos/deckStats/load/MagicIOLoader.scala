@@ -67,7 +67,8 @@ object MagicIOLoader extends CardLoader with LoadUtils with URLUtils {
       )
     }
 
-    ZIO.attempt {
+    ZIO.attemptBlocking {
+      log.info(s"Requesting card $name from MagicIOLoader")
       val cardJsonResponse: Response = requests.get(
         baseUrl,
         params = Map("name" -> name),

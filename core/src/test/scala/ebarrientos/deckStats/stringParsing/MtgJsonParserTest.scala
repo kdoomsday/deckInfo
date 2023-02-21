@@ -56,6 +56,7 @@ object MtgJsonParserTest extends TestSuite {
 
     "Multiple mana" - {
       * - assertManaList(Seq(ColoredMana(Black), GenericMana(1)), p("{1}{B}"))
+      * - assertManaList(Seq(GenericMana(1), ColoredMana(Black)), p("{1}{B}"))
       * - assertManaList(Seq(ColoredMana(White), ColoredMana(Blue)), p("{W}{U}"))
     }
 

@@ -7,5 +7,5 @@ import zio._
   * el helper de otro loader no consiga nada
   */
 object NullCardLoader extends CardLoader {
-  def card(name: String): Task[Option[Card]] = ZIO.succeed(None)
+  def card(name: String): Task[Option[Card]] = ZIO.none
 }

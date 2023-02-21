@@ -29,7 +29,7 @@ object DummyObjects {
     "Tricia McMillan",
     Set(Creature),
     Set(Legendary),
-    Set("Space Adventurer"),
+    Set("Human", "Adventurer"),
     "text",
     1,
     2
@@ -51,7 +51,7 @@ object DummyObjects {
     "Zaphod BeebleBrox",
     Set(Creature),
     Set(Legendary),
-    Set("Space Adventurer"),
+    Set("Regent", "Adventurer"),
     "text",
     2,
     1
@@ -92,23 +92,24 @@ object DummyObjects {
     Set(Legendary),
     Set(),
     """|(5): Flip a coin. Heads, you win the game.
-                            |Tails you lose the game""".stripMargin,
+       |Tails you lose the game""".stripMargin,
     0,
     0
   )
 
   /** Dummy deck loader to be used for tests */
   val dummyCardLoader: CardLoader = new CardLoader {
+
     def card(name: String): Task[Option[Card]] =
       ZIO.succeed(name match {
-        case "Arthur Dent"                               => Some(arthur)
-        case "Tricia McMillan"                           => Some(trillian)
-        case "Ford Prefect"                              => Some(ford)
-        case "Zaphod BeebleBrox"                         => Some(zaphod)
-        case "Marvin the Paranoid Android"               => Some(marvin)
-        case "The Restaurant at the End of the Universe" => Some(restaurant)
-        case "The Heart of Gold"                         => Some(heartOfGold)
-        case _                                           => None
+        case arthur.name      => Some(arthur)
+        case trillian.name    => Some(trillian)
+        case ford.name        => Some(ford)
+        case zaphod.name      => Some(zaphod)
+        case marvin.name      => Some(marvin)
+        case restaurant.name  => Some(restaurant)
+        case heartOfGold.name => Some(heartOfGold)
+        case _                => None
       })
   }
 }

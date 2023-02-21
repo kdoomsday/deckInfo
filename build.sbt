@@ -3,7 +3,7 @@
  ************/
 lazy val root = project
   .in(file("."))
-  .aggregate(core, cliView, web, playWeb)
+  .aggregate(core, web, playWeb)
   .settings(
     name := "deckinfo",
     inThisBuild(
@@ -28,13 +28,8 @@ lazy val core = (project in file("core"))
     libraryDependencies ++= deps,
     libraryDependencies ++= circeDeps,
     libraryDependencies ++= testDeps,
-    libraryDependencies  += guice
-  )
-
-lazy val cliView = (project in file("cliView"))
-  .dependsOn(core)
-  .settings(
-    compilerSettings
+    libraryDependencies  += guice,
+    libraryDependencies ++= logbackDeps
   )
 
 lazy val web = (project in file("web"))
@@ -60,11 +55,13 @@ lazy val playWeb = (project in file("playWeb"))
 /****************
  * DEPENDENCIES *
  ****************/
-val zioVersion      = "2.0.2"
-val zioCatsVersion  = "3.3.0"
-val doobieVersion   = "0.8.8"
-val utestVersion    = "0.7.2"
-val quillVersion    = "4.6.0"
+val zioVersion          = "2.0.2"
+val zioCatsVersion      = "3.3.0"
+val doobieVersion       = "0.8.8"
+val utestVersion        = "0.7.2"
+val mockitoScalaVersion = "1.16.3"
+val quillVersion        = "4.6.0"
+val logbackVersion      = "1.4.5"
 
 lazy val deps = Seq(
   "com.typesafe.slick"     %% "slick"                    % "3.3.2",
@@ -81,12 +78,12 @@ lazy val deps = Seq(
   "org.tpolecat"           %% "doobie-h2"                % doobieVersion,
   "io.getquill"            %% "quill-jdbc"               % quillVersion,
   "io.getquill"            %% "quill-jdbc-zio"           % quillVersion
-
 )
 
 lazy val testDeps = Seq(
   // Test dependencies
-  "com.lihaoyi" %% "utest" % utestVersion % "test"
+  "com.lihaoyi" %% "utest"         % utestVersion        % Test,
+  "org.mockito" %% "mockito-scala" % mockitoScalaVersion % Test
 )
 
 val circeVersion = "0.13.0"
@@ -107,4 +104,10 @@ lazy val http4sDeps = Seq(
   "org.http4s" %% "http4s-twirl"
 ).map(_ % http4sVersion)
 
+lazy val logbackDeps = Seq(
+  "ch.qos.logback" % "logback-classic" % logbackVersion % Test
+)
+
 enablePlugins(JavaAppPackaging)
+
+ThisBuild / run / fork := true

@@ -15,6 +15,7 @@ this functionality) was created.
    - Local storage
      - XMLCardLoader    :: Load from an XML file.
      - H2DBDoobieLoader :: Load from an H2DB database
+     - H2DBQuillLoader  :: Load from an H2DB database using Quill
    - Remote
      - MagicIOLoader      :: Load from =api.magicthegathering.io=
      - ScryCardLoader     :: /Deprecated/
@@ -24,7 +25,7 @@ this functionality) was created.
        information the first time. Useful to avoid loading from remote sources
        more than once.
      - MtgJsonLoader    :: Loads cards that are in MtgJson format. It takes the
-       JSon directly and transforms it into a card.
+       Json directly and transforms it into a card.
 ** Calculating deck information
    The object [[file:core/src/main/scala/ebarrientos/deckStats/math/Calc.scala::package ebarrientos.deckStats.math][ebarrientos.deckStats.math.Calc]] offers methods for calculating
    metrics of a deck. It has methods for obtaining averages, counts, etc.
