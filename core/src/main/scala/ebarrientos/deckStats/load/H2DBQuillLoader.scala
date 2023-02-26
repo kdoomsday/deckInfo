@@ -46,7 +46,6 @@ class H2DBQuillLoader(override val helper: CardLoader, ds: DataSource, runner: Z
   // private val log = LoggerFactory.getLogger(getClass())
   private val parser = MtgJsonParser
 
-
   /** DataSource layer for the dao */
   private val dataSource: ZLayer[Any, Throwable, DataSource] =
     ZLayer.fromZIO(ZIO.succeed(ds))
@@ -74,7 +73,9 @@ class H2DBQuillLoader(override val helper: CardLoader, ds: DataSource, runner: Z
   // Supertypes
   implicit private val superTypeDecoder =
     MappedEncoding[String, Set[Supertype]](
-      _.split(" ").map(Supertype.apply).toSet
+      _.split(" ").collect {
+        case st if st.nonEmpty => Supertype.apply(st)
+      }.toSet
     )
 
   implicit private val superTypeEncoder =
@@ -90,12 +91,11 @@ class H2DBQuillLoader(override val helper: CardLoader, ds: DataSource, runner: Z
 
   protected def retrieve(name: String): Task[Option[Card]] = {
     log.debug("Asked to fetch [{}]", name)
-    val q = quote { query[Card].filter(c => c.name == lift(name)) }
+    val q = quote(query[Card].filter(c => c.name == lift(name)))
     ctx
       .run(q)
       .tap(cs => ZIO.succeed(log.debug(s"Found $cs")))
       .map(_.headOption)
-      .tap(oc => ZIO.succeed(log.debug(s"QUILL >>> $oc")))
       .catchAll { ex =>
         ZIO.succeed(log.warn(s"Error loading from DB: ${ex.getMessage}")) *> ZIO.succeed(None)
       }
@@ -104,7 +104,7 @@ class H2DBQuillLoader(override val helper: CardLoader, ds: DataSource, runner: Z
 
   protected def store(c: Card): Task[Unit] =
     ctx
-      .run(quote { query[Card].insertValue(lift(c)) })
+      .run(quote(query[Card].insertValue(lift(c))))
       .tap(_ => ZIO.succeed(log.info("{} stored", c.name)))
       .map(_ => ())
       .provide(dataSource)
@@ -113,18 +113,18 @@ class H2DBQuillLoader(override val helper: CardLoader, ds: DataSource, runner: Z
   private def runInitScripts(): Task[Unit] = {
     def runSingle(path: Path): ZIO[DataSource, Throwable, Unit] = {
       log.debug(s"Run script: $path")
-      val source = scala.io.Source.fromFile(path.toFile())
-      val text = source.getLines().mkString("\n")
+      val source       = scala.io.Source.fromFile(path.toFile())
+      val text         = source.getLines().mkString("\n")
       source.close()
-      val createScript = quote { sql"#${text}".as[Update[Int]] }
-      ctx.run(createScript)
-        .unit
+      val createScript = quote(sql"#${text}".as[Update[Int]])
+      ctx.run(createScript).unit
     }
 
-    val scriptsPath = Paths.get("dbInitScripts/")
+    val scriptsPath    = Paths.get("dbInitScripts/")
     val scriptIterator = Files.list(scriptsPath).iterator().asScala.toList.sorted
 
-    ZIO.collectAll(scriptIterator.map(runSingle))
+    ZIO
+      .collectAll(scriptIterator.map(runSingle))
       .provide(dataSource)
       .unit
   }

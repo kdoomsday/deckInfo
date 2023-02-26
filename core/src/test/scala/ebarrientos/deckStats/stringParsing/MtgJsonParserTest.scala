@@ -63,5 +63,10 @@ object MtgJsonParserTest extends TestSuite {
     "Snow mana" - {
       * - assertManaList(Seq(GenericMana(1, Set(SnowMana))), p("{S}"))
     }
+
+    "parse and stringify" - {
+      val mana = "{2}{W}{W}"
+      assert(MtgJsonParser.stringify(p(mana)) == mana)
+    }
   }
 }

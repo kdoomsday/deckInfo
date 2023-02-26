@@ -114,8 +114,8 @@ private object CardController {
     for {
       config    <- ZIO.fromEither(ConfigSource.default.load[CoreConfig])
       ds = dataSource(config)
-      // cardLoader = new H2DBQuillLoader(MagicIOLoader, ds, runner)
-      cardLoader = new CachedLoader(MagicIOLoader)
+      cardLoader = new H2DBQuillLoader(MagicIOLoader, ds, runner)
+      // cardLoader = new CachedLoader(MagicIOLoader)
     } yield cardLoader
   }
 

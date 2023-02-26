@@ -97,6 +97,17 @@ object DummyObjects {
     0
   )
 
+  val petunias = Card(
+    cost = Seq(GenericMana(0)),
+    name = "Bowl of Petunias",
+    types = Set(Creature),
+    supertypes = Set.empty,
+    subtypes = Set.empty,
+    text = "Bowl of Petunias is Green",
+    power = 0,
+    toughness = 1
+  )
+
   /** Dummy deck loader to be used for tests */
   val dummyCardLoader: CardLoader = new CardLoader {
 

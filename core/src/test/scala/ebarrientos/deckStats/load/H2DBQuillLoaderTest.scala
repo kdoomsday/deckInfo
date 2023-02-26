@@ -33,9 +33,10 @@ object H2DBQuillLoaderTest extends TestSuite {
   /** Loader that always returns the same single card */
   val testLoader = new CardLoader() {
     override def card(name: String) = name match {
-      case DummyObjects.arthur.name => ZIO.some(DummyObjects.arthur)
-      case DummyObjects.zaphod.name => ZIO.some(DummyObjects.zaphod)
-      case _                        => ZIO.none
+      case DummyObjects.arthur.name   => ZIO.some(DummyObjects.arthur)
+      case DummyObjects.zaphod.name   => ZIO.some(DummyObjects.zaphod)
+      case DummyObjects.petunias.name => ZIO.some(DummyObjects.petunias)
+      case _                          => ZIO.none
     }
   }
 
@@ -77,6 +78,19 @@ object H2DBQuillLoaderTest extends TestSuite {
 
       assert(ores.isDefined)
       assert(ores.get == DummyObjects.zaphod)
+    }
+
+    test("storing and loading a card without supertypes finds it") {
+      val la = new H2DBQuillLoader(testLoader, ds, runner)
+      val lb = new H2DBQuillLoader(NullCardLoader, ds, runner)
+
+      val res = la.card(DummyObjects.petunias.name) *> lb.card(DummyObjects.petunias.name)
+      val ores = runner.run(res)
+
+      assert(ores.isDefined)
+      val card = ores.get
+      assert(card.name == DummyObjects.petunias.name)
+      assert(card.supertypes.isEmpty)
     }
   }
 }
