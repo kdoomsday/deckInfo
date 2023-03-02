@@ -14,12 +14,15 @@ this functionality) was created.
    queries information from.
    - Local storage
      - XMLCardLoader    :: Load from an XML file.
-     - H2DBDoobieLoader :: Load from an H2DB database
+     - +H2DBDoobieLoader+ :: Load from an H2DB database using Doobie /Deprecated/
+       - This was removed as part of the move to ZIO2. We are using the Quill
+         loader instead
      - H2DBQuillLoader  :: Load from an H2DB database using Quill
+       - DB configuration can be set in application.conf
    - Remote
      - MagicIOLoader      :: Load from =api.magicthegathering.io=
-     - ScryCardLoader     :: /Deprecated/
-     - MagicAPICardLoader :: Load from http://stegriff.co.uk/ /Deprecated/
+     - +ScryCardLoader+     :: Load from scry.me.uk /Deprecated/
+     - +MagicAPICardLoader+ :: Load from http://stegriff.co.uk/ /Deprecated/
    - Other
      - WeakCachedLoader :: Card info cache. It requires a helper loader to get
        information the first time. Useful to avoid loading from remote sources
