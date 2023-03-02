@@ -66,7 +66,7 @@ val logbackVersion      = "1.4.5"
 lazy val deps = Seq(
   "com.typesafe.slick"     %% "slick"                    % "3.3.2",
   "com.h2database"          % "h2"                       % "1.3.148",
-  "org.scala-lang.modules" %% "scala-parser-combinators" % "1.1.2",
+  "org.scala-lang.modules" %% "scala-parser-combinators" % "2.2.0",
   "org.scala-lang.modules" %% "scala-xml"                % "2.0.0-M1",
   // "org.json4s"             %% "json4s-jackson"           % "3.7.0-M4",
   "org.json4s"             %% "json4s-native"            % "3.7.0-M4",

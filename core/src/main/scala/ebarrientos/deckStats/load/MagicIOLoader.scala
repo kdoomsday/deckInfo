@@ -4,7 +4,7 @@ import ebarrientos.deckStats.basics.{Card, Mana}
 import ebarrientos.deckStats.load.utils.{LoadUtils, URLUtils}
 import org.json4s._
 import org.json4s.native.JsonMethods._
-import zio.IO
+import zio.Task
 import requests.Response
 import scala.annotation.tailrec
 import ebarrientos.deckStats.basics.CardType
@@ -19,7 +19,7 @@ object MagicIOLoader extends CardLoader with LoadUtils with URLUtils {
 
   private[this] val baseUrl = "https://api.magicthegathering.io/v1/cards"
 
-  def card(name: String): IO[Throwable, Option[Card]] = {
+  def card(name: String): Task[Option[Card]] = {
     def getStr(value: JValue): String = value match {
       case JString(s) => s
       case _          => ""
@@ -31,7 +31,7 @@ object MagicIOLoader extends CardLoader with LoadUtils with URLUtils {
     }
 
     /** In an array of results, find the one that fully matches the expected name.
-      * This is important because teh API finds partial matches (e.g. when
+      * This is important because the API finds partial matches (e.g. when
       * searching for 'Wasteland' a result will come in for 'Wasteland Scorpion'
       */
     def findObject(arr: JArray): Option[JValue] = {
