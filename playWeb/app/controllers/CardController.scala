@@ -3,18 +3,11 @@ package controllers
 import com.fasterxml.jackson.core.PrettyPrinter
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
-import ebarrientos.deckStats.basics.Card
-import ebarrientos.deckStats.basics.Land
+import ebarrientos.deckStats.basics.{ Card, Land }
 import ebarrientos.deckStats.config.CoreConfig
-import ebarrientos.deckStats.load.CardLoader
-import ebarrientos.deckStats.load.DeckLoader
-import ebarrientos.deckStats.load.H2DBQuillLoader
-import ebarrientos.deckStats.load.MagicIOLoader
-import ebarrientos.deckStats.load.NaturalDeckLoader
-import ebarrientos.deckStats.load.XMLDeckLoader
+import ebarrientos.deckStats.load._
 import ebarrientos.deckStats.math.Calc
-import ebarrientos.deckStats.queries.DeckCalc
-import ebarrientos.deckStats.queries.DeckObject
+import ebarrientos.deckStats.queries.{ DeckCalc, DeckObject }
 import ebarrientos.deckStats.run
 import io.circe.generic.auto._
 import io.circe.syntax._
@@ -23,31 +16,25 @@ import play.api.Logger
 import play.api.http.Writeable
 import play.api.libs.circe.Circe
 import play.api.mvc.AnyContent
-import play.api.mvc.BaseController
-import play.api.mvc.ControllerComponents
-import play.api.mvc.MultipartFormData
-import play.api.mvc.Request
-import play.api.mvc.Result
+import play.api.mvc.{ BaseController, ControllerComponents, MultipartFormData, Request, Result }
 import play.mvc.Action
 import pureconfig.ConfigSource
 import pureconfig.error.ConfigReaderFailures
 import pureconfig.generic.auto._
+import zio.Task
 import zio.ZIO
 
 import java.io.File
-import java.nio.file.Files
-import java.nio.file.Paths
+import java.nio.file.{ Files, Paths, Path }
 import java.util.concurrent.Executors
 import javax.inject.Inject
 import javax.sql.DataSource
 import scala.concurrent.ExecutionContext
-import ebarrientos.deckStats.load.CachedLoader
 
 class CardController @Inject() (
     val controllerComponents: ControllerComponents,
     runner: run.ZioRunner
-) extends BaseController
-    with Circe {
+) extends BaseController with Circe {
 
   val log = Logger(getClass())
 
@@ -64,6 +51,9 @@ class CardController @Inject() (
 
   /** Service for querying info about a deck loaded as an xml file */
   def deckStats = Action(parse.multipartFormData) { implicit request =>
+    def deleteFile(path: Path): Task[Unit] =
+      ZIO.attempt(Files.delete(path)) *> ZIO.succeed(log.debug(s"Deleted file $path"))
+
     log.info("Call into deckStats")
 
     val r = request
@@ -81,6 +71,7 @@ class CardController @Inject() (
             deckLoader <- CardController.xmlDeckLoader(realFile.toFile(), loader, runner)
             deck       <- deckLoader.load()
             deckObject  = DeckCalc.fullCalc(deck)
+            _          <- deleteFile(realFile)
             _          <- ZIO.succeed(log.debug(s"=> $deckObject"))
           } yield deckObject
 
@@ -96,13 +87,13 @@ class CardController @Inject() (
   def naturalDeckStats = Action { implicit request =>
     val r = request.body.asText
 
-    r.fold(BadRequest("No deck"))(text => {
+    r.fold(BadRequest("No deck")) { text =>
       val res = CardController
         .naturalDeckLoader(text, runner)
         .flatMap(_.load())
         .map(deck => DeckCalc.fullCalc(deck))
       Ok(runner.run(res).asJson)
-    })
+    }
   }
 }
 
@@ -110,17 +101,20 @@ private object CardController {
   private[this] val log = Logger(classOf[CardController])
 
   /** Card loader a usar para servir el contenido */
-  def loader(runner: run.ZioRunner): ZIO[Any, ConfigReaderFailures, CardLoader] = {
+  def loader(runner: run.ZioRunner): ZIO[Any, ConfigReaderFailures, CardLoader] =
     for {
       config    <- ZIO.fromEither(ConfigSource.default.load[CoreConfig])
-      ds = dataSource(config)
+      ds         = dataSource(config)
       cardLoader = new H2DBQuillLoader(MagicIOLoader, ds, runner)
       // cardLoader = new CachedLoader(MagicIOLoader)
     } yield cardLoader
-  }
 
   /** Deck loader to process deck requests. Depends on the loader */
-  def xmlDeckLoader(f: File, loader: CardLoader, runner: run.ZioRunner): ZIO[Any, ConfigReaderFailures, XMLDeckLoader] =
+  def xmlDeckLoader(
+      f: File,
+      loader: CardLoader,
+      runner: run.ZioRunner
+  ): ZIO[Any, ConfigReaderFailures, XMLDeckLoader] =
     ZIO.succeed(new XMLDeckLoader(f, loader))
 
   /** Natural deck loader. Depends on the loader */
