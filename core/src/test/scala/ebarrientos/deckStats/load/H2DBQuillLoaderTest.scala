@@ -11,7 +11,6 @@ import utest._
 import ebarrientos.deckStats.run.ZioRunnerDefault
 import org.h2.jdbcx.JdbcDataSource
 
-
 /** Tests for [[H2DBQuillLoader]] */
 object H2DBQuillLoaderTest extends TestSuite {
 
@@ -22,23 +21,14 @@ object H2DBQuillLoaderTest extends TestSuite {
   )
 
   val runner = Unsafe.unsafe(implicit unsafe => new ZioRunnerDefault()(unsafe))
-  val ds = {
+
+  val ds     = {
     val jdbcds = new JdbcDataSource()
     jdbcds.setURL(config.dbConnectionUrl)
     jdbcds
   }
   val loader = new H2DBQuillLoader(NullCardLoader, ds, runner)
-  val r = zio.Runtime.default
-
-  /** Loader that always returns the same single card */
-  val testLoader = new CardLoader() {
-    override def card(name: String) = name match {
-      case DummyObjects.arthur.name   => ZIO.some(DummyObjects.arthur)
-      case DummyObjects.zaphod.name   => ZIO.some(DummyObjects.zaphod)
-      case DummyObjects.petunias.name => ZIO.some(DummyObjects.petunias)
-      case _                          => ZIO.none
-    }
-  }
+  val r      = zio.Runtime.default
 
   val tests = Tests {
     test("Load on empty produces empty") {
@@ -47,7 +37,7 @@ object H2DBQuillLoaderTest extends TestSuite {
     }
 
     test("storing and loading a card finds it") {
-      val la = new H2DBQuillLoader(testLoader, ds, runner)
+      val la = new H2DBQuillLoader(DummyObjects.dummyCardLoader, ds, runner)
       val lb = new H2DBQuillLoader(NullCardLoader, ds, runner)
 
       /* We use <la> to store it. Then <lb> goes to retrieve it and it should
@@ -56,7 +46,7 @@ object H2DBQuillLoaderTest extends TestSuite {
        * does not get it from that
        */
 
-      val res = la.card(DummyObjects.arthur.name) *> lb.card(DummyObjects.arthur.name)
+      val res  = la.card(DummyObjects.arthur.name) *> lb.card(DummyObjects.arthur.name)
       val ores = runner.run(res)
 
       assert(ores.isDefined)
@@ -64,7 +54,7 @@ object H2DBQuillLoaderTest extends TestSuite {
     }
 
     test("storing and loading a card with colorless mana finds it") {
-      val la = new H2DBQuillLoader(testLoader, ds, runner)
+      val la = new H2DBQuillLoader(DummyObjects.dummyCardLoader, ds, runner)
       val lb = new H2DBQuillLoader(NullCardLoader, ds, runner)
 
       /* We use <la> to store it. Then <lb> goes to retrieve it and it should
@@ -73,7 +63,7 @@ object H2DBQuillLoaderTest extends TestSuite {
        * does not get it from that
        */
 
-      val res = la.card(DummyObjects.zaphod.name) *> lb.card(DummyObjects.zaphod.name)
+      val res  = la.card(DummyObjects.zaphod.name) *> lb.card(DummyObjects.zaphod.name)
       val ores = runner.run(res)
 
       assert(ores.isDefined)
@@ -81,16 +71,34 @@ object H2DBQuillLoaderTest extends TestSuite {
     }
 
     test("storing and loading a card without supertypes finds it") {
-      val la = new H2DBQuillLoader(testLoader, ds, runner)
+      val la = new H2DBQuillLoader(DummyObjects.dummyCardLoader, ds, runner)
       val lb = new H2DBQuillLoader(NullCardLoader, ds, runner)
 
-      val res = la.card(DummyObjects.petunias.name) *> lb.card(DummyObjects.petunias.name)
+      val res  = la.card(DummyObjects.petunias.name) *> lb.card(DummyObjects.petunias.name)
       val ores = runner.run(res)
 
       assert(ores.isDefined)
       val card = ores.get
       assert(card.name == DummyObjects.petunias.name)
       assert(card.supertypes.isEmpty)
+    }
+
+    test("Loading multiple cards finds them") {
+      val loader = new H2DBQuillLoader(DummyObjects.dummyCardLoader, ds, runner)
+      val cards  = runner.run(
+        loader.cards(
+          DummyObjects.petunias.name,
+          DummyObjects.heartOfGold.name,
+          DummyObjects.trillian.name,
+          "nonexistent"
+        )
+      )
+
+      val names = cards.map(_.name)
+      assert(names.contains(DummyObjects.petunias.name))
+      assert(names.contains(DummyObjects.heartOfGold.name))
+      assert(names.contains(DummyObjects.trillian.name))
+      assert(!names.contains("nonexistent"))
     }
   }
 }

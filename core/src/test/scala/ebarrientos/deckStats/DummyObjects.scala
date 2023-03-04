@@ -120,6 +120,7 @@ object DummyObjects {
         case marvin.name      => Some(marvin)
         case restaurant.name  => Some(restaurant)
         case heartOfGold.name => Some(heartOfGold)
+        case petunias.name    => Some(petunias)
         case _                => None
       })
   }
