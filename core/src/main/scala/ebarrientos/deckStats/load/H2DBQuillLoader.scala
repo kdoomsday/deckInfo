@@ -38,12 +38,11 @@ import ebarrientos.deckStats.stringParsing.MtgJsonParser
   * @param ds [[DataSource]] to use
   * @param runner [[ZioRunner]] which will be used to ensure tables are initialized
   */
-class H2DBQuillLoader(override val helper: CardLoader, ds: DataSource, runner: ZioRunner)
+class H2DBQuillLoader(val helper: CardLoader, ds: DataSource, runner: ZioRunner)
     extends CardLoader
-    with StoringLoader
     with LoadUtils {
 
-  // private val log = LoggerFactory.getLogger(getClass())
+  private val log = LoggerFactory.getLogger(getClass())
   private val parser = MtgJsonParser
 
   /** DataSource layer for the dao */
@@ -55,41 +54,53 @@ class H2DBQuillLoader(override val helper: CardLoader, ds: DataSource, runner: Z
 
   // Encoders/Decoders
   // Mana
-  implicit private val manaDecoder =
+  implicit private val manaDecoder: MappedEncoding[String,Seq[Mana]] =
     MappedEncoding[String, Seq[Mana]](costStr => parser.parseAll(parser.cost, costStr).get)
 
-  implicit private val manaEncoder =
+  implicit private val manaEncoder: MappedEncoding[Seq[Mana],String] =
     MappedEncoding[Seq[Mana], String](cost => parser.stringify(cost))
 
   // Card types
-  implicit private val cardTypeDecoder =
+  implicit private val cardTypeDecoder: MappedEncoding[String,Set[CardType]] =
     MappedEncoding[String, Set[CardType]](
       _.split(" ").map(CardType.apply).toSet
     )
 
-  implicit private val cardTypeEncoder =
+  implicit private val cardTypeEncoder: MappedEncoding[Set[CardType],String] =
     MappedEncoding[Set[CardType], String](_.mkString(" "))
 
   // Supertypes
-  implicit private val superTypeDecoder =
+  implicit private val superTypeDecoder: MappedEncoding[String,Set[Supertype]] =
     MappedEncoding[String, Set[Supertype]](
       _.split(" ").collect {
         case st if st.nonEmpty => Supertype.apply(st)
       }.toSet
     )
 
-  implicit private val superTypeEncoder =
+  implicit private val superTypeEncoder: MappedEncoding[Set[Supertype],String] =
     MappedEncoding[Set[Supertype], String](_.mkString(" "))
 
   // Subtypes
-  implicit private val subTypeDecoder =
+  implicit private val subTypeDecoder: MappedEncoding[String,Set[String]] =
     MappedEncoding[String, Set[String]](_.split(" ").toSet)
 
-  implicit private val subTypeEncoder =
+  implicit private val subTypeEncoder: MappedEncoding[Set[String],String] =
     MappedEncoding[Set[String], String](_.mkString(" "))
   // End Encoders/Decoders
 
-  protected def retrieve(name: String): Task[Option[Card]] = {
+  override def card(name: String): Task[Option[Card]] =
+    retrieve(name)
+      .flatMap { oc =>
+        if (oc.isDefined) ZIO.succeed(oc)
+        else {
+          helper
+            .card(name)
+            .flatMap(oc => maybeStore(oc) *> ZIO.succeed(oc))
+        }
+      }
+
+  /** Get card from DB, do not involve helper */
+  private def retrieve(name: String): Task[Option[Card]] = {
     log.debug("Asked to fetch [{}]", name)
     val q = quote(query[Card].filter(c => c.name == lift(name)))
     ctx
@@ -102,7 +113,11 @@ class H2DBQuillLoader(override val helper: CardLoader, ds: DataSource, runner: Z
       .provide(dataSource)
   }
 
-  protected def store(c: Card): Task[Unit] =
+  /** Store the card, if it is present */
+  private def maybeStore(oc: Option[Card]): Task[Unit] =
+    oc.map(c => store(c)).getOrElse(ZIO.unit)
+
+  private def store(c: Card): Task[Unit] =
     ctx
       .run(quote(query[Card].insertValue(lift(c))))
       .tap(_ => ZIO.succeed(log.info("{} stored", c.name)))
