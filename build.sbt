@@ -46,6 +46,7 @@ lazy val playWeb = (project in file("playWeb"))
     compilerSettings,
     libraryDependencies ++= Seq(
       guice,
+      "com.typesafe.play" %% "play" % "2.8.19",
       "com.dripower" %% "play-circe" % "2812.0"
     ),
     libraryDependencies ++= testDeps
