@@ -24,8 +24,10 @@ trait CardLoader {
    * @return {{{Seq[Card]}}}
    * All cards not found will not be present in the result
    */
-  def cards(names: String*): Task[Seq[Card]] =
+  def cards(names: Seq[String]) =
     for {
       cs <- ZIO.collectAll(names.map(n => card(n)))
     } yield cs.flatten
+
+  def cardsM(names: String*): Task[Seq[Card]] = cards(names.toSeq)
 }

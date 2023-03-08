@@ -38,16 +38,17 @@ case class XMLDeckLoader(
 
     log.debug("Found {} distinct cards", cardinfo.size)
 
-    val cards: Seq[ZIO[Any, Throwable, Option[DeckEntry]]] = cardinfo.map { case (name, number) =>
-      loader
-        .card(name)
-        .tap(c => ZIO.succeed(log.info(s"Got $c from helper loader")))
-        .map(maybeCard => maybeCard.map(c => DeckEntry(c, number.toInt)))
-    }
+    val cardMap: ZIO[Any,Throwable,Map[String,Card]] =
+      for { cards <- loader.cards(cardinfo.map{ case (name, _) => name }) }
+      yield cards.map(c => c.name -> c).toMap
+
+    val cards: ZIO[Any, Throwable, Seq[Option[DeckEntry]]] =
+      for (cMap <- cardMap)
+      yield cardinfo.map { case (name, number) => cMap.get(name).map(c => DeckEntry(c, number.toInt)) }
 
     log.debug("Collect all results into list of maybe cards")
 
-    ZIO.collectAll(cards)
+    cards
       .tap(_ => ZIO.succeed(log.debug("Map into a deck")))
       .map { cs =>
         log.debug("Begin get deck entries")
