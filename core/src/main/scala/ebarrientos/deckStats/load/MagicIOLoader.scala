@@ -14,7 +14,7 @@ import ebarrientos.deckStats.stringParsing.MtgJsonParser.{cost, parseAll}
 import zio.ZIO
 
 /** Loader para cargar información de api.magicthegathering.io */
-object MagicIOLoader extends CardLoader with LoadUtils with URLUtils {
+class MagicIOLoader(override val maxParallelExecutions: Int) extends ParallelGroupedCardLoader with LoadUtils with URLUtils {
   private val log = LoggerFactory.getLogger(getClass())
 
   private[this] val baseUrl = "https://api.magicthegathering.io/v1/cards"
