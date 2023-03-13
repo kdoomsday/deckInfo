@@ -9,8 +9,7 @@ trait ParallelGroupedCardLoader extends CardLoader {
 
   override def cards(names: Seq[String]): ZIO[Any,Throwable,Seq[Card]] = {
     val allExecs = names.grouped(maxParallelExecutions).map(group => ZIO.collectAllPar(group.map(c => card(c))))
-    val res = ZIO.collectAll(allExecs.toSeq)
-
-    res.map(_.map(_.flatten).flatten)
+    ZIO.collectAll(allExecs.toSeq)
+      .map(_.map(_.flatten).flatten)
   }
 }

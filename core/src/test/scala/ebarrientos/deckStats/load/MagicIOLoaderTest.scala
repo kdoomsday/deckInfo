@@ -14,12 +14,13 @@ object MagicIOLoaderTest extends TestSuite {
   val tests = Tests {
     "load a card from its json" - {
       val path = "core/src/test/resources/MagicIOResponse.json"
+      val loader = new MagicIOLoader(maxParallelExecutions = 2)
       val res =
         ZIO.scoped(
           ZIO.fromAutoCloseable(ZIO.attempt(scala.io.Source.fromFile(Paths.get(path).toFile())))
             .flatMap { src =>
               val cardJsonStr = src.getLines().mkString
-              MagicIOLoader.cardFromJsonString(name = "Dark Confidant", cardJson = cardJsonStr)
+              loader.cardFromJsonString(name = "Dark Confidant", cardJson = cardJsonStr)
             }
             .map {
               case Some(card) =>

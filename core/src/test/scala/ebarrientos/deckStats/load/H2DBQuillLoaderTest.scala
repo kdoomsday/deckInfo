@@ -17,7 +17,8 @@ object H2DBQuillLoaderTest extends TestSuite {
   val config = CoreConfig(
     dbConnectionUrl = "jdbc:h2:mem:test;DB_CLOSE_DELAY=-1",
     dbDriver = "org.h2.Driver",
-    dbThreads = 1
+    dbThreads = 1,
+    parallelMax = 2
   )
 
   val runner = Unsafe.unsafe(implicit unsafe => new ZioRunnerDefault()(unsafe))
