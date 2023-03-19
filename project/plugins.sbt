@@ -4,5 +4,3 @@ logLevel := Level.Warn
 addSbtPlugin("com.typesafe.sbt" % "sbt-native-packager" % "1.7.3")
 
 addSbtPlugin("com.typesafe.play" % "sbt-plugin" % "2.8.19")
-
-addSbtPlugin("com.typesafe.sbt" % "sbt-twirl" % "1.5.0")

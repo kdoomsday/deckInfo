@@ -3,7 +3,7 @@
  ************/
 lazy val root = project
   .in(file("."))
-  .aggregate(core, web, playWeb)
+  .aggregate(core, playWeb)
   .settings(
     name := "deckinfo",
     inThisBuild(
@@ -32,13 +32,6 @@ lazy val core = (project in file("core"))
     libraryDependencies ++= logbackDeps
   )
 
-lazy val web = (project in file("web"))
-  .enablePlugins(SbtTwirl)
-  .dependsOn(core)
-  .settings(
-    libraryDependencies ++= http4sDeps
-  )
-
 lazy val playWeb = (project in file("playWeb"))
   .dependsOn(core)
   .enablePlugins(PlayScala)
@@ -58,7 +51,6 @@ lazy val playWeb = (project in file("playWeb"))
  ****************/
 val zioVersion          = "2.0.2"
 val zioCatsVersion      = "3.3.0"
-val doobieVersion       = "0.8.8"
 val utestVersion        = "0.7.2"
 val mockitoScalaVersion = "1.16.3"
 val quillVersion        = "4.6.0"
@@ -75,8 +67,6 @@ lazy val deps = Seq(
   "dev.zio"                %% "zio-interop-cats"         % zioCatsVersion,
   "com.lihaoyi"            %% "requests"                 % "0.5.1",
   "com.github.pureconfig"  %% "pureconfig"               % "0.12.3",
-  "org.tpolecat"           %% "doobie-core"              % doobieVersion,
-  "org.tpolecat"           %% "doobie-h2"                % doobieVersion,
   "io.getquill"            %% "quill-jdbc"               % quillVersion,
   "io.getquill"            %% "quill-jdbc-zio"           % quillVersion
 )
@@ -95,20 +85,12 @@ lazy val circeDeps = Seq(
   "io.circe" %% "circe-parser"
 ).map(_ % circeVersion)
 
-val http4sVersion   = "0.21.15"
-
-lazy val http4sDeps = Seq(
-  "org.http4s" %% "http4s-blaze-server",
-  "org.http4s" %% "http4s-blaze-client",
-  "org.http4s" %% "http4s-circe",
-  "org.http4s" %% "http4s-dsl",
-  "org.http4s" %% "http4s-twirl"
-).map(_ % http4sVersion)
 
 lazy val logbackDeps = Seq(
   "ch.qos.logback" % "logback-classic" % logbackVersion % Test
 )
 
-enablePlugins(JavaAppPackaging)
+// enablePlugins(JavaAppPackaging)
+enablePlugins(UniversalPlugin)
 
 ThisBuild / run / fork := true
