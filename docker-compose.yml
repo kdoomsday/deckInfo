@@ -1,0 +1,10 @@
+# Use postgres/example user/password credentials
+version: '3.1'
+
+services:
+
+  deckinfo:
+    image: deckinfo
+    restart: always
+    ports:
+      - 9000:9000
