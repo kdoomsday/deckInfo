@@ -3,11 +3,11 @@ package controllers
 import com.fasterxml.jackson.core.PrettyPrinter
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
-import ebarrientos.deckStats.basics.{ Card, Land }
+import ebarrientos.deckStats.basics.{Card, Land}
 import ebarrientos.deckStats.config.CoreConfig
 import ebarrientos.deckStats.load._
 import ebarrientos.deckStats.math.Calc
-import ebarrientos.deckStats.queries.{ DeckCalc, DeckObject }
+import ebarrientos.deckStats.queries.{DeckCalc, DeckObject}
 import ebarrientos.deckStats.run
 import io.circe.generic.auto._
 import io.circe.syntax._
@@ -16,7 +16,7 @@ import play.api.Logger
 import play.api.http.Writeable
 import play.api.libs.circe.Circe
 import play.api.mvc.AnyContent
-import play.api.mvc.{ BaseController, ControllerComponents, MultipartFormData, Request, Result }
+import play.api.mvc.{BaseController, ControllerComponents, MultipartFormData, Request, Result}
 import play.mvc.Action
 import pureconfig.ConfigSource
 import pureconfig.error.ConfigReaderFailures
@@ -25,7 +25,7 @@ import zio.Task
 import zio.ZIO
 
 import java.io.File
-import java.nio.file.{ Files, Paths, Path }
+import java.nio.file.{Files, Path, Paths}
 import java.util.concurrent.Executors
 import javax.inject.Inject
 import javax.sql.DataSource
@@ -34,7 +34,8 @@ import scala.concurrent.ExecutionContext
 class CardController @Inject() (
     val controllerComponents: ControllerComponents,
     runner: run.ZioRunner
-) extends BaseController with Circe {
+) extends BaseController
+    with Circe {
 
   val log = Logger(getClass())
 
@@ -104,8 +105,9 @@ private object CardController {
   def loader(runner: run.ZioRunner): ZIO[Any, ConfigReaderFailures, CardLoader] =
     for {
       config    <- ZIO.fromEither(ConfigSource.default.load[CoreConfig])
+      _         <- ZIO.succeed(log.info(s"Loaded configuration: $config"))
       ds         = dataSource(config)
-      loader = new MagicIOLoader(config.parallelMax)
+      loader     = new MagicIOLoader(config.parallelMax)
       cardLoader = new H2DBQuillLoader(loader, ds, runner)
       // cardLoader = new CachedLoader(MagicIOLoader)
     } yield cardLoader

@@ -187,6 +187,11 @@ class H2DBQuillLoader(val helper: CardLoader, ds: DataSource, runner: ZioRunner)
       _            <- storeMulti(helperCards)
     } yield storedCards ++ helperCards
 
+  private def logTotalCardCount(): Task[Unit] =
+    ctx.run(quote{query[Card].size})
+      .map(count => log.debug(s"Found $count cards."))
+      .provide(dataSource)
+
   /* Initialize the tables if necessary */
-  runner.run(runInitScripts())
+  runner.run(runInitScripts() *> logTotalCardCount())
 }
