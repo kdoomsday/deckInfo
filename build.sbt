@@ -1,3 +1,6 @@
+ThisBuild / evictionErrorLevel := Level.Info
+ThisBuild / maintainer := "Eduardo Barrientos"
+
 /************
  * PROJECTS *
  ************/
@@ -55,12 +58,13 @@ val utestVersion        = "0.7.2"
 val mockitoScalaVersion = "1.16.3"
 val quillVersion        = "4.6.0"
 val logbackVersion      = "1.4.5"
+val scalaXmlVersion    = "2.1.0"
 
 lazy val deps = Seq(
   "com.typesafe.slick"     %% "slick"                    % "3.3.2",
   "com.h2database"          % "h2"                       % "1.3.148",
   "org.scala-lang.modules" %% "scala-parser-combinators" % "2.2.0",
-  "org.scala-lang.modules" %% "scala-xml"                % "2.0.0-M1",
+  "org.scala-lang.modules" %% "scala-xml"                % scalaXmlVersion,
   // "org.json4s"             %% "json4s-jackson"           % "3.7.0-M4",
   "org.json4s"             %% "json4s-native"            % "3.7.0-M4",
   "dev.zio"                %% "zio"                      % zioVersion,
@@ -90,7 +94,6 @@ lazy val logbackDeps = Seq(
   "ch.qos.logback" % "logback-classic" % logbackVersion % Test
 )
 
-// enablePlugins(JavaAppPackaging)
-enablePlugins(UniversalPlugin)
+enablePlugins(JavaAppPackaging)
 
 ThisBuild / run / fork := true
