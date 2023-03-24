@@ -10,6 +10,8 @@ import zio.Unsafe
 import utest._
 import ebarrientos.deckStats.run.ZioRunnerDefault
 import org.h2.jdbcx.JdbcDataSource
+import ebarrientos.deckStats.config.RequestConfig
+import scala.concurrent.duration.FiniteDuration
 
 /** Tests for [[H2DBQuillLoader]] */
 object H2DBQuillLoaderTest extends TestSuite {
@@ -18,7 +20,8 @@ object H2DBQuillLoaderTest extends TestSuite {
     dbConnectionUrl = "jdbc:h2:mem:test;DB_CLOSE_DELAY=-1",
     dbDriver = "org.h2.Driver",
     dbThreads = 1,
-    parallelMax = 2
+    parallelMax = 2,
+    requestConfig = RequestConfig(FiniteDuration(100, scala.concurrent.duration.SECONDS))
   )
 
   val runner = Unsafe.unsafe(implicit unsafe => new ZioRunnerDefault()(unsafe))

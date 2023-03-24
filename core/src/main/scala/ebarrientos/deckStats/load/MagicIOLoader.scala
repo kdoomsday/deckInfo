@@ -12,9 +12,10 @@ import ebarrientos.deckStats.basics.Supertype
 import org.slf4j.LoggerFactory
 import ebarrientos.deckStats.stringParsing.MtgJsonParser.{cost, parseAll}
 import zio.ZIO
+import scala.concurrent.duration.FiniteDuration
 
 /** Loader para cargar información de api.magicthegathering.io */
-class MagicIOLoader(override val maxParallelExecutions: Int) extends ParallelGroupedCardLoader with LoadUtils with URLUtils {
+class MagicIOLoader(override val maxParallelExecutions: Int, val timeout: FiniteDuration) extends ParallelGroupedCardLoader with LoadUtils with URLUtils {
   private val log = LoggerFactory.getLogger(getClass())
 
   private[this] val baseUrl = "https://api.magicthegathering.io/v1/cards"
@@ -25,8 +26,8 @@ class MagicIOLoader(override val maxParallelExecutions: Int) extends ParallelGro
       requests.get(
         baseUrl,
         params = Map("name" -> name),
-        readTimeout = 20000,
-        connectTimeout = 20000
+        readTimeout = timeout.toMillis.toInt,
+        connectTimeout = timeout.toMillis.toInt
       )
     }
     .flatMap { cardJsonResponse =>

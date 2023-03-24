@@ -7,6 +7,8 @@ import org.slf4j.LoggerFactory
 import zio.Unsafe
 import java.nio.file.Paths
 import zio.ZIO
+import scala.concurrent.duration.FiniteDuration
+import java.time.temporal.ChronoUnit
 
 object MagicIOLoaderTest extends TestSuite {
   val log = LoggerFactory.getLogger(getClass())
@@ -14,7 +16,7 @@ object MagicIOLoaderTest extends TestSuite {
   val tests = Tests {
     "load a card from its json" - {
       val path = "core/src/test/resources/MagicIOResponse.json"
-      val loader = new MagicIOLoader(maxParallelExecutions = 2)
+      val loader = new MagicIOLoader(maxParallelExecutions = 2, timeout = FiniteDuration(100, scala.concurrent.duration.SECONDS))
       val res =
         ZIO.scoped(
           ZIO.fromAutoCloseable(ZIO.attempt(scala.io.Source.fromFile(Paths.get(path).toFile())))
