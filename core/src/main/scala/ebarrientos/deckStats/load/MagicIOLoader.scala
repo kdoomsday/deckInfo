@@ -41,7 +41,7 @@ class MagicIOLoader(override val maxParallelExecutions: Int) extends ParallelGro
     }
   }
 
-  /** From json get subtertypes, types and subtypes */
+  /** From json get supertypes, types and subtypes */
   def parseTypesJson(
       cardJson: JValue
   ): (Set[Supertype], Set[CardType], Set[String]) = {
