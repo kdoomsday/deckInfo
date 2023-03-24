@@ -1,36 +1,35 @@
 package ebarrientos.deckStats.load
 
-import ebarrientos.deckStats.load.utils.LoadUtils
-import ebarrientos.deckStats.config.CoreConfig
-import org.slf4j.LoggerFactory
-import zio.ZLayer
-import zio.Task
-import io.getquill._
-import io.getquill.util.LoadConfig
-import ebarrientos.deckStats.basics.Card
-import com.zaxxer.hikari.HikariDataSource
 import com.zaxxer.hikari.HikariConfig
-import ebarrientos.deckStats.basics.Mana
+import com.zaxxer.hikari.HikariDataSource
+import ebarrientos.deckStats.basics.Card
 import ebarrientos.deckStats.basics.CardType
-import ebarrientos.deckStats.basics.Supertype
-import java.util.zip.ZipEntry
-// import ebarrientos.deckStats.stringParsing.ManaParser.{cost, parseAll}
-import ebarrientos.deckStats.stringParsing.MtgJsonParser
 import ebarrientos.deckStats.basics.ColoredMana
-import ebarrientos.deckStats.basics.White
 import ebarrientos.deckStats.basics.ColorlessMana
 import ebarrientos.deckStats.basics.GenericMana
+import ebarrientos.deckStats.basics.Mana
+import ebarrientos.deckStats.basics.Supertype
+import ebarrientos.deckStats.basics.White
+import ebarrientos.deckStats.config.CoreConfig
+import ebarrientos.deckStats.load.utils.LoadUtils
 import ebarrientos.deckStats.run._
-import javax.sql.DataSource
-import zio.ZIO
-import java.nio.file.Files
-import java.nio.file.Paths
-import scala.collection.JavaConverters._
-import java.nio.file.Path
+import ebarrientos.deckStats.stringParsing.MtgJsonParser
+import io.getquill._
+import io.getquill.util.LoadConfig
+import org.slf4j.LoggerFactory
 import zio.Ref
+import zio.Task
 import zio.UIO
 import zio.Unsafe
-import ebarrientos.deckStats.stringParsing.MtgJsonParser
+import zio.ZIO
+import zio.ZLayer
+
+import java.nio.file.Files
+import java.nio.file.Path
+import java.nio.file.Paths
+import java.util.zip.ZipEntry
+import javax.sql.DataSource
+import scala.collection.JavaConverters._
 
 /** Card loader using quill to handle database queries
   *

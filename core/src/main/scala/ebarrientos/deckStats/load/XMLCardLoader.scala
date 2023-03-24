@@ -6,9 +6,12 @@ import ebarrientos.deckStats.load.utils.LoadUtils
 import scala.util.{ Success, Try }
 import scala.xml.Elem
 import zio._
+import org.slf4j.LoggerFactory
 
 /** CardLoader that takes its info from an XML file. */
 class XMLCardLoader(xmlFile: String) extends CardLoader with LoadUtils {
+  private val log    = LoggerFactory.getLogger(getClass())
+
 	private[this] lazy val ioCards: IO[Exception, Elem] =
     ZIO.fromEither(et2ee(Try(scala.xml.XML.load(xmlFile)).toEither))
 
@@ -41,8 +44,13 @@ class XMLCardLoader(xmlFile: String) extends CardLoader with LoadUtils {
 		    power,
 		    toughness
       )
+
+      log.debug(s"XMLCardLoader found $name")
       Some(c)
 		}
-	  else None
+	  else {
+      log.debug(s"XMLCardLoader could not find $name")
+      None
+    }
 	}
 }

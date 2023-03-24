@@ -15,7 +15,7 @@ import zio.ZIO
 import scala.concurrent.duration.FiniteDuration
 
 /** Loader para cargar información de api.magicthegathering.io */
-class MagicIOLoader(override val maxParallelExecutions: Int, val timeout: FiniteDuration) extends ParallelGroupedCardLoader with LoadUtils with URLUtils {
+class MagicIOLoader(val timeout: FiniteDuration) extends CardLoader with LoadUtils with URLUtils {
   private val log = LoggerFactory.getLogger(getClass())
 
   private[this] val baseUrl = "https://api.magicthegathering.io/v1/cards"
@@ -35,10 +35,12 @@ class MagicIOLoader(override val maxParallelExecutions: Int, val timeout: Finite
         cardFromJsonString(name, cardJsonResponse.text())
       }
       else {
-        throw new Exception(
-          s"Error loading card: Status ${cardJsonResponse.statusCode}"
-        )
+        ZIO.fail(new Exception(s"Error loading card: Status ${cardJsonResponse.statusCode}"))
       }
+    }
+    .catchAll { case ex =>
+      log.error(s"Error querying card $name", ex)
+      ZIO.succeed(None)
     }
   }
 
