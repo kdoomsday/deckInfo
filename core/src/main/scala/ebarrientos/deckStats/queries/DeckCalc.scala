@@ -13,11 +13,14 @@ object DeckCalc {
     */
   def fullCalc(d: Deck): DeckObject = {
     // Calculate the counts, by grouping and counting
-    val counts: Seq[CountObject] =
+    val typeCounts: Seq[CountObject] =
       Calc
         .groupedCount(d, _.types)
         .map { case (t, c) => CountObject(t.toString(), c) }
         .toSeq
+
+    val counts: Seq[CountObject] =
+      CountObject("cardCount", Calc.count(d)) +: typeCounts
 
     val symbolCounts: Seq[CountObject] =
       Calc

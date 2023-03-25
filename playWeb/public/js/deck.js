@@ -39,6 +39,15 @@ function showAll() {
 function avgCosts(data) {
     $('#avgCMC').val(data.avgCMC.toFixed(2));
     $('#avgCMCNonLands').val(data.avgCMCNonLands.toFixed(2));
+    $('#cardCount').val(findCount("cardCount", data));
+    $('#landCount').val(findCount("Land", data));
+}
+
+/** Find one count by name in the deck object counts */
+function findCount(name, data) {
+    let elem = data.counts.find((e) => e.name == name);
+    if (elem === undefined) return 0;
+    else return elem.count;
 }
 
 /** Display the mana curve */
