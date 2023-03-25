@@ -21,8 +21,7 @@ import play.mvc.Action
 import pureconfig.ConfigSource
 import pureconfig.error.ConfigReaderFailures
 import pureconfig.generic.auto._
-import zio.Task
-import zio.ZIO
+import zio.{ZIO, Task, UIO}
 
 import java.io.File
 import java.nio.file.{Files, Path, Paths}
@@ -52,8 +51,9 @@ class CardController @Inject() (
 
   /** Service for querying info about a deck loaded as an xml file */
   def deckStats = Action(parse.multipartFormData) { implicit request =>
-    def deleteFile(path: Path): Task[Unit] =
-      ZIO.attempt(Files.delete(path)) *> ZIO.succeed(log.debug(s"Deleted file $path"))
+    def deleteFile(path: Path): UIO[Unit] =
+      (ZIO.attempt(Files.delete(path)) *> ZIO.succeed(log.debug(s"Deleted file $path")))
+        .catchAll(ex => ZIO.succeed(log.warn(s"Error deleteing $path", ex)))
 
     log.info("Call into deckStats")
 
@@ -72,11 +72,10 @@ class CardController @Inject() (
             deckLoader <- CardController.xmlDeckLoader(realFile.toFile(), loader, runner)
             deck       <- deckLoader.load()
             deckObject  = DeckCalc.fullCalc(deck)
-            _          <- deleteFile(realFile)
             _          <- ZIO.succeed(log.debug(s"=> $deckObject"))
           } yield deckObject
 
-        Ok(runner.run(res).asJson)
+        Ok(runner.run(res.ensuring(deleteFile(realFile))).asJson)
       }
       .getOrElse(BadRequest("Missing deck"))
 
