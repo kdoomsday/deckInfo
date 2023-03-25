@@ -7,4 +7,5 @@ RUN apt-get install unzip
 RUN unzip /opt/app/playweb-1.0.zip -d /opt/app
 WORKDIR /opt/app/playweb-1.0
 ADD dbInitScripts/ dbInitScripts/
+ADD cards.xml .
 CMD ["bin/playweb", "-Dplay.http.secret.key=$(echo $RANDOM | md5sum | head -c 20)"]

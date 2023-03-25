@@ -110,7 +110,6 @@ private object CardController {
       xmlLoader  = new XMLCardLoader("cards.xml")
       seqLoader  = new SequenceLoader(xmlLoader, loader)
       cardLoader = new H2DBQuillLoader(seqLoader, ds, runner)
-      // cardLoader = new CachedLoader(MagicIOLoader)
     } yield cardLoader
 
   /** Deck loader to process deck requests. Depends on the loader */
