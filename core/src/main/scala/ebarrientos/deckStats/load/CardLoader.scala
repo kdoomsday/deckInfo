@@ -26,7 +26,7 @@ trait CardLoader {
    */
   def cards(names: Seq[String]): ZIO[Any,Throwable,Seq[Card]] =
     for {
-      cs <- ZIO.collectAll(names.map(card))
+      cs <- ZIO.collectAllSuccesses(names.map(card))
     } yield cs.flatten
 
   /** Load cards by name. Utility present for usability purposes */
