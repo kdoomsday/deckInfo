@@ -1,8 +1,11 @@
-@()(implicit request: RequestHeader)
-
-@import helper._
-
-@template("DeckInfo", Seq("deck.js"), Seq("https://cdn.jsdelivr.net/npm/chart.js@2.8.0")) {
+<!DOCTYPE html>
+<head>
+    <title>DeckInfo</title>
+    <link rel="stylesheet" media="screen" href="assets/stylesheets/bootstrap.min.css")">
+    <link rel="stylesheet" media="screen" href="assets/stylesheets/main.css")">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
     <div class="container">
         <h1>Load your deck</h1>
 
@@ -27,7 +30,6 @@
                     <span class="btn btn-secondary">
                         Browse
                         <form id="deckForm" enctype="multipart/form-data">
-                            @CSRF.formField
                             <input type="file" name="deck" id="deck" style="display:none" />
                         </form>
                     </span>
@@ -112,4 +114,8 @@
          hideAll();
      });
     </script>
-}
+
+    <script type="text/javascript" src="assets/js/bootstrap.bundle.min.js"></script>
+    <script type="text/javascript" src="assets/js/deck.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+</body>

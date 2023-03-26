@@ -4,10 +4,14 @@
 # ~~~~
 
 # An example controller showing a sample home page
-GET     /                controllers.ApplicationController.index
+GET     /                controllers.ApplicationController.index()
+
++ nocsrf
+GET     /plain           controllers.Assets.at(path="/public", file="plainIndex.html")
 
 GET     /card/:name      controllers.CardController.card(name: String)
 
++ nocsrf
 POST    /deck            controllers.CardController.deckStats
 POST    /deckN           controllers.CardController.naturalDeckStats 
 
