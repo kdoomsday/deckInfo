@@ -9,6 +9,7 @@ package ebarrientos.deckStats.queries
 case class DeckObject(
     avgCMC        : Double,
     avgCMCNonLands: Double,
+    cardCount     : Int,
     counts        : Seq[CountObject],
     manaSymbols   : Seq[CountObject],
     manaCurve     : Seq[CurvePoint]
