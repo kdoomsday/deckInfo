@@ -106,7 +106,7 @@ private object CardController {
       config    <- ZIO.fromEither(ConfigSource.default.load[CoreConfig])
       _         <- ZIO.succeed(log.info(s"Loaded configuration: $config"))
       ds         = dataSource(config)
-      loader     = new MagicIOLoader(config.requestConfig.timeout)
+      loader     = new MagicIOLoader(config.requestConfig.timeout, config.requestConfig.retryTime)
       xmlLoader  = new XMLCardLoader("cards.xml")
       seqLoader  = new SequenceLoader(xmlLoader, loader)
       cardLoader = new H2DBQuillLoader(seqLoader, ds, runner)

@@ -13,9 +13,12 @@ import org.slf4j.LoggerFactory
 import ebarrientos.deckStats.stringParsing.MtgJsonParser.{cost, parseAll}
 import zio.ZIO
 import scala.concurrent.duration.FiniteDuration
+import scala.concurrent.duration.DurationInt
+import zio.Schedule
+import zio.Duration
 
 /** Loader para cargar información de api.magicthegathering.io */
-class MagicIOLoader(val timeout: FiniteDuration) extends CardLoader with LoadUtils with URLUtils {
+class MagicIOLoader(val timeout: FiniteDuration, retryTime: FiniteDuration) extends CardLoader with LoadUtils with URLUtils {
   private val log = LoggerFactory.getLogger(getClass())
 
   private[this] val baseUrl = "https://api.magicthegathering.io/v1/cards"
@@ -38,6 +41,7 @@ class MagicIOLoader(val timeout: FiniteDuration) extends CardLoader with LoadUti
         ZIO.fail(new Exception(s"Error loading card: Status ${cardJsonResponse.statusCode}"))
       }
     }
+    .retry(Schedule.fibonacci(Duration.Finite(retryTime.toNanos)))
     .catchAll { case ex =>
       log.error(s"Error querying card $name", ex)
       ZIO.succeed(None)

@@ -3,7 +3,7 @@ package ebarrientos.deckStats.config
 import pureconfig._
 import scala.concurrent.duration.FiniteDuration
 
-case class RequestConfig(timeout: FiniteDuration)
+case class RequestConfig(timeout: FiniteDuration, retryTime: FiniteDuration)
 
 case class CoreConfig(
     dbConnectionUrl: String,

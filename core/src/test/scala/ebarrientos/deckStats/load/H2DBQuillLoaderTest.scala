@@ -21,7 +21,7 @@ object H2DBQuillLoaderTest extends TestSuite {
     dbDriver = "org.h2.Driver",
     dbThreads = 1,
     parallelMax = 2,
-    requestConfig = RequestConfig(FiniteDuration(100, scala.concurrent.duration.SECONDS))
+    requestConfig = RequestConfig(FiniteDuration(100, scala.concurrent.duration.SECONDS), FiniteDuration(1, scala.concurrent.duration.SECONDS))
   )
 
   val runner = Unsafe.unsafe(implicit unsafe => new ZioRunnerDefault()(unsafe))

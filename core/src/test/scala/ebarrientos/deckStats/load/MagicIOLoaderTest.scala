@@ -16,7 +16,10 @@ object MagicIOLoaderTest extends TestSuite {
   val tests = Tests {
     "load a card from its json" - {
       val path = "core/src/test/resources/MagicIOResponse.json"
-      val loader = new MagicIOLoader(timeout = FiniteDuration(100, scala.concurrent.duration.SECONDS))
+      val loader = new MagicIOLoader(
+        timeout = FiniteDuration(100, scala.concurrent.duration.SECONDS),
+        retryTime = FiniteDuration(1, scala.concurrent.duration.SECONDS)
+      )
       val res =
         ZIO.scoped(
           ZIO.fromAutoCloseable(ZIO.attempt(scala.io.Source.fromFile(Paths.get(path).toFile())))
