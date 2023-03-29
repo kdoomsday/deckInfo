@@ -18,35 +18,36 @@ import zio.Schedule
 import zio.Duration
 
 /** Loader para cargar información de api.magicthegathering.io */
-class MagicIOLoader(val timeout: FiniteDuration, retryTime: FiniteDuration) extends CardLoader with LoadUtils with URLUtils {
+class MagicIOLoader(val timeout: FiniteDuration, retryTime: FiniteDuration, requester: MagicIOLoader.RequestParams => Response)
+    extends CardLoader
+    with LoadUtils
+    with URLUtils {
+
+  /** Alternate constructor that uses MagicIOLoader.requestsCallCard by default as the requester */
+  def this(timeout: FiniteDuration, retryTime: FiniteDuration) = this(timeout, retryTime, MagicIOLoader.requestsCallCard)
+
   private val log = LoggerFactory.getLogger(getClass())
 
-  private[this] val baseUrl = "https://api.magicthegathering.io/v1/cards"
 
-  def card(name: String): Task[Option[Card]] = {
-    ZIO.attemptBlocking {
-      log.info(s"Requesting card $name from MagicIOLoader")
-      requests.get(
-        baseUrl,
-        params = Map("name" -> name),
-        readTimeout = timeout.toMillis.toInt,
-        connectTimeout = timeout.toMillis.toInt
-      )
-    }
-    .flatMap { cardJsonResponse =>
-      if (cardJsonResponse.statusCode == 200) {
-        cardFromJsonString(name, cardJsonResponse.text())
+  def card(name: String): Task[Option[Card]] =
+    ZIO
+      .attemptBlocking {
+        log.info(s"Requesting card $name from MagicIOLoader")
+        requester(MagicIOLoader.RequestParams(name, timeout))
       }
-      else {
-        ZIO.fail(new Exception(s"Error loading card: Status ${cardJsonResponse.statusCode}"))
+      .flatMap { cardJsonResponse =>
+        if (cardJsonResponse.statusCode == 200) {
+          cardFromJsonString(name, cardJsonResponse.text())
+        }
+        else {
+          ZIO.fail(new Exception(s"Error loading card: Status ${cardJsonResponse.statusCode}"))
+        }
       }
-    }
-    .retry(Schedule.fibonacci(Duration.Finite(retryTime.toNanos)))
-    .catchAll { case ex =>
-      log.error(s"Error querying card $name", ex)
-      ZIO.succeed(None)
-    }
-  }
+      .retry(Schedule.fibonacci(Duration.Finite(retryTime.toNanos)))
+      .catchAll { case ex =>
+        log.error(s"Error querying card $name", ex)
+        ZIO.succeed(None)
+      }
 
   /** From json get supertypes, types and subtypes */
   def parseTypesJson(
@@ -70,7 +71,7 @@ class MagicIOLoader(val timeout: FiniteDuration, retryTime: FiniteDuration) exte
   }
 
   /** Given the card's json string, parse the card */
-  def cardFromJsonString(name: String, cardJson: String): Task[Option[Card]] = {
+  def cardFromJsonString(name: String, cardJson: String): Task[Option[Card]] =
     ZIO.attempt {
       (parse(cardJson) \\ "cards") match {
         case arr @ JArray(_) =>
@@ -78,12 +79,11 @@ class MagicIOLoader(val timeout: FiniteDuration, retryTime: FiniteDuration) exte
         case _               => None
       }
     }
-  }
 
-  /** In an array of results, find the one that fully matches the expected name.
-   * This is important because the API finds partial matches (e.g. when
-   * searching for 'Wasteland' a result will come in for 'Wasteland Scorpion'
-   */
+  /** In an array of results, find the one that fully matches the expected name. This is important
+    * because the API finds partial matches (e.g. when searching for 'Wasteland' a result will come
+    * in for 'Wasteland Scorpion'
+    */
   private def findObject(name: String, arr: JArray): Option[JValue] = {
     @tailrec
     def fo(l: List[JValue]): Option[JValue] =
@@ -103,7 +103,7 @@ class MagicIOLoader(val timeout: FiniteDuration, retryTime: FiniteDuration) exte
 
   // Construir la carta a partir del jobject correspondiente ya extraido de la lista
   private def cardFromJobject(name: String, j: JValue): Card = {
-    val manaCost: Seq[Mana] = parseAll(cost, getStr(j \\ "manaCost")).get
+    val manaCost: Seq[Mana]           = parseAll(cost, getStr(j \\ "manaCost")).get
     val (supertypes, types, subTypes) = parseTypesJson(j)
     Card(
       manaCost,
@@ -117,15 +117,33 @@ class MagicIOLoader(val timeout: FiniteDuration, retryTime: FiniteDuration) exte
     )
   }
 
-
   private def getStr(value: JValue): String = value match {
     case JString(s) => s
     case _          => ""
   }
 
-  private def getInt(value: JValue): Int    = value match {
+  private def getInt(value: JValue): Int = value match {
     case JInt(num)                              => num.toInt
     case JString(txt) if (txt matches "[0-9]+") => txt.toInt
     case _                                      => 0
   }
+}
+
+object MagicIOLoader {
+  case class RequestParams(cardName: String, timeout: FiniteDuration)
+
+  val baseUrl = "https://api.magicthegathering.io/v1/cards"
+
+  /** Make the call to get a card
+   *
+   * @param name Name of the card
+   * @return Response
+   */
+  private def requestsCallCard: RequestParams => Response =
+    requestParams => requests.get(
+      baseUrl,
+      params = Map("name" -> requestParams.cardName),
+      readTimeout = requestParams.timeout.toMillis.toInt,
+      connectTimeout = requestParams.timeout.toMillis.toInt
+    )
 }
