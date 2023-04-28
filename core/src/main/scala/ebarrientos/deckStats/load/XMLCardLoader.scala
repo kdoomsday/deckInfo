@@ -13,7 +13,8 @@ class XMLCardLoader(xmlFile: String) extends CardLoader with LoadUtils {
   private val log    = LoggerFactory.getLogger(getClass())
 
 	private[this] lazy val ioCards: IO[Exception, Elem] =
-    ZIO.fromEither(et2ee(Try(scala.xml.XML.load(xmlFile)).toEither))
+    ZIO.succeed(log.debug(s"Loading cards from $xmlFile")) *>
+      ZIO.fromEither(et2ee(Try(scala.xml.XML.load(xmlFile)).toEither))
 
   // Either[Throwable, A] => Either[Exception, A] (just wraps the throwable)
   private[this] def et2ee[A](e: Either[Throwable, A]): Either[Exception, A] =
