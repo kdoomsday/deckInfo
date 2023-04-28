@@ -25,47 +25,12 @@ object CardController {
 
   private val log = LoggerFactory.getLogger(CardController.getClass())
 
-  private val runner: ZioRunner =
-    Unsafe.unsafe { implicit unsafe =>
-      new ZioRunnerDefault()
-    }
-
-  private val loaderLive: URIO[Any, CardLoader] =
-    loaderZIO(runner)
-      .orDieWith { configReaderFailures =>
-        val ex = new Exception(s"Error: $configReaderFailures")
-        log.error("Error creating loader", ex)
-        ex
-      }
-
-  private def dataSource(config: CoreConfig): DataSource = {
-    log.info(s"Starting datasource for ${config.dbConnectionUrl}")
-    val ds = new JdbcDataSource()
-    ds.setURL(config.dbConnectionUrl)
-    ds
-  }
-
-  /** Card loader a usar para servir el contenido */
-  private def loaderZIO(runner: ZioRunner): ZIO[Any, ConfigReaderFailures, CardLoader] =
-    for {
-      config    <- ZIO.fromEither(ConfigSource.default.load[CoreConfig])
-      _         <- ZIO.succeed(log.info(s"Loaded configuration: $config"))
-      ds        <- ZIO.succeed(dataSource(config))
-      loader    <- ZIO.succeed(new MagicIOLoader(config.requestConfig.timeout, config.requestConfig.retryTime))
-      xmlLoader <- ZIO.succeed(new XMLCardLoader(config.paths.xmlCards))
-      seqLoader <- ZIO.succeed(new SequenceLoader(xmlLoader, loader))
-      cardLoader<- ZIO.succeed(new H2DBQuillLoader(seqLoader, ds, config.paths.initScripts, runner))
-    } yield cardLoader
-
-  /** Card meaning no card found */
-  private val nullCard: Card = Card(Seq(), "Not found", Set())
-
   /** The actual app that will serve requests */
-  val app: Http[Any, Response, Request, Response] = Http.collectZIO[Request] {
+  val app: Http[CardLoader, Response, Request, Response] = Http.collectZIO[Request] {
     case Method.GET -> !! / "card" / name =>
       val unencodedName = URLDecoder.decode(name, Charsets.Utf8)
       (for {
-        loader <- loaderLive
+        loader <- ZIO.service[CardLoader]
         c      <- loader.card(unencodedName)
       } yield Response.json(c.getOrElse(nullCard).asJson.toString))
         .catchAll { ex =>
@@ -77,4 +42,8 @@ object CardController {
             )
         }
   }
+
+
+  /** Card meaning no card found */
+  private val nullCard: Card = Card(Seq(), "Not found", Set())
 }
