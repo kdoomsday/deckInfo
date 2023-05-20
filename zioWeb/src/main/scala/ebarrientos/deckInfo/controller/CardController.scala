@@ -74,7 +74,6 @@ object CardController {
   private def loadDeckFromXMLRequest(request: Request): ZIO[CardLoader, Throwable, Response] =
     for {
       deckXMLString <- deckStringFromRequest(request)
-      _             <- ZIO.succeed(log.info(s">>> $deckXMLString"))
       elem          <- elemFromString(deckXMLString)
       cardLoader    <- ZIO.service[CardLoader]
       loader        <- ZIO.succeed(new XMLDeckLoader(elem, cardLoader))
@@ -84,9 +83,11 @@ object CardController {
   /** Extract the xmlDeck from the request */
   private def deckStringFromRequest(request: Request): Task[String] =
     request.body.asString.map { content =>
-      content
-        .split(Array('\n', '\r'))
-        .filter(_.trim.startsWith("<")) // This depends on xml elements being each on a line. Do better
+      val lines = content.split(Array('\n', '\r'))
+      val boundary = lines.headOption.getOrElse("--")
+      lines
+        .filterNot(line => line.startsWith(boundary) || line.isBlank())
+        .drop(2) // Get rid of content type and disposition
         .mkString
     }
 }
