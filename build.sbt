@@ -1,5 +1,4 @@
 ThisBuild / evictionErrorLevel := Level.Info
-ThisBuild / maintainer := "Eduardo Barrientos"
 
 /************
  * PROJECTS *
@@ -9,6 +8,7 @@ lazy val root = project
   .aggregate(core)
   .settings(
     name := "deckinfo",
+    maintainer := "Eduardo Barrientos",
     inThisBuild(
       List(
         organization := "com.ebarrientos",
@@ -35,6 +35,7 @@ lazy val core = (project in file("core"))
     libraryDependencies ++= logbackDeps
   )
 
+// Web server
 lazy val zioWeb = (project in file("zioWeb"))
   .dependsOn(core)
   .settings(
