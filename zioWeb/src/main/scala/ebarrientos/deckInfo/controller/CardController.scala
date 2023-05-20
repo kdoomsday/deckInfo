@@ -86,8 +86,8 @@ object CardController {
       val lines = content.split(Array('\n', '\r'))
       val boundary = lines.headOption.getOrElse("--")
       lines
-        .filterNot(line => line.startsWith(boundary) || line.isBlank())
-        .drop(2) // Get rid of content type and disposition
+        .dropWhile(!_.trim.startsWith("<?xml"))
+        .filterNot(line => line.trim.startsWith(boundary))
         .mkString
     }
 }
