@@ -12,26 +12,20 @@ import ebarrientos.deckStats.run.ZioRunnerDefault
 import org.h2.jdbcx.JdbcDataSource
 import ebarrientos.deckStats.config.RequestConfig
 import scala.concurrent.duration.FiniteDuration
+import ebarrientos.deckStats.config.Paths
 
 /** Tests for [[H2DBQuillLoader]] */
 object H2DBQuillLoaderTest extends TestSuite {
 
-  val config = CoreConfig(
-    dbConnectionUrl = "jdbc:h2:mem:test;DB_CLOSE_DELAY=-1",
-    dbDriver = "org.h2.Driver",
-    dbThreads = 1,
-    parallelMax = 2,
-    requestConfig = RequestConfig(FiniteDuration(100, scala.concurrent.duration.SECONDS), FiniteDuration(1, scala.concurrent.duration.SECONDS))
-  )
-
   val runner = Unsafe.unsafe(implicit unsafe => new ZioRunnerDefault()(unsafe))
+  val initScriptsPath = "./dbInitScripts/"
 
   val ds     = {
     val jdbcds = new JdbcDataSource()
-    jdbcds.setURL(config.dbConnectionUrl)
+    jdbcds.setURL("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1")
     jdbcds
   }
-  val loader = new H2DBQuillLoader(NullCardLoader, ds, runner)
+  val loader = new H2DBQuillLoader(NullCardLoader, ds, initScriptsPath, runner)
   val r      = zio.Runtime.default
 
   val tests = Tests {
@@ -41,8 +35,8 @@ object H2DBQuillLoaderTest extends TestSuite {
     }
 
     test("storing and loading a card finds it") {
-      val la = new H2DBQuillLoader(DummyObjects.dummyCardLoader, ds, runner)
-      val lb = new H2DBQuillLoader(NullCardLoader, ds, runner)
+      val la = new H2DBQuillLoader(DummyObjects.dummyCardLoader, ds, initScriptsPath, runner)
+      val lb = new H2DBQuillLoader(NullCardLoader, ds, initScriptsPath, runner)
 
       /* We use <la> to store it. Then <lb> goes to retrieve it and it should
        * already be in the db so it should find it.
@@ -58,8 +52,8 @@ object H2DBQuillLoaderTest extends TestSuite {
     }
 
     test("storing and loading a card with colorless mana finds it") {
-      val la = new H2DBQuillLoader(DummyObjects.dummyCardLoader, ds, runner)
-      val lb = new H2DBQuillLoader(NullCardLoader, ds, runner)
+      val la = new H2DBQuillLoader(DummyObjects.dummyCardLoader, ds, initScriptsPath, runner)
+      val lb = new H2DBQuillLoader(NullCardLoader, ds, initScriptsPath, runner)
 
       /* We use <la> to store it. Then <lb> goes to retrieve it and it should
        * already be in the db so it should find it.
@@ -75,8 +69,8 @@ object H2DBQuillLoaderTest extends TestSuite {
     }
 
     test("storing and loading a card without supertypes finds it") {
-      val la = new H2DBQuillLoader(DummyObjects.dummyCardLoader, ds, runner)
-      val lb = new H2DBQuillLoader(NullCardLoader, ds, runner)
+      val la = new H2DBQuillLoader(DummyObjects.dummyCardLoader, ds, initScriptsPath, runner)
+      val lb = new H2DBQuillLoader(NullCardLoader, ds, initScriptsPath, runner)
 
       val res  = la.card(DummyObjects.petunias.name) *> lb.card(DummyObjects.petunias.name)
       val ores = runner.run(res)
@@ -88,7 +82,7 @@ object H2DBQuillLoaderTest extends TestSuite {
     }
 
     test("Loading multiple cards finds them") {
-      val loader = new H2DBQuillLoader(DummyObjects.dummyCardLoader, ds, runner)
+      val loader = new H2DBQuillLoader(DummyObjects.dummyCardLoader, ds, initScriptsPath, runner)
       val cards  = runner.run(
         loader.cards(
           DummyObjects.petunias.name,

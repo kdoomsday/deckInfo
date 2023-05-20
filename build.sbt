@@ -6,7 +6,7 @@ ThisBuild / maintainer := "Eduardo Barrientos"
  ************/
 lazy val root = project
   .in(file("."))
-  .aggregate(core, playWeb)
+  .aggregate(core)
   .settings(
     name := "deckinfo",
     inThisBuild(
@@ -33,19 +33,6 @@ lazy val core = (project in file("core"))
     libraryDependencies ++= testDeps,
     libraryDependencies  += guice,
     libraryDependencies ++= logbackDeps
-  )
-
-lazy val playWeb = (project in file("playWeb"))
-  .dependsOn(core)
-  .enablePlugins(PlayScala)
-  .settings(
-    compilerSettings,
-    libraryDependencies ++= Seq(
-      guice,
-      "com.typesafe.play" %% "play" % "2.8.19",
-      "com.dripower" %% "play-circe" % "2812.0"
-    ),
-    libraryDependencies ++= testDeps
   )
 
 lazy val zioWeb = (project in file("zioWeb"))

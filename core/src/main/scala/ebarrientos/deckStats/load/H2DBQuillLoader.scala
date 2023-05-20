@@ -33,15 +33,16 @@ import scala.collection.JavaConverters._
 
 /** Card loader using quill to handle database queries
   *
-  * @param helper
-  *   [[CardLoader]] to fetch info if not present in this one
-  * @param ds
-  *   [[DataSource]] to use
-  * @param runner
-  *   [[ZioRunner]] which will be used to ensure tables are initialized
+  * @param helper [[CardLoader]] to fetch info if not present in this one
+  * @param ds     [[DataSource]] to use
+  * @param runner [[ZioRunner]] which will be used to ensure tables are initialized
   */
-class H2DBQuillLoader(val helper: CardLoader, ds: DataSource, initScriptsPath: String, runner: ZioRunner)
-    extends CardLoader
+class H2DBQuillLoader(
+    val helper: CardLoader,
+    ds: DataSource,
+    initScriptsPath: String,
+    runner: ZioRunner
+) extends CardLoader
     with LoadUtils {
 
   private val log    = LoggerFactory.getLogger(getClass())
@@ -126,12 +127,13 @@ class H2DBQuillLoader(val helper: CardLoader, ds: DataSource, initScriptsPath: S
       .map(_ => ())
       .provide(dataSource)
 
-  /**
-   * Store multiple cards at once
-   *
-   * @param cards Cards to store
-   * @return Number of cards stores. Assumes all were inserted
-   */
+  /** Store multiple cards at once
+    *
+    * @param cards
+    *   Cards to store
+    * @return
+    *   Number of cards stores. Assumes all were inserted
+    */
   private def storeMulti(cards: Seq[Card]): Task[Long] =
     ctx
       .run(liftQuery(cards).foreach(c => quote(query[Card].insertValue(c))))
@@ -151,7 +153,7 @@ class H2DBQuillLoader(val helper: CardLoader, ds: DataSource, initScriptsPath: S
 
     ZIO
       .attempt {
-        val initPath = Paths.get(initScriptsPath)
+        val initPath       = Paths.get(initScriptsPath)
         log.debug(s"Getting scripts from root path $initPath")
         val scriptIterator = Files.list(initPath).iterator().asScala.toList.sorted
         scriptIterator
