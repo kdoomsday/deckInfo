@@ -40,7 +40,7 @@ import scala.collection.JavaConverters._
   * @param runner
   *   [[ZioRunner]] which will be used to ensure tables are initialized
   */
-class H2DBQuillLoader(val helper: CardLoader, ds: DataSource, runner: ZioRunner)
+class H2DBQuillLoader(val helper: CardLoader, ds: DataSource, initScriptsPath: String, runner: ZioRunner)
     extends CardLoader
     with LoadUtils {
 
@@ -149,11 +149,14 @@ class H2DBQuillLoader(val helper: CardLoader, ds: DataSource, runner: ZioRunner)
       ctx.run(createScript).unit
     }
 
-    val scriptsPath    = Paths.get("dbInitScripts/")
-    val scriptIterator = Files.list(scriptsPath).iterator().asScala.toList.sorted
-
     ZIO
-      .collectAll(scriptIterator.map(runSingle))
+      .attempt {
+        val initPath = Paths.get(initScriptsPath)
+        log.debug(s"Getting scripts from root path $initPath")
+        val scriptIterator = Files.list(initPath).iterator().asScala.toList.sorted
+        scriptIterator
+      }
+      .flatMap(si => ZIO.collectAll(si.map(runSingle)))
       .provide(dataSource)
       .unit
   }
@@ -187,10 +190,18 @@ class H2DBQuillLoader(val helper: CardLoader, ds: DataSource, runner: ZioRunner)
     } yield storedCards ++ helperCards
 
   private def logTotalCardCount(): Task[Unit] =
-    ctx.run(quote{query[Card].size})
+    ctx
+      .run(quote(query[Card].size))
       .map(count => log.debug(s"Found $count cards."))
       .provide(dataSource)
 
+  log.debug("Attempting to run init scripts")
   /* Initialize the tables if necessary */
-  runner.run(runInitScripts() *> logTotalCardCount())
+  runner.run(
+    (runInitScripts() *> logTotalCardCount()).catchAll { ex =>
+      log.error("Error initializing database", ex)
+      ZIO.fail(ex)
+    }
+  )
+  log.debug(s"Finished initialization of ${getClass()}")
 }

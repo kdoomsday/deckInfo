@@ -48,6 +48,13 @@ lazy val playWeb = (project in file("playWeb"))
     libraryDependencies ++= testDeps
   )
 
+lazy val zioWeb = (project in file("zioWeb"))
+  .dependsOn(core)
+  .settings(
+    compilerSettings,
+    libraryDependencies ++= zioWebDeps
+  )
+
 
 /****************
  * DEPENDENCIES *
@@ -58,7 +65,8 @@ val utestVersion        = "0.7.2"
 val mockitoScalaVersion = "1.16.3"
 val quillVersion        = "4.6.0"
 val logbackVersion      = "1.4.5"
-val scalaXmlVersion    = "2.1.0"
+val scalaXmlVersion     = "2.1.0"
+val zioHttpVersion      = "3.0.0-RC1"
 
 lazy val deps = Seq(
   "com.typesafe.slick"     %% "slick"                    % "3.3.2",
@@ -91,7 +99,12 @@ lazy val circeDeps = Seq(
 
 
 lazy val logbackDeps = Seq(
-  "ch.qos.logback" % "logback-classic" % logbackVersion % Test
+  // "ch.qos.logback" % "logback-classic" % logbackVersion % Test
+  "ch.qos.logback" % "logback-classic" % logbackVersion
+)
+
+lazy val zioWebDeps = Seq(
+  "dev.zio" %% "zio-http" % zioHttpVersion
 )
 
 enablePlugins(JavaAppPackaging)
