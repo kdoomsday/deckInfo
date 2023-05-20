@@ -9,8 +9,8 @@ function loadDeck() {
         data: fd,
         processData: false,
         cache: false,
-        // contentType: 'multipart/form-data',
-        contentType: false,
+        contentType: 'multipart/form-data',
+        // contentType: false,
 
         success: function(data) {
             avgCosts(data);

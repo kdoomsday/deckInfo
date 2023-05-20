@@ -3,8 +3,8 @@ package ebarrientos.deckInfo
 import zio._
 import zio.http.Server
 import java.io.IOException
-import ebarrientos.deckInfo.controller.CardController
-import zio.http.{Http, Request, Response}
+import ebarrientos.deckInfo.controller.{ CardController, PublicController }
+import zio.http._
 import ebarrientos.deckStats.run.ZioRunner
 import ebarrientos.deckStats.run.ZioRunnerDefault
 import ebarrientos.deckStats.config.CoreConfig
@@ -20,13 +20,14 @@ import ebarrientos.deckStats.load.MagicIOLoader
 import ebarrientos.deckStats.load.XMLCardLoader
 import ebarrientos.deckStats.load.SequenceLoader
 import ebarrientos.deckStats.load.H2DBQuillLoader
+import java.io.File
 
 object ZIOServer extends ZIOAppDefault {
 
   private val log = LoggerFactory.getLogger(getClass())
 
   override def run: ZIO[Environment with ZIOAppArgs with Scope,Any,Any] = {
-    val app = CardController.app ++ HelloApp.app
+    val app = CardController.app ++ PublicController.app
 
     val config = Server.Config.default.port(9000)
     val configLayer = ZLayer.succeed(config)
