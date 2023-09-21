@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cockatrice_deck version="1">
+    <deckname>The Rock X</deckname>
+    <comments></comments>
+    <zone name="main">
+        <card number="4" name="Arthur Dent"/>
+        <card number="4" name="Tricia McMillan"/>
+    </zone>
+</cockatrice_deck>
