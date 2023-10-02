@@ -1,35 +1,24 @@
 package ebarrientos.deckStats.load
 
-import com.zaxxer.hikari.HikariConfig
-import com.zaxxer.hikari.HikariDataSource
 import ebarrientos.deckStats.basics.Card
 import ebarrientos.deckStats.basics.CardType
-import ebarrientos.deckStats.basics.ColoredMana
-import ebarrientos.deckStats.basics.ColorlessMana
-import ebarrientos.deckStats.basics.GenericMana
 import ebarrientos.deckStats.basics.Mana
 import ebarrientos.deckStats.basics.Supertype
-import ebarrientos.deckStats.basics.White
-import ebarrientos.deckStats.config.CoreConfig
 import ebarrientos.deckStats.load.utils.LoadUtils
 import ebarrientos.deckStats.run._
 import ebarrientos.deckStats.stringParsing.MtgJsonParser
 import io.getquill._
-import io.getquill.util.LoadConfig
 import org.slf4j.LoggerFactory
-import zio.Ref
 import zio.Task
-import zio.UIO
-import zio.Unsafe
 import zio.ZIO
 import zio.ZLayer
 
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
-import java.util.zip.ZipEntry
 import javax.sql.DataSource
 import scala.jdk.CollectionConverters._
+import scala.annotation.unused
 
 /** Card loader using quill to handle database queries
   *
@@ -57,37 +46,37 @@ class H2DBQuillLoader(
 
   // Encoders/Decoders
   // Mana
-  implicit private val manaDecoder: MappedEncoding[String, Seq[Mana]] =
+  @unused implicit private val manaDecoder: MappedEncoding[String, Seq[Mana]] =
     MappedEncoding[String, Seq[Mana]](costStr => parser.parseAll(parser.cost, costStr).get)
 
-  implicit private val manaEncoder: MappedEncoding[Seq[Mana], String] =
+  @unused implicit private val manaEncoder: MappedEncoding[Seq[Mana], String] =
     MappedEncoding[Seq[Mana], String](cost => parser.stringify(cost))
 
   // Card types
-  implicit private val cardTypeDecoder: MappedEncoding[String, Set[CardType]] =
+  @unused implicit private val cardTypeDecoder: MappedEncoding[String, Set[CardType]] =
     MappedEncoding[String, Set[CardType]](
       _.split(" ").map(CardType.apply).toSet
     )
 
-  implicit private val cardTypeEncoder: MappedEncoding[Set[CardType], String] =
+  @unused implicit private val cardTypeEncoder: MappedEncoding[Set[CardType], String] =
     MappedEncoding[Set[CardType], String](_.mkString(" "))
 
   // Supertypes
-  implicit private val superTypeDecoder: MappedEncoding[String, Set[Supertype]] =
+  @unused implicit private val superTypeDecoder: MappedEncoding[String, Set[Supertype]] =
     MappedEncoding[String, Set[Supertype]](
       _.split(" ").collect {
         case st if st.nonEmpty => Supertype.apply(st)
       }.toSet
     )
 
-  implicit private val superTypeEncoder: MappedEncoding[Set[Supertype], String] =
+  @unused implicit private val superTypeEncoder: MappedEncoding[Set[Supertype], String] =
     MappedEncoding[Set[Supertype], String](_.mkString(" "))
 
   // Subtypes
-  implicit private val subTypeDecoder: MappedEncoding[String, Set[String]] =
+  @unused implicit private val subTypeDecoder: MappedEncoding[String, Set[String]] =
     MappedEncoding[String, Set[String]](_.split(" ").toSet)
 
-  implicit private val subTypeEncoder: MappedEncoding[Set[String], String] =
+  @unused implicit private val subTypeEncoder: MappedEncoding[Set[String], String] =
     MappedEncoding[Set[String], String](_.mkString(" "))
   // End Encoders/Decoders
 

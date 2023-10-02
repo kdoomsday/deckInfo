@@ -2,9 +2,7 @@ package ebarrientos.deckStats
 
 import utest._
 import ebarrientos.deckStats.load.XMLDeckLoader
-import java.nio.file.Paths
 import java.io.File
-import ebarrientos.deckStats.basics.DeckEntry
 
 object XMLDeckLoaderTests extends TestSuite {
 

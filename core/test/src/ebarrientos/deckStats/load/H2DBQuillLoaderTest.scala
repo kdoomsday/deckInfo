@@ -2,17 +2,12 @@ package ebarrientos.deckStats.load
 
 import utest.TestSuite
 import utest.Tests
-import zio.ZIO
 import ebarrientos.deckStats.DummyObjects
 import ebarrientos.deckStats.TestHelper
-import ebarrientos.deckStats.config.CoreConfig
 import zio.Unsafe
 import utest._
 import ebarrientos.deckStats.run.ZioRunnerDefault
 import org.h2.jdbcx.JdbcDataSource
-import ebarrientos.deckStats.config.RequestConfig
-import scala.concurrent.duration.FiniteDuration
-import ebarrientos.deckStats.config.Paths
 
 /** Tests for [[H2DBQuillLoader]] */
 object H2DBQuillLoaderTest extends TestSuite {

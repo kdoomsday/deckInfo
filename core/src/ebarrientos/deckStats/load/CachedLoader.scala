@@ -3,7 +3,6 @@ package ebarrientos.deckStats.load
 import ebarrientos.deckStats.basics.Card
 
 import scala.collection.mutable
-import scala.collection.mutable.HashMap
 import zio._
 
 /** Loader that caches values in memory for repeated use. */

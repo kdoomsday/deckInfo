@@ -2,9 +2,7 @@ package ebarrientos.deckInfo
 
 import zio._
 import zio.http.Server
-import java.io.IOException
 import ebarrientos.deckInfo.controller.{CardController, PublicController}
-import zio.http._
 import ebarrientos.deckStats.run.ZioRunner
 import ebarrientos.deckStats.run.ZioRunnerDefault
 import ebarrientos.deckStats.config.CoreConfig
@@ -14,13 +12,11 @@ import ebarrientos.deckStats.load.CardLoader
 import pureconfig.error.ConfigReaderFailures
 import pureconfig.ConfigSource
 import pureconfig.generic.auto._
-import ebarrientos.deckStats.basics.Card
 import org.slf4j.LoggerFactory
 import ebarrientos.deckStats.load.MagicIOLoader
 import ebarrientos.deckStats.load.XMLCardLoader
 import ebarrientos.deckStats.load.SequenceLoader
 import ebarrientos.deckStats.load.H2DBQuillLoader
-import java.io.File
 
 object ZIOServer extends ZIOAppDefault {
 

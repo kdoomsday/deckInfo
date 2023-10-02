@@ -2,7 +2,6 @@ package ebarrientos.deckStats.load
 
 import ebarrientos.deckStats.basics.Card
 import zio.ZIO
-import zio.Chunk
 
 trait ParallelGroupedCardLoader extends CardLoader {
   def maxParallelExecutions: Int

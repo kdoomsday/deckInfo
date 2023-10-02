@@ -1,6 +1,5 @@
 package ebarrientos.deckStats.load
 
-import scala.collection.mutable.WeakHashMap
 import ebarrientos.deckStats.basics.Card
 
 import scala.collection.mutable

@@ -39,7 +39,7 @@ object MtgJsonParser extends JavaTokenParsers with ParserHelpers {
     def inner(mana:Mana): String = mana match {
       case ColoredMana(color, properties) => colorString(color) + (if (properties contains Phyrexian) "/P" else "")
       case _: XMana => "X"
-      case GenericMana(cmc, properties) => cmc.toString()
+      case GenericMana(cmc, _) => cmc.toString()
       case ColorlessMana(_) => "C"
       case HybridMana(options) => options.map(n => inner(n)).mkString("/")
     }

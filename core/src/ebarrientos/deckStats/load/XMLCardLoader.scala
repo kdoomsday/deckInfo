@@ -3,7 +3,7 @@ package ebarrientos.deckStats.load
 import ebarrientos.deckStats.stringParsing.ManaParser
 import ebarrientos.deckStats.basics.Card
 import ebarrientos.deckStats.load.utils.LoadUtils
-import scala.util.{ Success, Try }
+import scala.util.Try
 import scala.xml.Elem
 import zio._
 import org.slf4j.LoggerFactory

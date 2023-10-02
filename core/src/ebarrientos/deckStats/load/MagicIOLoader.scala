@@ -13,7 +13,6 @@ import org.slf4j.LoggerFactory
 import ebarrientos.deckStats.stringParsing.MtgJsonParser.{cost, parseAll}
 import zio.ZIO
 import scala.concurrent.duration.FiniteDuration
-import scala.concurrent.duration.DurationInt
 import zio.Schedule
 import zio.Duration
 

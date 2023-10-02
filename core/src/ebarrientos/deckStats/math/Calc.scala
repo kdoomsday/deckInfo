@@ -5,10 +5,6 @@ import ebarrientos.deckStats.basics._
 /** Provides operations to apply to decks of cards to get information. */
 object Calc {
 
-  /** Average of a seq of numbers */
-  private[this] def avg(seq: Seq[Int]) =
-    seq.foldLeft(0.0)(_ + _) / seq.size
-
   /** Average mana cost of the whole deck. */
   def avgManaCost(d: Deck): Double =
     avgManaCost(d, _ => true)
@@ -113,13 +109,10 @@ object Calc {
         opts.foldLeft(m) {
           mana2Map(_, _, count, 0.5)
         } // We count both sides of hybrid as half the amount
-      case ColorlessMana(props) => m.updated("C", m("C") + weight * 1)
+      case ColorlessMana(_) => m.updated("C", m("C") + weight * 1)
     }
 
     val mapCost = Map[String, Double]().withDefaultValue(0.0)
-
-    val symbols =
-      d.cards.filter(e => criterion(e.card)).flatMap(e => e.card.cost)
 
     d.cards.filter(e => criterion(e.card))
       .flatMap(de => de.card.cost.map(mana => (de.copies, mana)))

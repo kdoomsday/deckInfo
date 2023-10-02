@@ -1,8 +1,9 @@
 package ebarrientos.deckStats.load
-import ebarrientos.deckStats.basics.{Card, CardType, Mana, Supertype}
+
+import ebarrientos.deckStats.basics.{Card, Mana}
 import ebarrientos.deckStats.load.MtgJsonLoader.Carta
 import ebarrientos.deckStats.load.utils.LoadUtils
-import ebarrientos.deckStats.stringParsing.{MagicApiManaParser, MtgJsonParser, ScryManaParser}
+import ebarrientos.deckStats.stringParsing.MtgJsonParser
 import io.circe.Decoder.Result
 import io.circe._
 import io.circe.generic.semiauto._

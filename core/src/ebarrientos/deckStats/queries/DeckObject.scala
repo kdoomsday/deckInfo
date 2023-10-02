@@ -1,11 +1,15 @@
 package ebarrientos.deckStats.queries
 
-/** Response object to a deck query
-  *
-  * @param avgCMC         Full deck avg mana cost
-  * @param avgCMCNonLands Avg mana cost not counting lands
-  * @param counts         [[TypeCounts]] with card type counts for the deck
-  */
+/**
+ * Response object to a deck query
+ *
+ * @param avgCMC         Full deck avg mana cost
+ * @param avgCMCNonLands Avg mana cost not counting lands
+ * @param cardCount      Number of cards in the deck
+ * @param counts         [[TypeCounts]] with card type counts for the deck
+ * @param manaSymbols   Mana symbol counts
+ * @param manaCurve     Points to create a Mana Curve
+ */
 case class DeckObject(
     avgCMC        : Double,
     avgCMCNonLands: Double,

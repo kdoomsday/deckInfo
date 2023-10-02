@@ -11,17 +11,17 @@ object PublicController {
   private val log = LoggerFactory.getLogger(getClass())
 
   val app = Http.collectHttp[Request] {
-    case Method.GET -> !! / "assets" / "stylesheets" / style =>
+    case Method.GET -> Root / "assets" / "stylesheets" / style =>
       Handler.fromStream(getResource("public/stylesheets", style)).toHttp
 
-    case Method.GET -> !! / "assets" / "js" / script =>
+    case Method.GET -> Root / "assets" / "js" / script =>
       Handler.fromStream(getResource("public/js", script)).toHttp
 
-    case Method.GET -> !! / filename =>
+    case Method.GET -> Root / filename =>
       log.debug(s"Serving public file: $filename")
       Handler.fromStream(getResource("public", filename)).toHttp
 
-    case Method.GET -> !! =>
+    case Method.GET -> Root =>
       log.debug("Requested index page")
       Handler.fromStream(getResource("public", "plainIndex.html")).toHttp
 

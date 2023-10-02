@@ -10,8 +10,9 @@ trait MyModule extends ScalaModule {
   val quillVersion        = "4.6.0"
   val logbackVersion      = "1.4.5"
   val scalaXmlVersion     = "2.1.0"
-  val zioHttpVersion      = "3.0.0-RC1"
+  val zioHttpVersion      = "3.0.0-RC2"
   val circeVersion        = "0.13.0"
+  val tapirVersion        = "1.7.5"
 
   val deps = Agg(
     ivy"javax.inject:javax.inject:1",
@@ -34,20 +35,24 @@ trait MyModule extends ScalaModule {
     ivy"io.circe::circe-parser:$circeVersion"
   )
 
-  val logbackDeps = Agg(
-    ivy"ch.qos.logback:logback-classic:$logbackVersion"
-  )
+  val logbackDeps = Agg(ivy"ch.qos.logback:logback-classic:$logbackVersion")
 
   object test extends ScalaTests with TestModule.Utest {
+
     def ivyDeps = Agg(
       ivy"com.lihaoyi::utest:$utestVersion",
       ivy"org.mockito::mockito-scala:$mockitoScalaVersion"
     )
   }
 
-  def scalacOptions = Seq("-deprecation", "-Xfatal-warnings")
+  def scalacOptions = Seq("-deprecation", "-Xfatal-warnings", "-Wunused")
 }
 
+/**
+ * Core models and functionality. This will have the base Card and Deck models, plus calculations.
+ * Also included are mechanisms to find cards, whether it be by going to a file, going to a
+ * database, or to a web service
+ */
 object core extends MyModule {
   def ivyDeps = deps ++ circeDeps ++ logbackDeps
 
@@ -56,28 +61,46 @@ object core extends MyModule {
   }
 }
 
+/** ZIO Https implementations */
 object zioWeb extends MyModule {
+
   val zioWebDeps = Agg(
     ivy"dev.zio::zio-http:$zioHttpVersion"
   )
+
   def ivyDeps = deps ++ circeDeps ++ logbackDeps ++ zioWebDeps
 
   def moduleDeps = Seq(core)
-
-  def dockerBuild = T {
-    assembly()
-    val dockerImageName = "deckinfo"
-    os.proc("docker", "build", "-f", "Dockerfile", "-t", s"$dockerImageName", ".").call()
-  }
 }
 
 /**
- * Update the millw script.
+ * Tapir Endpoints
  */
+object tapir extends MyModule {
+
+  val tapirDeps = Agg(
+    ivy"com.softwaremill.sttp.tapir::tapir-zio-http-server:$tapirVersion",
+    ivy"com.softwaremill.sttp.tapir::tapir-prometheus-metrics:$tapirVersion",
+    ivy"com.softwaremill.sttp.tapir::tapir-swagger-ui-bundle:$tapirVersion",
+    ivy"com.softwaremill.sttp.tapir::tapir-json-zio:$tapirVersion"
+  )
+
+  def ivyDeps   = deps ++ circeDeps ++ logbackDeps ++ tapirDeps
+  def moduleDeps = Seq(zioWeb)
+}
+
+/** Update the millw script. */
 def millw() = T.command {
   val target = mill.util.Util.download("https://raw.githubusercontent.com/lefou/millw/main/millw")
-  val millw = build.millSourcePath / "mill"
+  val millw  = build.millSourcePath / "mill"
   os.copy.over(target.path, millw)
   os.perms.set(millw, os.perms(millw) + java.nio.file.attribute.PosixFilePermission.OWNER_EXECUTE)
   target
+}
+
+/** Generate a Docker image from the assembly */
+def dockerBuild = T {
+  zioWeb.assembly()
+  val dockerImageName = "deckinfo"
+  os.proc("docker", "build", "-f", "Dockerfile", "-t", s"$dockerImageName", ".").call()
 }

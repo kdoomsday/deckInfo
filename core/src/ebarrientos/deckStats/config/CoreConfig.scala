@@ -1,6 +1,5 @@
 package ebarrientos.deckStats.config
 
-import pureconfig._
 import scala.concurrent.duration.FiniteDuration
 
 case class RequestConfig(timeout: FiniteDuration, retryTime: FiniteDuration)

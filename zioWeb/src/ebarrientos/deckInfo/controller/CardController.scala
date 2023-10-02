@@ -2,31 +2,16 @@ package ebarrientos.deckInfo.controller
 
 import zio._
 import zio.http._
-import pureconfig.ConfigSource
-import pureconfig.error.ConfigReaderFailures
-import pureconfig.generic.auto._
 import ebarrientos.deckStats.load.CardLoader
-import ebarrientos.deckStats.config.CoreConfig
-import ebarrientos.deckStats.load.MagicIOLoader
-import ebarrientos.deckStats.load.XMLCardLoader
-import ebarrientos.deckStats.load.SequenceLoader
-import ebarrientos.deckStats.load.H2DBQuillLoader
 import org.slf4j.LoggerFactory
-import org.h2.jdbcx.JdbcDataSource
-import javax.sql.DataSource
-import ebarrientos.deckStats.run.ZioRunner
-import ebarrientos.deckStats.run.ZioRunnerDefault
 import ebarrientos.deckStats.basics.Card
 import io.circe.generic.auto._
 import io.circe.syntax._
 import java.net.URLDecoder
-import ebarrientos.deckStats.load.DeckLoader
 import scala.xml.Elem
 import scala.xml.XML
 import ebarrientos.deckStats.load.XMLDeckLoader
 import ebarrientos.deckStats.queries.DeckCalc
-import java.io.File
-import zio.stream.ZSink
 
 object CardController {
 
@@ -36,14 +21,14 @@ object CardController {
   val app: Http[CardLoader, Response, Request, Response] =
     Http
       .collectZIO[Request] {
-        case Method.GET -> !! / "card" / name =>
+        case Method.GET -> Root / "card" / name =>
           val unencodedName = URLDecoder.decode(name, Charsets.Utf8)
           for {
             loader <- ZIO.service[CardLoader]
             c      <- loader.card(unencodedName)
           } yield Response.json(c.getOrElse(nullCard).asJson.toString)
 
-        case request @ Method.POST -> !! / "deck" =>
+        case request @ Method.POST -> Root / "deck" =>
           loadDeckFromXMLRequest(request)
       }
       .catchAllZIO { ex =>

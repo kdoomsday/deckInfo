@@ -4,11 +4,9 @@ import utest._
 import ebarrientos.deckStats.basics.Creature
 import ebarrientos.deckStats.TestHelper
 import org.slf4j.LoggerFactory
-import zio.Unsafe
 import java.nio.file.Paths
 import zio.ZIO
 import scala.concurrent.duration.FiniteDuration
-import java.time.temporal.ChronoUnit
 import requests.Response
 import geny.Bytes
 import ebarrientos.deckStats.basics.Card
