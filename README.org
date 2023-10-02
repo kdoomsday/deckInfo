@@ -35,13 +35,5 @@ this functionality) was created.
    Also, [[file:core/src/main/scala/ebarrientos/deckStats/queries/DeckCalc.scala::package ebarrientos.deckStats.queries][ebarrientos.deckStats.queries.DeckCalc]] provides a deck level version
    that relies internally on ~Calc~.
 * Running
-There are two main runners:
-** Web Based
-Upload a deck through the interface, see your information.
-*** Running
-~sbt playWeb/run~
-** CLI
-Transitional interface meant to prove everything else worked. Shows information
-on the console.
-*** Running
-~sbt cliView/run <path/to/deck>~
+Upload a deck through the interface, see your information. By default runs on
+http://localhost:8080. Run it with ~./mill tapir.run~
