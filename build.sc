@@ -100,7 +100,7 @@ def millw() = T.command {
 
 /** Generate a Docker image from the assembly */
 def dockerBuild = T {
-  zioWeb.assembly()
+  tapir.assembly()
   val dockerImageName = "deckinfo"
   os.proc("docker", "build", "-f", "Dockerfile", "-t", s"$dockerImageName", ".").call()
 }

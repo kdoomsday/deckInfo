@@ -3,11 +3,9 @@ EXPOSE 8080/tcp
 ARG VERSION=1.1
 RUN mkdir /opt/app
 WORKDIR /opt/app/deckinfo-$VERSION
-ADD out/zioWeb/assembly.dest/out.jar .
-# RUN apt-get update
-# RUN apt-get install unzip
-# RUN unzip /opt/app/deckinfo-$VERSION.zip -d /opt/app
+ADD out/tapir/assembly.dest/out.jar .
 ADD dbInitScripts/ dbInitScripts/
 ADD cards.xml .
+ADD www/ www/
 # CMD ["bin/deckInfo"]
 CMD ["java", "-jar", "out.jar"]
