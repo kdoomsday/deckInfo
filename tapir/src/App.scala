@@ -22,13 +22,13 @@ object App extends ZIOAppDefault {
 
     val port = appConfig.port
 
-    val endpoints = Endpoints.allEndpoints ++ CardServerEndpoints.allEndpoints ++ PublicEndpoints.all
-    val docEndpoints: List[ZServerEndpoint[Any, Any]] = SwaggerInterpreter()
-      .fromServerEndpoints[Task](endpoints, "deckInfo", "1.0.0")
+    val endpoints = CardServerEndpoints.allEndpoints ++ PublicEndpoints.all
+    val docEndpoints: List[ZServerEndpoint[Any, Any]] =
+      SwaggerInterpreter().fromServerEndpoints[Task](endpoints, "deckInfo", "1.0.0")
 
     (
       for {
-        allEndpoints <- ZIO.succeed(endpoints ++ docEndpoints)
+        allEndpoints <- ZIO.succeed(docEndpoints ++ endpoints)
         app          <- ZIO.succeed(ZioHttpInterpreter(serverOptions).toHttp(allEndpoints))
         actualPort   <- Server.install(app.withDefaultErrorResponse)
         _            <-
@@ -38,7 +38,7 @@ object App extends ZIOAppDefault {
               s"Go to http://localhost:${actualPort}/docs to open SwaggerUI. Press ENTER key to exit."
             )
         _            <- zio.Console.readLine
-        _ <- ZIO.succeed(log.info("Server shutdown requested"))
+        _            <- ZIO.succeed(log.info("Server shutdown requested"))
       } yield ()
     ).provide(
       Server.defaultWithPort(port)
