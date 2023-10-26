@@ -16,7 +16,8 @@ case class DeckObject(
     cardCount     : Int,
     counts        : Seq[CountObject],
     manaSymbols   : Seq[CountObject],
-    manaCurve     : Seq[CurvePoint]
+    manaCurve     : Seq[CurvePoint],
+    deckName      : String
 )
 
 /** Encapsulates a category and it's count

@@ -25,6 +25,8 @@ case class XMLDeckLoader(
 
   override def load(): Task[Deck] = {
     // This will throw a NoSuchElementException if there is no main deck
+    val deckName = (definition \\ "deckname").text
+
     val maindeck =
       (definition \\ "zone").filter(n => (n \ "@name").text == "main").head
 
@@ -51,7 +53,7 @@ case class XMLDeckLoader(
         log.debug("Begin get deck entries")
         val deckEntries = cs.flatten
         log.debug("Got entries, create deck")
-        Deck(deckEntries)
+        Deck(deckEntries, deckName)
       }
   }
 }

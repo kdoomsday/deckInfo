@@ -9,7 +9,7 @@ import ebarrientos.deckStats.queries.CountObject
 import ebarrientos.deckStats.basics.DeckEntry
 
 object DeckCalcTests extends TestSuite {
-  val d1 = Deck(Seq(DeckEntry(arthur, 2), DeckEntry(trillian, 1)))
+  val d1 = Deck(Seq(DeckEntry(arthur, 2), DeckEntry(trillian, 1)), name = "d1")
 
   val d2 = Deck(Seq(DeckEntry(arthur, 1), DeckEntry(trillian, 1),
                     DeckEntry(ford, 1), DeckEntry(marvin, 1), DeckEntry(zaphod, 1),
@@ -22,7 +22,8 @@ object DeckCalcTests extends TestSuite {
       assert(res.avgCMC == res.avgCMCNonLands,
              res.avgCMC == 1.0,
              res.counts.contains(CountObject("Creature", 3)),
-             res.manaCurve.contains(CurvePoint(1, 3)))
+             res.manaCurve.contains(CurvePoint(1, 3)),
+             res.deckName == d1.name)
     }
 
     "Full deck full calcs" - {

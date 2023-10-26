@@ -39,8 +39,17 @@
 
         <!-- Deck Info -->
         <div class="row" id="deckinfo">
-            <!-- Counts -->
-            <div class="col-sm-12 col-md-4">
+            <!-- Deck name and card count -->
+            <div class="col-sm-12 col-md-6">
+                <div class="input-group" >
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">Name</span>
+                        <div id="response"></div>
+                    </div>
+                    <input type="text" class="form-control" id="deckName" readonly>
+                </div>
+            </div>
+            <div class="col-sm-12 col-md-6">
                 <div class="input-group" >
                     <div class="input-group-prepend">
                         <span class="input-group-text">Cards</span>
@@ -50,7 +59,7 @@
                 </div>
             </div>
             <!-- Averages -->
-            <div class="col-sm-12 col-md-4">
+            <div class="col-sm-12 col-md-6">
                 <div class="input-group" >
                     <div class="input-group-prepend">
                         <span class="input-group-text">Avg CMC</span>
@@ -59,7 +68,7 @@
                     <input type="text" class="form-control" id="avgCMC" readonly>
                 </div>
             </div>
-            <div class="col-sm-12 col-md-4">
+            <div class="col-sm-12 col-md-6">
                 <div class="input-group" >
                     <div class="input-group-prepend">
                         <span class="input-group-text">Avg CMC NonLands</span>

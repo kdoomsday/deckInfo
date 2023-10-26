@@ -31,7 +31,8 @@ object DeckCalc {
       Calc.count(d),
       counts,
       symbolCounts,
-      Calc.manaCurve(d).map(CurvePoint.apply _)
+      Calc.manaCurve(d).map(CurvePoint.apply _),
+      d.name
     )
   }
 }

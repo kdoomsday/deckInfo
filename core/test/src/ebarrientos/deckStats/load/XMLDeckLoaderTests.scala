@@ -36,5 +36,9 @@ object XMLDeckLoaderTests extends TestSuite {
     test("numCopies") {
       res.get(DummyObjects.arthur.name).fold(assert(1==0))(e => e.copies == 4)
     }
+
+    test("deckName") {
+      assert(res.name == "The Rock X")
+    }
   }
 }

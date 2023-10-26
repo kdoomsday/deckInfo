@@ -14,7 +14,7 @@ function loadDeck() {
         // contentType: false,
 
         success: function(data) {
-            avgCosts(data);
+            displayInfo(data);
             manaCurve(data);
             countsChart(data);
             symbolsChart(data);
@@ -46,7 +46,7 @@ function loadDeckContents() {
         contentType: false,
 
         success: function(data) {
-            avgCosts(data);
+            displayInfo(data);
             manaCurve(data);
             countsChart(data);
             symbolsChart(data);
@@ -68,11 +68,12 @@ function showAll() {
     $('#deckinfo').show();
 }
 
-/** Display Avg costs */
-function avgCosts(data) {
+/** Display deck information */
+function displayInfo(data) {
     $('#avgCMC').val(data.avgCMC.toFixed(2));
     $('#avgCMCNonLands').val(data.avgCMCNonLands.toFixed(2));
     $('#cardCount').val(data.cardCount);
+    $('#deckName').val(data.deckName);
 }
 
 /** Display the mana curve */
