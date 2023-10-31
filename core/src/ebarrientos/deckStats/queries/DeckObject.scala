@@ -7,8 +7,10 @@ package ebarrientos.deckStats.queries
  * @param avgCMCNonLands Avg mana cost not counting lands
  * @param cardCount      Number of cards in the deck
  * @param counts         [[TypeCounts]] with card type counts for the deck
- * @param manaSymbols   Mana symbol counts
- * @param manaCurve     Points to create a Mana Curve
+ * @param manaSymbols    Mana symbol counts
+ * @param manaCurve      Points to create a Mana Curve
+ * @param deckName       Name of the deck
+ * @param cards          Names of cards in the deck, with counts
  */
 case class DeckObject(
     avgCMC        : Double,
@@ -17,7 +19,8 @@ case class DeckObject(
     counts        : Seq[CountObject],
     manaSymbols   : Seq[CountObject],
     manaCurve     : Seq[CurvePoint],
-    deckName      : String
+    deckName      : String,
+    cards         : Seq[CountObject]
 )
 
 /** Encapsulates a category and it's count

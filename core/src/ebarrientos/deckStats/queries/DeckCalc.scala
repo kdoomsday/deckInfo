@@ -26,13 +26,14 @@ object DeckCalc {
         .toSeq
 
     DeckObject(
-      avgManaCost(d),
+      avgCMC         = avgManaCost(d),
       avgCMCNonLands = avgManaCost(d, c => !c.types.contains(Land)),
-      Calc.count(d),
-      counts,
-      symbolCounts,
-      Calc.manaCurve(d).map(CurvePoint.apply _),
-      d.name
+      cardCount      = Calc.count(d),
+      counts         = counts,
+      manaSymbols    = symbolCounts,
+      manaCurve      = Calc.manaCurve(d).map(CurvePoint.apply _),
+      deckName       = d.name,
+      cards          = d.cards.map(de   => CountObject(de.card.name, de.copies))
     )
   }
 }
