@@ -74,6 +74,11 @@ function displayInfo(data) {
     $('#avgCMCNonLands').val(data.avgCMCNonLands.toFixed(2));
     $('#cardCount').val(data.cardCount);
     $('#deckName').val(data.deckName);
+
+    $('#deckList').append("<ul id='deckList_inner'></ul>");
+    for (card of data.cards) {
+        $('#deckList_inner').append("<li>"+card.count + " x " + card.name + "</li>");
+    }
 }
 
 /** Display the mana curve */
