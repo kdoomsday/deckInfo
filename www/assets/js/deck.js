@@ -77,8 +77,13 @@ function displayInfo(data) {
 
     $('#deckList').append("<ul id='deckList_inner'></ul>");
     for (card of data.cards) {
-        $('#deckList_inner').append("<li>"+card.count + " x " + card.name + "</li>");
+        $('#deckList_inner').append(`<li>${card.count} x ${cardLink(card.name)}</li>`);
     }
+}
+
+function cardLink(name) {
+    // return "<a href='https://deckbox.org/mtg/" + card.name + "'>" + card.name + "</a>";
+    return `<a href='https://deckbox.org/mtg/${encodeURIComponent(name)}' target='_blank'>${name}</a>`;
 }
 
 /** Display the mana curve */
