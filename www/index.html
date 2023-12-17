@@ -39,57 +39,62 @@
 
         <!-- Deck Info -->
         <div class="row" id="deckinfo">
-            <!-- Deck name and card count -->
-            <div class="col-sm-12 col-md-6">
-                <div class="input-group" >
-                    <div class="input-group-prepend">
-                        <span class="input-group-text">Name</span>
-                        <div id="response"></div>
+            <div class="col-sm-12 col-md-8" >
+                <!-- Deck name and card count -->
+                <div class="row">
+                    <div class="col-sm-12 col-md-6">
+                        <div class="input-group" >
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">Name</span>
+                                <div id="response"></div>
+                            </div>
+                            <input type="text" class="form-control" id="deckName" readonly>
+                        </div>
                     </div>
-                    <input type="text" class="form-control" id="deckName" readonly>
-                </div>
-            </div>
-            <div class="col-sm-12 col-md-6">
-                <div class="input-group" >
-                    <div class="input-group-prepend">
-                        <span class="input-group-text">Cards</span>
-                        <div id="response"></div>
+                    <div class="col-sm-12 col-md-6">
+                        <div class="input-group" >
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">Cards</span>
+                                <div id="response"></div>
+                            </div>
+                            <input type="text" class="form-control" id="cardCount" readonly>
+                        </div>
                     </div>
-                    <input type="text" class="form-control" id="cardCount" readonly>
-                </div>
-            </div>
-            <!-- Averages -->
-            <div class="col-sm-12 col-md-6">
-                <div class="input-group" >
-                    <div class="input-group-prepend">
-                        <span class="input-group-text">Avg CMC</span>
-                        <div id="response"></div>
+                    <!-- Averages -->
+                    <div class="col-sm-12 col-md-6">
+                        <div class="input-group" >
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">Avg CMC</span>
+                                <div id="response"></div>
+                            </div>
+                            <input type="text" class="form-control" id="avgCMC" readonly>
+                        </div>
                     </div>
-                    <input type="text" class="form-control" id="avgCMC" readonly>
-                </div>
-            </div>
-            <div class="col-sm-12 col-md-6">
-                <div class="input-group" >
-                    <div class="input-group-prepend">
-                        <span class="input-group-text">Avg CMC NonLands</span>
-                        <div id="response"></div>
+                    <div class="col-sm-12 col-md-6">
+                        <div class="input-group" >
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">Avg CMC NonLands</span>
+                                <div id="response"></div>
+                            </div>
+                            <input type="text" class="form-control" id="avgCMCNonLands" readonly>
+                        </div>
                     </div>
-                    <input type="text" class="form-control" id="avgCMCNonLands" readonly>
+
+                    <!-- Graphs -->
+                    <div class="col-12 col-md-6 mt-3">
+                        <canvas id="manaCurve"></canvas>
+                    </div>
+                    <div class="col-12 col-md-6 mt-3">
+                        <canvas id="counts"></canvas>
+                    </div>
+                    <div class="col-12">
+                        <canvas id="symbols"></canvas>
+                    </div>
+
                 </div>
             </div>
 
-            <!-- Graphs -->
-            <div class="col-12 col-md-6 mt-3">
-                <canvas id="manaCurve"></canvas>
-            </div>
-            <div class="col-12 col-md-6 mt-3">
-                <canvas id="counts"></canvas>
-            </div>
-            <div class="col-12">
-                <canvas id="symbols"></canvas>
-            </div>
-
-            <div class="row" id="deckList"></div>
+            <div class="col-sm-12 col-md-4" id="deckList"></div>
         </div>
 
         <div class="col alert alert-warning" id="myalerts" role="alert"></div>
