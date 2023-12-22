@@ -112,7 +112,8 @@ class MagicIOLoader(val timeout: FiniteDuration, retryTime: FiniteDuration, requ
       subTypes,
       getStr(j \ "text"),
       getInt(j \ "power"),
-      getInt(j \ "toughness")
+      getInt(j \ "toughness"),
+      Some(getInt(j \ "multiverseid"))
     )
   }
 

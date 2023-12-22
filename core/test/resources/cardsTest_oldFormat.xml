@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cockatrice_carddatabase version="2">
+    <cards>
+        <card>
+            <name>Tundra Kavu</name>
+            <set picURL="http://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=26805&amp;type=card" picURLHq="" picURLSt="">AP</set>
+            <color>R</color>
+            <manacost>2R</manacost>
+            <type>Creature - Kavu</type>
+            <pt>2/2</pt>
+            <tablerow>2</tablerow>
+            <text>{T}: Target land becomes a Plains or an Island until end of turn.</text>
+        </card>
+        <card>
+            <name>Hundred-Talon Kami</name>
+            <set picURL="http://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=79145&amp;type=card" picURLHq="" picURLSt="">CHK</set>
+            <color>W</color>
+            <manacost>4W</manacost>
+            <type>Creature - Spirit</type>
+            <pt>2/3</pt>
+            <tablerow>2</tablerow>
+            <text>Flying
+Soulshift 4 (When this creature dies, you may return target Spirit card with converted mana cost 4 or less from your graveyard to your hand.)</text>
+        </card>
+        <card>
+            <name>Soldevi Sentry</name>
+            <set picURL="http://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=3060&amp;type=card" picURLHq="" picURLSt="">AL</set>
+            <manacost>1</manacost>
+            <type>Artifact Creature - Soldier</type>
+            <pt>1/1</pt>
+            <tablerow>2</tablerow>
+            <text>{1}: Choose target opponent. Regenerate Soldevi Sentry. When it regenerates this way, that player may draw a card.</text>
+        </card>
+    </cards>
+</cockatrice_carddatabase>

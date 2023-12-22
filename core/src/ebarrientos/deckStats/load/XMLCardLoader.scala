@@ -31,11 +31,13 @@ class XMLCardLoader(xmlFile: String) extends CardLoader with LoadUtils {
 	  if (seq.nonEmpty) {
 		  val elem = seq.head
 		  val name = (elem \ "name").text
-		  val cost = (elem \ "manacost").text
-		  val (supertypes, types, subtypes) = parseTypes((elem \ "type").text)
+		  val cost = (elem \\ "manacost").text
+		  val (supertypes, types, subtypes) = parseTypes((elem \\ "type").text)
 		  val text = (elem \ "text").text
 
-		  val (power, toughness) = parsePT((elem \ "pt").text)
+		  val (power, toughness) = parsePT((elem \\ "pt").text)
+
+      val multiverseId = (elem \ "set" \\ "@muid").headOption.map(_.text.toInt)
 
 		  val c = Card(
 	      ManaParser.parseAll(ManaParser.cost, cost).get,
@@ -43,7 +45,8 @@ class XMLCardLoader(xmlFile: String) extends CardLoader with LoadUtils {
 		    types, supertypes, subtypes,
 		    text,
 		    power,
-		    toughness
+		    toughness,
+        multiverseId
       )
 
       log.debug(s"XMLCardLoader found $name")

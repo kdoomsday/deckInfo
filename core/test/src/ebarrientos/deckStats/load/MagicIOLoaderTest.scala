@@ -42,6 +42,7 @@ object MagicIOLoaderTest extends TestSuite {
     assert(card.types.contains(Creature))
     assert(card.subtypes contains "Human")
     assert(card.subtypes contains "Wizard")
+    assert(card.multiverseId == Some(489754))
   }
 
 

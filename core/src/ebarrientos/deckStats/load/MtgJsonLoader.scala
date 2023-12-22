@@ -10,6 +10,12 @@ import io.circe.generic.semiauto._
 import io.circe.parser._
 import zio._
 
+/**
+ * Loads cards from MtgJson
+ * This API is no longer working and thus this class is no longer maintained
+ * @deprecated Use MagicIOLoader instead
+ */
+@Deprecated
 class MtgJsonLoader(source: => String) extends CardLoader with LoadUtils {
   val manaParseFunc: String => Seq[Mana] = MtgJsonParser.parseAll(MtgJsonParser.cost, _).get
 
@@ -38,7 +44,8 @@ class MtgJsonLoader(source: => String) extends CardLoader with LoadUtils {
       subtypes,
       c.text.getOrElse(""),
       power,
-      toughness
+      toughness,
+      multiverseId = None
     )
   }
 

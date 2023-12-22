@@ -6,5 +6,6 @@ Create table IF NOT EXISTS card (
   subtypes VARCHAR(150),
   text VARCHAR(2000),
   power INT,
-  toughness INT
+  toughness INT,
+  multiverseid INT
 );

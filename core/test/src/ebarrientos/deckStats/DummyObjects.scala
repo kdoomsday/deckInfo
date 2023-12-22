@@ -21,7 +21,8 @@ object DummyObjects {
     Set("Homeowner"),
     "text",
     1,
-    1
+    1,
+    multiverseId = Some(1)
   )
 
   val trillian = Card(
@@ -32,7 +33,8 @@ object DummyObjects {
     Set("Human", "Adventurer"),
     "text",
     1,
-    2
+    2,
+    multiverseId = Some(2)
   )
 
   val ford = Card(
@@ -43,7 +45,8 @@ object DummyObjects {
     Set("Hitchhiker"),
     "text",
     2,
-    2
+    2,
+    multiverseId = Some(3)
   )
 
   val zaphod = Card(
@@ -54,7 +57,8 @@ object DummyObjects {
     Set("Regent", "Adventurer"),
     "text",
     2,
-    1
+    1,
+    multiverseId = Some(4)
   )
 
   val marvin = Card(
@@ -65,7 +69,8 @@ object DummyObjects {
     Set("Android"),
     "1t: Tap target Creature",
     0,
-    100
+    100,
+    multiverseId = Some(5)
   )
 
   val restaurant = Card(
@@ -76,7 +81,8 @@ object DummyObjects {
     Set(),
     "t: Add 2 generic mana to your mana pool",
     0,
-    0
+    0,
+    multiverseId = Some(6)
   )
 
   val heartOfGold = Card(
@@ -94,7 +100,8 @@ object DummyObjects {
     """|(5): Flip a coin. Heads, you win the game.
        |Tails you lose the game""".stripMargin,
     0,
-    0
+    0,
+    multiverseId = Some(7)
   )
 
   val petunias = Card(
@@ -105,7 +112,8 @@ object DummyObjects {
     subtypes = Set.empty,
     text = "Bowl of Petunias is Green",
     power = 0,
-    toughness = 1
+    toughness = 1,
+    multiverseId = Some(8)
   )
 
   /** Dummy deck loader to be used for tests */

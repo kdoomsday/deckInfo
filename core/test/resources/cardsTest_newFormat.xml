@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cockatrice_carddatabase version="4" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://raw.githubusercontent.com/Cockatrice/Cockatrice/master/doc/carddatabase_v4/cards.xsd">
+    <info>
+        <author>Cockatrice 2.8.0 (2021-01-26)</author>
+        <createdAt>2023-09-23T14:52:45Z</createdAt>
+        <sourceUrl>https://www.mtgjson.com/api/v5/AllPrintings.json.xz</sourceUrl>
+        <sourceVersion>5.2.2+20230923</sourceVersion>
+    </info>
+    <cards>
+        <card>
+            <name>Etchings of the Chosen</name>
+            <text>As Etchings of the Chosen enters the battlefield, choose a creature type.
+Creatures you control of the chosen type get +1/+1.
+{1}, Sacrifice a creature of the chosen type: Target creature you control gains indestructible until end of turn.</text>
+            <prop>
+                <format-penny>legal</format-penny>
+                <format-commander>legal</format-commander>
+                <format-duel>legal</format-duel>
+                <type>Enchantment</type>
+                <format-gladiator>legal</format-gladiator>
+                <format-historicbrawl>legal</format-historicbrawl>
+                <cmc>3</cmc>
+                <layout>normal</layout>
+                <format-modern>legal</format-modern>
+                <coloridentity>WB</coloridentity>
+                <format-vintage>legal</format-vintage>
+                <format-legacy>legal</format-legacy>
+                <maintype>Enchantment</maintype>
+                <manacost>1WB</manacost>
+                <format-historic>legal</format-historic>
+                <colors>WB</colors>
+                <format-oathbreaker>legal</format-oathbreaker>
+                <side>front</side>
+            </prop>
+            <set num="25" uuid="2e1da79b-4392-47cc-ade9-776827695276" rarity="uncommon">H1R</set>
+            <set num="689" uuid="4a55bb40-02f1-4dca-8ea8-cb62fc8335ba" rarity="uncommon">J21</set>
+            <set num="198" muid="464147" uuid="7036ab83-94a3-4634-9f0a-dde7af3be450" rarity="uncommon">MH1</set>
+            <set num="91359" uuid="4af398b8-9197-4880-80f2-20f489f882c8" rarity="rare">PRM</set>
+            <tablerow>1</tablerow>
+        </card>
+        <card>
+            <name>Blossom Prancer</name>
+            <text>Reach
+When Blossom Prancer enters the battlefield, look at the top five cards of your library. You may reveal a creature or enchantment card from among them and put it into your hand. Put the rest on the bottom of your library in a random order. If you didn't put a card into your hand this way, you gain 4 life.</text>
+            <prop>
+                <format-penny>legal</format-penny>
+                <format-commander>legal</format-commander>
+                <format-duel>legal</format-duel>
+                <type>Creature — Spirit</type>
+                <format-gladiator>legal</format-gladiator>
+                <format-standard>legal</format-standard>
+                <format-historicbrawl>legal</format-historicbrawl>
+                <cmc>5</cmc>
+                <layout>normal</layout>
+                <format-explorer>legal</format-explorer>
+                <format-modern>legal</format-modern>
+                <coloridentity>G</coloridentity>
+                <format-vintage>legal</format-vintage>
+                <format-pioneer>legal</format-pioneer>
+                <format-future>legal</format-future>
+                <format-legacy>legal</format-legacy>
+                <maintype>Creature</maintype>
+                <manacost>3GG</manacost>
+                <format-historic>legal</format-historic>
+                <format-paupercommander>restricted</format-paupercommander>
+                <colors>G</colors>
+                <pt>4/4</pt>
+                <format-oathbreaker>legal</format-oathbreaker>
+                <format-brawl>legal</format-brawl>
+                <side>front</side>
+            </prop>
+            <set num="175" muid="548481" uuid="d26abdf2-efd7-40e5-bfc6-d75fcadd26f8" rarity="uncommon">NEO</set>
+            <set num="1133" uuid="36905fec-c21b-4904-b102-eed60aa7e635" rarity="uncommon">PLIST</set>
+            <tablerow>2</tablerow>
+        </card>
+    </cards>
+</cockatrice_carddatabase>
