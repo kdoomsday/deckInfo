@@ -13,6 +13,7 @@ import zio.json.JsonDecoder
 import ebarrientos.deckStats.queries.DeckObject
 import ebarrientos.deckStats.queries.CountObject
 import ebarrientos.deckStats.queries.CurvePoint
+import ebarrientos.deckStats.queries.CardObject
 
 object Codecs {
   implicit val colorEncoder: JsonEncoder[Color]               = DeriveJsonEncoder.gen
@@ -22,6 +23,7 @@ object Codecs {
   implicit val supertypeEncoder: JsonEncoder[Supertype]       = DeriveJsonEncoder.gen
   implicit val cardEncoder: JsonEncoder[Card]                 = DeriveJsonEncoder.gen
   implicit val countObjectEncoder: JsonEncoder[CountObject]   = DeriveJsonEncoder.gen
+  implicit val cardObjectEncoder: JsonEncoder[CardObject]     = DeriveJsonEncoder.gen
   implicit val curvePointEncoder: JsonEncoder[CurvePoint]     = DeriveJsonEncoder.gen
   implicit val deckObjectEncoder: JsonEncoder[DeckObject]     = DeriveJsonEncoder.gen
 
@@ -32,6 +34,7 @@ object Codecs {
   implicit val supertypeDecoder: JsonDecoder[Supertype]       = DeriveJsonDecoder.gen
   implicit val cardDecoder: JsonDecoder[Card]                 = DeriveJsonDecoder.gen
   implicit val countObjectDecoder: JsonDecoder[CountObject]   = DeriveJsonDecoder.gen
+  implicit val cardObjectDecoder: JsonDecoder[CardObject]     = DeriveJsonDecoder.gen
   implicit val curvePointDecoder: JsonDecoder[CurvePoint]     = DeriveJsonDecoder.gen
   implicit val deckObjectDecoder: JsonDecoder[DeckObject]     = DeriveJsonDecoder.gen
 }

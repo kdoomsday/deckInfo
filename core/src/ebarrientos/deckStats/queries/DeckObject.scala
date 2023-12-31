@@ -20,7 +20,7 @@ case class DeckObject(
     manaSymbols   : Seq[CountObject],
     manaCurve     : Seq[CurvePoint],
     deckName      : String,
-    cards         : Seq[CountObject]
+    cards         : Seq[CardObject]
 )
 
 /** Encapsulates a category and it's count
@@ -29,6 +29,15 @@ case class DeckObject(
   * @param count Count
   */
 case class CountObject(name: String, count: Double)
+
+/**
+ * Card info for the response
+ *
+ * @param name Card name
+ * @param count How many are present in the deck
+ * @param multiverseId Card multiverse id
+ */
+case class CardObject(name: String, count: Double, multiverseId: Int)
 
 /** A point in a (mana)curve */
 case class CurvePoint(cost: Int, amount: Int)

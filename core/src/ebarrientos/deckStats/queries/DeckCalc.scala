@@ -33,7 +33,7 @@ object DeckCalc {
       manaSymbols    = symbolCounts,
       manaCurve      = Calc.manaCurve(d).map(CurvePoint.apply _),
       deckName       = d.name,
-      cards          = d.cards.map(de   => CountObject(de.card.name, de.copies))
+      cards          = d.cards.map(de   => CardObject(de.card.name, de.copies, de.card.multiverseId.getOrElse(-1)))
     )
   }
 }
