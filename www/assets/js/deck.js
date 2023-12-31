@@ -75,6 +75,7 @@ function displayInfo(data) {
     $('#cardCount').val(data.cardCount);
     $('#deckName').val(data.deckName);
 
+    $('#deckList').html("");
     $('#deckList').append("<ul id='deckList_inner'></ul>");
     for (card of data.cards) {
         $('#deckList_inner').append(`<li>${card.count} x ${cardLink(card.name)}</li>`);
