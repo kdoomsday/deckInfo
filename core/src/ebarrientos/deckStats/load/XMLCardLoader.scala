@@ -1,6 +1,6 @@
 package ebarrientos.deckStats.load
 
-import ebarrientos.deckStats.stringParsing.ManaParser
+import ebarrientos.deckStats.stringParsing.MtgDBManaParser
 import ebarrientos.deckStats.basics.Card
 import ebarrientos.deckStats.load.utils.LoadUtils
 import scala.util.Try
@@ -40,7 +40,7 @@ class XMLCardLoader(xmlFile: String) extends CardLoader with LoadUtils {
       val multiverseId = (elem \ "set" \\ "@muid").headOption.map(_.text.toInt)
 
 		  val c = Card(
-	      ManaParser.parseAll(ManaParser.cost, cost).get,
+	      MtgDBManaParser.parseAll(MtgDBManaParser.cost, cost).get,
 		    name,
 		    types, supertypes, subtypes,
 		    text,
