@@ -10,11 +10,12 @@ import pureconfig.generic.auto._
 import ebarrientos.deckStats.config.CoreConfig
 import sttp.tapir.swagger.bundle.SwaggerInterpreter
 import org.slf4j.LoggerFactory
+import org.slf4j.Logger
 
 object App extends ZIOAppDefault {
-  private val appConfig = ConfigSource.default.loadOrThrow[CoreConfig]
+  private val appConfig: CoreConfig = ConfigSource.default.loadOrThrow[CoreConfig]
 
-  private val log = LoggerFactory.getLogger(classOf[App])
+  private val log: Logger = LoggerFactory.getLogger(classOf[App])
 
   override def run = {
     val serverOptions: ZioHttpServerOptions[Any] =
@@ -23,6 +24,7 @@ object App extends ZIOAppDefault {
     val port = appConfig.port
 
     val endpoints = CardServerEndpoints.allEndpoints ++ PublicEndpoints.all
+
     val docEndpoints: List[ZServerEndpoint[Any, Any]] =
       SwaggerInterpreter().fromServerEndpoints[Task](endpoints, "deckInfo", "1.0.0")
 

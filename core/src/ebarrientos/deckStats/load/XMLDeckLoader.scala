@@ -8,9 +8,10 @@ import zio.ZIO
 import org.slf4j.LoggerFactory
 import ebarrientos.deckStats.basics.DeckEntry
 
-/** Deck loader that loads the information from an XML file. The card loader provides the card
-  * information.
-  */
+/**
+ * Deck loader that loads the information from an XML file. The card loader provides the card
+ * information.
+ */
 case class XMLDeckLoader(
     definition: Elem,
     loader: CardLoader
@@ -37,13 +38,19 @@ case class XMLDeckLoader(
 
     log.debug("Found {} distinct cards", cardinfo.size)
 
-    val cardMap: ZIO[Any,Throwable,Map[String,Card]] =
-      for { cards <- loader.cards(cardinfo.map{ case (name, _) => name }) }
-      yield cards.map(c => c.name -> c).toMap
+    val cardMap: ZIO[Any, Throwable, Map[String, Card]] =
+      for { cards <- loader.cards(cardinfo.map { case (name, _) => name }) }
+      yield cards
+        .map(c => c.name -> c)
+        .toMap
 
     val cards: ZIO[Any, Throwable, Seq[Option[DeckEntry]]] =
       for (cMap <- cardMap)
-      yield cardinfo.map { case (name, number) => cMap.get(name).map(c => DeckEntry(c, number.toInt)) }
+        yield cardinfo.map { case (name, number) =>
+          cMap.get(name).map { c =>
+            DeckEntry(c, number.toInt)
+          }
+        }
 
     log.debug("Collect all results into list of maybe cards")
 

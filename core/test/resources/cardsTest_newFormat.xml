@@ -73,5 +73,39 @@ When Blossom Prancer enters the battlefield, look at the top five cards of your 
             <set num="1133" uuid="36905fec-c21b-4904-b102-eed60aa7e635" rarity="uncommon">PLIST</set>
             <tablerow>2</tablerow>
         </card>
+        <card xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+            <name>Deathrite Shaman</name>
+            <text>{T}: Exile target land card from a graveyard. Add one mana of any color.
+{B}, {T}: Exile target instant or sorcery card from a graveyard. Each opponent loses 2 life.
+{G}, {T}: Exile target creature card from a graveyard. You gain 2 life.</text>
+            <prop>
+                <format-commander>legal</format-commander>
+                <format-duel>legal</format-duel>
+                <type>Creature — Elf Shaman</type>
+                <format-gladiator>legal</format-gladiator>
+                <format-historicbrawl>legal</format-historicbrawl>
+                <cmc>1</cmc>
+                <layout>normal</layout>
+                <format-explorer>legal</format-explorer>
+                <format-modern>banned</format-modern>
+                <coloridentity>BG</coloridentity>
+                <format-vintage>legal</format-vintage>
+                <format-pioneer>legal</format-pioneer>
+                <format-legacy>banned</format-legacy>
+                <maintype>Creature</maintype>
+                <manacost>{B/G}</manacost>
+                <format-historic>legal</format-historic>
+                <colors>BG</colors>
+                <format-oathbreaker>legal</format-oathbreaker>
+                <pt>1/2</pt>
+                <side>front</side>
+            </prop>
+            <set num="15" uuid="2071ed5f-7a50-4b02-b6a4-f5c781ef9212" rarity="rare">EA3</set>
+            <set num="215" muid="413757" uuid="d14f9fc8-e48c-473f-ba6b-9cffce94bb53" rarity="rare">EMA</set>
+            <set num="59" muid="456063" uuid="a65e485b-03a2-4634-9218-f5bb7c104d41" rarity="rare">GK1</set>
+            <set num="213" muid="290529" uuid="70496f16-c4c0-4c03-beef-454eb4824cd1" rarity="rare">RTR</set>
+            <set num="2012" uuid="9793f0a1-ab76-46e2-add2-200c2a9693b4" rarity="rare">SLC</set>
+            <tablerow>2</tablerow>
+        </card>
     </cards>
 </cockatrice_carddatabase>

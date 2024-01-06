@@ -52,5 +52,16 @@ object XMLCardLoaderTests extends TestSuite {
       val res = TestHelper.run(loader.card("Eduardo's egregious card name"))
       assert(res.isEmpty)
     }
+
+    test("load new format deathrite") {
+      val loader = withNewLoader()
+      val res = TestHelper.run(loader.card("Deathrite Shaman"))
+      val card = res.get
+
+      assert(card.power == 1)
+      assert(card.toughness == 2)
+      assert(card.multiverseId.isDefined)
+      assert(card.cmc == 1)
+    }
   }
 }
