@@ -129,7 +129,9 @@ function manaCurve(data) {
                 position: 'bottom',
                 text: 'Mana Curve'
             },
-            legend: { display: false }
+            plugins: {
+                legend: { display: false }
+            }
         }
     });
 }
