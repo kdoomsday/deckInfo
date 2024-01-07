@@ -259,8 +259,8 @@ function symbolsChart(data) {
                 position: "bottom",
                 display: true
             },
-            legend: {
-                position: "left"
+            plugins: {
+                legend: { display: false }
             }
         }
     });
