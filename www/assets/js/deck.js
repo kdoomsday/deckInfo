@@ -135,17 +135,30 @@ function manaCurve(data) {
 }
 
 /** Transform a list of CountObjects into labels and counts */
-function countsToChartData(countsObj) {
+function countsToChartData(countsObj, nameFunction = x => x) {
     const labs = [];
     const counts = [];
     for (co of countsObj) {
-        labs.push(co.name);
+        labs.push(nameFunction(co.name));
         counts.push(co.count);
     }
 
     return {
         "labels": labs,
         "counts": counts
+    };
+}
+
+/** Get the color name according to its symbol */
+function colorName(color) {
+    switch(color) {
+    case "W": return "White";
+    case "U": return "Blue";
+    case "B": return "Black";
+    case "R": return "Red";
+    case "G": return "Green";
+    case "C": return "Generic";
+    default:  return "???";
     };
 }
 
@@ -208,15 +221,15 @@ function symbolColor(context) {
     const index = context.dataIndex;
     const label = context.chart.data.labels[index];
 
-    if (label == "W")
+    if (label == colorName("W"))
         return "#f4f395";
-    else if (label == "U")
+    else if (label == colorName("U"))
         return "#0000ff";
-    else if (label == "B")
+    else if (label == colorName("B"))
         return "#000000";
-    else if (label == "R")
+    else if (label == colorName("R"))
         return "#ff0000";
-    else if (label == "G")
+    else if (label == colorName("G"))
         return "#00ff00";
     else
         return "#888888";
@@ -226,7 +239,7 @@ function symbolColor(context) {
 function symbolsChart(data) {
     $('#symbols').replaceWith('<canvas id="symbols"></canvas>');
 
-    const cd = countsToChartData(data.manaSymbols);
+    const cd = countsToChartData(data.manaSymbols, colorName);
 
     const ctx = document.getElementById('symbols').getContext('2d');
     const myChart = new Chart(ctx, {
