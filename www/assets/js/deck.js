@@ -86,7 +86,7 @@ function displayInfo(data) {
         var muid = element.getAttribute("multiverseId");
         var imgsrc = `${baseUrl}?multiverseid=${muid}&type=card`;
         element.addEventListener("mouseenter", (ev) => {
-            document.querySelector("#cardImage_img").setAttribute("src", imgsrc);
+            document.querySelector("#cardImage").setAttribute("src", imgsrc);
         });
     });
 }
