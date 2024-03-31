@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory
 class XMLCardLoader(xmlFile: String) extends CardLoader with LoadUtils {
   private val log    = LoggerFactory.getLogger(getClass())
 
-	private[this] lazy val ioCards: IO[Exception, Elem] =
+  private[this] lazy val ioCards: IO[Exception, Elem] =
     ZIO.succeed(log.debug(s"Loading cards from $xmlFile")) *>
       ZIO.fromEither(et2ee(Try(scala.xml.XML.load(xmlFile)).toEither))
 
@@ -24,37 +24,37 @@ class XMLCardLoader(xmlFile: String) extends CardLoader with LoadUtils {
     }
 
 
-	def card(name: String): IO[Exception, Option[Card]] = for(cards <- ioCards) yield {
-	  // The xml find gives nodeSeq. Names are unique, so head gives only match
-	  val seq = (cards \\ "card").filter(x => (x \\ "name").text == name)
+  def card(name: String): IO[Exception, Option[Card]] = for(cards <- ioCards) yield {
+    // The xml find gives nodeSeq. Names are unique, so head gives only match
+    val seq = (cards \\ "card").filter(x => (x \\ "name").text == name)
 
-	  if (seq.nonEmpty) {
-		  val elem = seq.head
-		  val name = (elem \ "name").text
-		  val cost = (elem \\ "manacost").text
-		  val (supertypes, types, subtypes) = parseTypes((elem \\ "type").text)
-		  val text = (elem \ "text").text
+    if (seq.nonEmpty) {
+      val elem = seq.head
+      val name = (elem \ "name").text
+      val cost = (elem \\ "manacost").text
+      val (supertypes, types, subtypes) = parseTypes((elem \\ "type").text)
+      val text = (elem \ "text").text
 
-		  val (power, toughness) = parsePT((elem \\ "pt").text)
+      val (power, toughness) = parsePT((elem \\ "pt").text)
 
       val multiverseId = (elem \ "set" \\ "@muid").headOption.map(_.text.toInt)
 
-		  val c = Card(
-	      MtgDBManaParser.parseAll(MtgDBManaParser.cost, cost).get,
-		    name,
-		    types, supertypes, subtypes,
-		    text,
-		    power,
-		    toughness,
+      val c = Card(
+        MtgDBManaParser.parseAll(MtgDBManaParser.cost, cost).get,
+        name,
+        types, supertypes, subtypes,
+        text,
+        power,
+        toughness,
         multiverseId
       )
 
       log.debug(s"XMLCardLoader found $name")
       Some(c)
-		}
-	  else {
+    }
+    else {
       log.debug(s"XMLCardLoader could not find $name")
       None
     }
-	}
+  }
 }

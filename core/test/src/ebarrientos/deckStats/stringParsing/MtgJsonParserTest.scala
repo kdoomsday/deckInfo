@@ -1,7 +1,7 @@
 package ebarrientos.deckStats.stringParsing
 
-import ebarrientos.deckStats.basics._
-import utest._
+import ebarrientos.deckStats.basics.*
+import utest.*
 
 object MtgJsonParserTest extends TestSuite {
   val p: String => Seq[Mana] =
@@ -25,18 +25,18 @@ object MtgJsonParserTest extends TestSuite {
     }
 
     "Parse colored mana" - {
-      * - assertMana(ColoredMana(White), p("{W}"))
-      * - assertMana(ColoredMana(Blue),  p("{U}"))
-      * - assertMana(ColoredMana(Black), p("{B}"))
-      * - assertMana(ColoredMana(Red),   p("{R}"))
-      * - assertMana(ColoredMana(Green), p("{G}"))
+      test { assertMana(ColoredMana(White), p("{W}")) }
+      test { assertMana(ColoredMana(Blue),  p("{U}")) }
+      test { assertMana(ColoredMana(Black), p("{B}")) }
+      test { assertMana(ColoredMana(Red),   p("{R}")) }
+      test { assertMana(ColoredMana(Green), p("{G}")) }
     }
 
     "Generic mana" - {
-      * - assertMana(GenericMana(0),  p("{0}"))
-      * - assertMana(GenericMana(1),  p("{1}"))
-      * - assertMana(GenericMana(3),  p("{3}"))
-      * - assertMana(GenericMana(16), p("{16}"))
+      test { assertMana(GenericMana(0),  p("{0}")) }
+      test { assertMana(GenericMana(1),  p("{1}")) }
+      test { assertMana(GenericMana(3),  p("{3}")) }
+      test { assertMana(GenericMana(16), p("{16}")) }
     }
 
     "Hybrid mana" - {
@@ -55,9 +55,9 @@ object MtgJsonParserTest extends TestSuite {
     }
 
     "Multiple mana" - {
-      * - assertManaList(Seq(ColoredMana(Black), GenericMana(1)), p("{1}{B}"))
-      * - assertManaList(Seq(GenericMana(1), ColoredMana(Black)), p("{1}{B}"))
-      * - assertManaList(Seq(ColoredMana(White), ColoredMana(Blue)), p("{W}{U}"))
+      test { assertManaList(Seq(ColoredMana(Black), GenericMana(1)), p("{1}{B}")) }
+      test { assertManaList(Seq(GenericMana(1), ColoredMana(Black)), p("{1}{B}")) }
+      test { assertManaList(Seq(ColoredMana(White), ColoredMana(Blue)), p("{W}{U}")) }
     }
 
     "Snow mana" - {

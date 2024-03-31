@@ -30,6 +30,6 @@ trait CardLoader {
     } yield cs.flatten
 
   /** Load cards by name. Utility present for usability purposes */
-  final def cards(name: String, names: String*): ZIO[Any,Throwable,Seq[Card]] =
+  def cards(name: String, names: String*): ZIO[Any,Throwable,Seq[Card]] =
     cards(name +: names)
 }

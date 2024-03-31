@@ -94,7 +94,7 @@ class H2DBQuillLoader(
   /** Get card from DB, do not involve helper */
   private def retrieve(name: String): Task[Option[Card]] = {
     log.debug("Asked to fetch [{}]", name)
-    val q = quote(query[Card].filter(c => c.name == lift(name)))
+    inline def q = quote(query[Card].filter(c => c.name == lift(name)))
     ctx
       .run(q)
       .tap(cs => ZIO.succeed(log.debug(s"Found $cs")))
@@ -125,7 +125,7 @@ class H2DBQuillLoader(
     */
   private def storeMulti(cards: Seq[Card]): Task[Long] =
     ctx
-      .run(liftQuery(cards).foreach(c => quote(query[Card].insertValue(c))))
+      .run(liftQuery(cards).foreach(c => query[Card].insertValue(c)))
       .map(_ => cards.size.toLong)
       .provide(dataSource)
 
@@ -136,7 +136,7 @@ class H2DBQuillLoader(
       val source       = scala.io.Source.fromFile(path.toFile())
       val text         = source.getLines().mkString("\n")
       source.close()
-      val createScript = quote(sql"#${text}".as[Update[Int]])
+      inline def createScript = quote(sql"#${text}".as[Update[Int]])
       ctx.run(createScript).unit
     }
 
@@ -160,7 +160,7 @@ class H2DBQuillLoader(
     *   All of the cards that were found. This might be less than the requested cards
     */
   private def queryMultiple(names: Seq[String]): Task[Seq[Card]] = {
-    val q = quote {
+    inline def q = quote {
       query[Card]
         .filter(c => liftQuery(names).contains(c.name))
     }

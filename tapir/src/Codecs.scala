@@ -14,9 +14,21 @@ import ebarrientos.deckStats.queries.DeckObject
 import ebarrientos.deckStats.queries.CountObject
 import ebarrientos.deckStats.queries.CurvePoint
 import ebarrientos.deckStats.queries.CardObject
+import ebarrientos.deckStats.basics.White
+import ebarrientos.deckStats.basics.Blue
+import ebarrientos.deckStats.basics.Black
+import ebarrientos.deckStats.basics.Red
+import ebarrientos.deckStats.basics.Green
 
 object Codecs {
-  implicit val colorEncoder: JsonEncoder[Color]               = DeriveJsonEncoder.gen
+  implicit val colorEncoder: JsonEncoder[Color] = JsonEncoder[String].contramap {
+    case White => "W"
+    case Blue  => "U"
+    case Black => "B"
+    case Red   => "R"
+    case Green => "G"
+  }
+
   implicit val manaPropertyEncoder: JsonEncoder[ManaProperty] = DeriveJsonEncoder.gen
   implicit val manaEncoder: JsonEncoder[Mana]                 = DeriveJsonEncoder.gen
   implicit val cardTypeEncoder: JsonEncoder[CardType]         = DeriveJsonEncoder.gen
@@ -27,7 +39,14 @@ object Codecs {
   implicit val curvePointEncoder: JsonEncoder[CurvePoint]     = DeriveJsonEncoder.gen
   implicit val deckObjectEncoder: JsonEncoder[DeckObject]     = DeriveJsonEncoder.gen
 
-  implicit val colorDecoder: JsonDecoder[Color]               = DeriveJsonDecoder.gen
+  implicit val colorDecoder: JsonDecoder[Color] = JsonDecoder[String].map {
+    case "W" => White
+    case "U" => Blue
+    case "B" => Black
+    case "R" => Red
+    case "G" => Green
+  }
+
   implicit val manaPropertyDecoder: JsonDecoder[ManaProperty] = DeriveJsonDecoder.gen
   implicit val manaDecoder: JsonDecoder[Mana]                 = DeriveJsonDecoder.gen
   implicit val cardTypeDecoder: JsonDecoder[CardType]         = DeriveJsonDecoder.gen

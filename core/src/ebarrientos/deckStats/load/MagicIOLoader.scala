@@ -54,15 +54,15 @@ class MagicIOLoader(val timeout: FiniteDuration, retryTime: FiniteDuration, requ
   ): (Set[Supertype], Set[CardType], Set[String]) = {
 
     val types = for {
-      JString(t) <- (cardJson \ "types")
+      case JString(t) <- (cardJson \ "types")
     } yield CardType(t)
 
     val supertypes = for {
-      JString(t) <- (cardJson \ "supertypes")
+      case JString(t) <- (cardJson \ "supertypes")
     } yield Supertype(t)
 
     val subtypes = for {
-      JString(t) <- (cardJson \ "subtypes")
+      case JString(t) <- (cardJson \ "subtypes")
     } yield t
 
     log.debug(s"""Types = ${types.mkString(", ")}""")

@@ -21,7 +21,7 @@ object MTGJsonLoaderTest extends TestSuite {
       val ioCard: IO[Exception, Option[Card]] = loader.card("Adorable Kitten")
       for ( maybeCard <- ioCard ) yield {
         assert(maybeCard.isDefined)
-        maybeCard.fold(assert(false)){ kitten: (Card) =>
+        maybeCard.fold(assert(false)){ (kitten: Card) =>
         assert(kitten.name == "Adorable Kitten",
                kitten.cost == Seq(ColoredMana(White)),
                kitten.subtypes contains "Cat",

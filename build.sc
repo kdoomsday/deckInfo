@@ -1,18 +1,18 @@
 import mill._, scalalib._
 
 trait MyModule extends ScalaModule {
-  def scalaVersion = "2.13.11"
+  def scalaVersion = "3.3.3"
 
-  val zioVersion          = "2.0.2"
-  val zioCatsVersion      = "3.3.0"
-  val utestVersion        = "0.7.2"
-  val mockitoScalaVersion = "1.16.3"
-  val quillVersion        = "4.6.0"
-  val logbackVersion      = "1.4.5"
-  val scalaXmlVersion     = "2.1.0"
-  val zioHttpVersion      = "3.0.0-RC2"
-  val circeVersion        = "0.13.0"
-  val tapirVersion        = "1.7.5"
+  val zioVersion        = "2.0.21"
+  val zioCatsVersion    = "3.3.0"
+  val utestVersion      = "0.8.2"
+  val scala3mockVersion = "0.6.0"
+  val quillVersion      = "4.6.0"
+  val logbackVersion    = "1.4.5"
+  val scalaXmlVersion   = "2.1.0"
+  val zioHttpVersion    = "3.0.0-RC2"
+  val circeVersion      = "0.14.0"
+  val tapirVersion      = "1.10.0"
 
   val deps = Agg(
     ivy"javax.inject:javax.inject:1",
@@ -20,11 +20,11 @@ trait MyModule extends ScalaModule {
     ivy"com.h2database:h2:1.3.148",
     ivy"org.scala-lang.modules::scala-parser-combinators:2.2.0",
     ivy"org.scala-lang.modules::scala-xml:$scalaXmlVersion",
-    ivy"org.json4s::json4s-native:3.7.0-M4",
+    ivy"org.json4s::json4s-native:4.0.7",
     ivy"dev.zio::zio:$zioVersion",
     ivy"dev.zio::zio-interop-cats:$zioCatsVersion",
-    ivy"com.lihaoyi::requests:0.5.1",
-    ivy"com.github.pureconfig::pureconfig:0.12.3",
+    ivy"com.lihaoyi::requests:0.7.0",
+    ivy"com.github.pureconfig::pureconfig-core:0.17.6",
     ivy"io.getquill::quill-jdbc:$quillVersion",
     ivy"io.getquill::quill-jdbc-zio:$quillVersion"
   )
@@ -41,11 +41,13 @@ trait MyModule extends ScalaModule {
 
     def ivyDeps = Agg(
       ivy"com.lihaoyi::utest:$utestVersion",
-      ivy"org.mockito::mockito-scala:$mockitoScalaVersion"
+      // ivy"org.mockito::mockito-scala:$mockitoScalaVersion"
+      ivy"eu.monniot::scala3mock:$scala3mockVersion",
+      ivy"eu.monniot::scala3mock-scalatest:$scala3mockVersion"
     )
   }
 
-  def scalacOptions = Seq("-deprecation", "-Xfatal-warnings", "-Wunused")
+  def scalacOptions = Seq("-deprecation", "-Xfatal-warnings")
 }
 
 /**

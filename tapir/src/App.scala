@@ -6,7 +6,6 @@ import sttp.tapir.ztapir._
 import zio._
 import zio.http.Server
 import pureconfig.ConfigSource
-import pureconfig.generic.auto._
 import ebarrientos.deckStats.config.CoreConfig
 import sttp.tapir.swagger.bundle.SwaggerInterpreter
 import org.slf4j.LoggerFactory
@@ -23,16 +22,19 @@ object App extends ZIOAppDefault {
 
     val port = appConfig.port
 
-    val endpoints = CardServerEndpoints.allEndpoints ++ PublicEndpoints.all
+    val cardEnpoints = CardServerEndpoints.allEndpoints
+    val publicEndpoints = PublicEndpoints.all
+    val endpoints = cardEnpoints ++ publicEndpoints
 
     val docEndpoints: List[ZServerEndpoint[Any, Any]] =
       SwaggerInterpreter().fromServerEndpoints[Task](endpoints, "deckInfo", "1.0.0")
 
     (
       for {
+        _            <- zio.Console.printLine("Starting up server...")
         allEndpoints <- ZIO.succeed(docEndpoints ++ endpoints)
         app          <- ZIO.succeed(ZioHttpInterpreter(serverOptions).toHttp(allEndpoints))
-        actualPort   <- Server.install(app.withDefaultErrorResponse)
+        actualPort   <- Server.install(app)
         _            <- zio.Console.printLine(welcomeMessage(actualPort))
         _            <- zio.Console.readLine
         _            <- ZIO.succeed(log.info("Server shutdown requested"))

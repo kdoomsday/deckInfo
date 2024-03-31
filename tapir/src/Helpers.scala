@@ -13,7 +13,6 @@ import ebarrientos.deckStats.run.ZioRunnerDefault
 import org.h2.jdbcx.JdbcDataSource
 import javax.sql.DataSource
 import pureconfig.ConfigSource
-import pureconfig.generic.auto._
 
 object Helpers {
 
@@ -33,17 +32,16 @@ object Helpers {
       appConfig: CoreConfig,
       runner: ZioRunner
   ): ZIO[Any, ConfigReaderFailures, CardLoader] =
-    for {
-      ds         <- ZIO.succeed(dataSource(appConfig))
-      loader     <-
-        ZIO.succeed(
-          new MagicIOLoader(appConfig.requestConfig.timeout, appConfig.requestConfig.retryTime)
-        )
-      xmlLoader  <- ZIO.succeed(new XMLCardLoader(appConfig.paths.xmlCards))
-      seqLoader  <- ZIO.succeed(new SequenceLoader(xmlLoader, loader))
-      cardLoader <-
-        ZIO.succeed(new H2DBQuillLoader(seqLoader, ds, appConfig.paths.initScripts, runner))
-    } yield cardLoader
+    ZIO.succeed {
+      val timeout    = appConfig.requestConfig.timeout
+      val retryTime  = appConfig.requestConfig.retryTime
+      val ds         = dataSource(appConfig)
+      val loader     = new MagicIOLoader(timeout, retryTime)
+      val xmlLoader  = new XMLCardLoader(appConfig.paths.xmlCards)
+      val seqLoader  = new SequenceLoader(xmlLoader, loader)
+      val cardLoader = new H2DBQuillLoader(seqLoader, ds, appConfig.paths.initScripts, runner)
+      cardLoader
+    }
 
   val appConfig: CoreConfig = ConfigSource.default.loadOrThrow[CoreConfig]
 

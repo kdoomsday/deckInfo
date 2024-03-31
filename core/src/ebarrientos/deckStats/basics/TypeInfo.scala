@@ -10,8 +10,8 @@ object CardType {
 
   // Convert a string into a type
   def apply(s: String): CardType = {
-    types.foreach(x => if (s == x.toString()) return x)
-    throw new Exception("Unknown card type")
+    types.find(t => (s == t.toString()))
+      .getOrElse(throw new Exception("Unknown card type"))
   }
 
   def unapply(t: CardType) = Some(t.toString())
@@ -37,8 +37,9 @@ object Supertype {
   private[this] val supertypes = IndexedSeq(Legendary, Basic, Host, Snow)
 
   def apply(s: String): Supertype = {
-    supertypes.foreach(x => if (s == x.toString) return x)
-    throw new Exception(s"Unknown supertype: $s")
+    // supertypes.foreach(x => if (s == x.toString) return x)
+    supertypes.find(x => s == x.toString)
+      .getOrElse(throw new Exception(s"Unknown supertype: $s"))
   }
 
   def unapply(st: Supertype) = Some(st.toString)
