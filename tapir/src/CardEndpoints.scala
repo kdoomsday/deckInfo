@@ -66,7 +66,7 @@ object Schemas {
   implicit def bSchema: Schema[Black.type]              = Schema.string
   implicit def rSchema: Schema[Red.type]                = Schema.string
   implicit def gSchema: Schema[Green.type]              = Schema.string
-  implicit def colorSchema: Schema[Color]               = Schema.derived
+  implicit def colorSchema: Schema[Color]               = Schema.oneOfWrapped[Color]
   implicit def manaPropertySchema: Schema[ManaProperty] = Schema.derived
   implicit def manaSchema: Schema[Mana]                 = Schema.derived
   implicit def cardTypeSchema: Schema[CardType]         = Schema.derived
