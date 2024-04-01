@@ -27,7 +27,7 @@ object App extends ZIOAppDefault {
     val endpoints = cardEnpoints ++ publicEndpoints
 
     val docEndpoints: List[ZServerEndpoint[Any, Any]] =
-      SwaggerInterpreter().fromServerEndpoints[Task](endpoints, "deckInfo", "1.0.0")
+      SwaggerInterpreter().fromServerEndpoints[Task](cardEnpoints, "deckInfo", "1.0.0")
 
     (
       for {
