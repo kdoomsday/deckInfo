@@ -35,8 +35,9 @@ object Helpers {
     ZIO.succeed {
       val timeout    = appConfig.requestConfig.timeout
       val retryTime  = appConfig.requestConfig.retryTime
+      val maxRetries = appConfig.requestConfig.maxRetries
       val ds         = dataSource(appConfig)
-      val loader     = new MagicIOLoader(timeout, retryTime)
+      val loader     = new MagicIOLoader(timeout, retryTime, maxRetries)
       val xmlLoader  = new XMLCardLoader(appConfig.paths.xmlCards)
       val seqLoader  = new SequenceLoader(xmlLoader, loader)
       val cardLoader = new H2DBQuillLoader(seqLoader, ds, appConfig.paths.initScripts, runner)

@@ -17,13 +17,13 @@ import zio.Schedule
 import zio.Duration
 
 /** Loader para cargar información de api.magicthegathering.io */
-class MagicIOLoader(val timeout: FiniteDuration, retryTime: FiniteDuration, requester: MagicIOLoader.RequestParams => Response)
+class MagicIOLoader(val timeout: FiniteDuration, retryTime: FiniteDuration, maxRetries: Int, requester: MagicIOLoader.RequestParams => Response)
     extends CardLoader
     with LoadUtils
     with URLUtils {
 
   /** Alternate constructor that uses MagicIOLoader.requestsCallCard by default as the requester */
-  def this(timeout: FiniteDuration, retryTime: FiniteDuration) = this(timeout, retryTime, MagicIOLoader.requestsCallCard)
+  def this(timeout: FiniteDuration, retryTime: FiniteDuration, maxRetries: Int) = this(timeout, retryTime, maxRetries, MagicIOLoader.requestsCallCard)
 
   private val log = LoggerFactory.getLogger(getClass())
 
@@ -42,7 +42,7 @@ class MagicIOLoader(val timeout: FiniteDuration, retryTime: FiniteDuration, requ
           ZIO.fail(new Exception(s"Error loading card: Status ${cardJsonResponse.statusCode}"))
         }
       }
-      .retry(Schedule.fibonacci(Duration.Finite(retryTime.toNanos)))
+      .retry(Schedule.fibonacci(Duration.Finite(retryTime.toNanos)) && Schedule.recurs(maxRetries))
       .catchAll { case ex =>
         log.error(s"Error querying card $name", ex)
         ZIO.succeed(None)
