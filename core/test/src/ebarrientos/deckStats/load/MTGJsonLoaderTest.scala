@@ -1,10 +1,11 @@
 package ebarrientos.deckStats.load
 
-import ebarrientos.deckStats.basics._
+import ebarrientos.deckStats.basics.*
 import zio.IO
-import utest._
+import utest.*
 
 import scala.io.Source
+import ebarrientos.deckStats.basics.CardType.*
 
 object MTGJsonLoaderTest extends TestSuite {
   private val text =

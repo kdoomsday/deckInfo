@@ -27,7 +27,7 @@ object DeckCalc {
 
     DeckObject(
       avgCMC         = avgManaCost(d),
-      avgCMCNonLands = avgManaCost(d, c => !c.types.contains(Land)),
+      avgCMCNonLands = avgManaCost(d, c => !c.types.contains(CardType.Land)),
       cardCount      = Calc.count(d),
       counts         = counts,
       manaSymbols    = symbolCounts,

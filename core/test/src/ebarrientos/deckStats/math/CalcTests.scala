@@ -3,9 +3,9 @@ package ebarrientos.deckStats.math
 import utest._
 import ebarrientos.deckStats.basics.Deck
 import ebarrientos.deckStats.DummyObjects._
-import ebarrientos.deckStats.basics.Creature
-import ebarrientos.deckStats.basics.Artifact
-import ebarrientos.deckStats.basics.Land
+import ebarrientos.deckStats.basics.CardType.Creature
+import ebarrientos.deckStats.basics.CardType.Artifact
+import ebarrientos.deckStats.basics.CardType.Land
 import ebarrientos.deckStats.basics.DeckEntry
 import ebarrientos.deckStats.basics.CardType
 

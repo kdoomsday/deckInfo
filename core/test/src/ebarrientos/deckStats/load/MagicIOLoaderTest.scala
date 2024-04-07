@@ -1,7 +1,6 @@
 package ebarrientos.deckStats.load
 
 import utest._
-import ebarrientos.deckStats.basics.Creature
 import ebarrientos.deckStats.TestHelper
 import org.slf4j.LoggerFactory
 import java.nio.file.Paths
@@ -11,6 +10,7 @@ import requests.Response
 import geny.Bytes
 import ebarrientos.deckStats.basics.Card
 import ebarrientos.deckStats.load.MagicIOLoader.RequestParams
+import ebarrientos.deckStats.basics.CardType
 
 object MagicIOLoaderTest extends TestSuite {
   val log = LoggerFactory.getLogger(getClass())
@@ -42,7 +42,7 @@ object MagicIOLoaderTest extends TestSuite {
     assert(card.power == 2)
     assert(card.toughness == 1)
     assert(card.text.startsWith("At the beginning"))
-    assert(card.types.contains(Creature))
+    assert(card.types.contains(CardType.Creature))
     assert(card.subtypes contains "Human")
     assert(card.subtypes contains "Wizard")
     assert(card.multiverseId == Some(489754))

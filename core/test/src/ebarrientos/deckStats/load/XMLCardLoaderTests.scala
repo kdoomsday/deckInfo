@@ -3,7 +3,7 @@ package ebarrientos.deckStats.load
 import java.io.File
 import utest._
 import ebarrientos.deckStats.TestHelper
-import ebarrientos.deckStats.basics.Enchantment
+import ebarrientos.deckStats.basics.CardType.Enchantment
 
 object XMLCardLoaderTests extends TestSuite {
 

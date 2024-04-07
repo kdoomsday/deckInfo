@@ -3,30 +3,41 @@ package ebarrientos.deckStats.basics
 /**
  * Possible card types.
  */
-sealed abstract class CardType
-object CardType {
-  val types =
-    IndexedSeq(Creature, Artifact, Land, Instant, Sorcery, Tribal, Enchantment, Planeswalker)
+// sealed abstract class CardType
+// object CardType {
+//   val types =
+//     IndexedSeq(Creature, Artifact, Land, Instant, Sorcery, Tribal, Enchantment, Planeswalker)
 
-  // Convert a string into a type
-  def apply(s: String): CardType = {
-    types.find(t => (s == t.toString()))
-      .getOrElse(throw new Exception("Unknown card type"))
-  }
+//   // Convert a string into a type
+//   def apply(s: String): CardType = {
+//     types.find(t => (s == t.toString()))
+//       .getOrElse(throw new Exception("Unknown card type"))
+//   }
 
-  def unapply(t: CardType) = Some(t.toString())
+//   def unapply(t: CardType) = Some(t.toString())
 
-  def isType(s: String): Boolean = types.foldLeft(false)((p, n) => p || s == n.toString)
+//   def isType(s: String): Boolean = types.foldLeft(false)((p, n) => p || s == n.toString)
+// }
+
+// case object Creature     extends CardType
+// case object Artifact     extends CardType
+// case object Land         extends CardType
+// case object Instant      extends CardType
+// case object Sorcery      extends CardType
+// case object Tribal       extends CardType
+// case object Enchantment  extends CardType
+// case object Planeswalker extends CardType
+
+enum CardType {
+  case Creature, Artifact, Land, Instant, Sorcery, Tribal, Enchantment, Planeswalker
 }
+object CardType {
+  def isType(s: String): Boolean = CardType.values.foldLeft(false)((p, n) => p || s == n.toString)
 
-case object Creature     extends CardType
-case object Artifact     extends CardType
-case object Land         extends CardType
-case object Instant      extends CardType
-case object Sorcery      extends CardType
-case object Tribal       extends CardType
-case object Enchantment  extends CardType
-case object Planeswalker extends CardType
+  def apply(typeName: String) =
+    CardType.values.find(t => (typeName == t.toString()))
+      .getOrElse(throw new Exception("Unknown card type"))
+}
 
 
 /**

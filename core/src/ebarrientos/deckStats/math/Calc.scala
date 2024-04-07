@@ -82,7 +82,7 @@ object Calc {
     */
   def manaCurve(
       d: Deck,
-      criterion: Card => Boolean = !_.is(Land)
+      criterion: Card => Boolean = !_.is(CardType.Land)
   ): Seq[(Int, Int)] =
     groupedCount1(d, _.cmc, criterion)
       .toSeq
