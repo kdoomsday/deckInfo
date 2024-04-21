@@ -1,24 +1,20 @@
 package ebarrientos.deckInfo
 
-import zio.json.DeriveJsonEncoder
 import ebarrientos.deckStats.basics.Card
-import ebarrientos.deckStats.basics.Mana
-import ebarrientos.deckStats.basics.Color
-import zio.json.JsonEncoder
-import ebarrientos.deckStats.basics.ManaProperty
 import ebarrientos.deckStats.basics.CardType
+import ebarrientos.deckStats.basics.Color
+import ebarrientos.deckStats.basics.Color.*
+import ebarrientos.deckStats.basics.Mana
+import ebarrientos.deckStats.basics.ManaProperty
 import ebarrientos.deckStats.basics.Supertype
-import zio.json.DeriveJsonDecoder
-import zio.json.JsonDecoder
-import ebarrientos.deckStats.queries.DeckObject
+import ebarrientos.deckStats.queries.CardObject
 import ebarrientos.deckStats.queries.CountObject
 import ebarrientos.deckStats.queries.CurvePoint
-import ebarrientos.deckStats.queries.CardObject
-import ebarrientos.deckStats.basics.White
-import ebarrientos.deckStats.basics.Blue
-import ebarrientos.deckStats.basics.Black
-import ebarrientos.deckStats.basics.Red
-import ebarrientos.deckStats.basics.Green
+import ebarrientos.deckStats.queries.DeckObject
+import zio.json.DeriveJsonDecoder
+import zio.json.DeriveJsonEncoder
+import zio.json.JsonDecoder
+import zio.json.JsonEncoder
 
 object Codecs {
   implicit val colorEncoder: JsonEncoder[Color] = JsonEncoder[String].contramap {

@@ -1,5 +1,7 @@
 package ebarrientos.deckStats.basics
 
+import ebarrientos.deckStats.basics.Color.*
+
 sealed trait ManaProperty
 case object Phyrexian extends ManaProperty
 case object SnowMana extends ManaProperty

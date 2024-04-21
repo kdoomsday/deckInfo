@@ -1,6 +1,7 @@
 package ebarrientos.deckStats.stringParsing
 
 import ebarrientos.deckStats.basics.*
+import ebarrientos.deckStats.basics.Color.*
 import utest.*
 
 object MtgJsonParserTest extends TestSuite {

@@ -1,6 +1,7 @@
 package ebarrientos.deckStats.stringParsing
 
-import ebarrientos.deckStats.basics._
+import ebarrientos.deckStats.basics.*
+import Color.*
 
 import scala.util.parsing.combinator.JavaTokenParsers
 

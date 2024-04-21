@@ -1,13 +1,14 @@
 package ebarrientos.deckStats.load
 
 import ebarrientos.deckStats.basics.*
+import ebarrientos.deckStats.basics.Color.*
 import zio.IO
 import utest.*
 
 import scala.io.Source
 import ebarrientos.deckStats.basics.CardType.*
 
-object MTGJsonLoaderTest extends TestSuite {
+object MtgJsonLoaderTest extends TestSuite {
   private val text =
     Source.fromInputStream(
       getClass

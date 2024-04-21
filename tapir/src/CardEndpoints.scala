@@ -12,7 +12,7 @@ import ebarrientos.deckStats.basics.CardType
 import ebarrientos.deckStats.basics.Supertype
 import sttp.tapir.Endpoint
 import ebarrientos.deckStats.queries.DeckObject
-import ebarrientos.deckStats.basics.{Black, Blue, Green, Red, White}
+import ebarrientos.deckStats.basics.Color.*
 
 /** Endpoint definitions */
 object CardEndpoints {

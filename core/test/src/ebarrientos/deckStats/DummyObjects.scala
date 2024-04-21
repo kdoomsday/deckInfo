@@ -3,7 +3,7 @@ package ebarrientos.deckStats
 import ebarrientos.deckStats.basics.Card
 import ebarrientos.deckStats.basics.{ColoredMana, GenericMana}
 import ebarrientos.deckStats.basics.CardType.{Artifact, Creature, Land}
-import ebarrientos.deckStats.basics.{Black, Blue, Green, Red, White}
+import ebarrientos.deckStats.basics.Color.*
 import ebarrientos.deckStats.load.CardLoader
 import zio._
 import ebarrientos.deckStats.basics.HybridMana
