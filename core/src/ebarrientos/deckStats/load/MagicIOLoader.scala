@@ -88,7 +88,8 @@ class MagicIOLoader(val timeout: FiniteDuration, retryTime: FiniteDuration, maxR
     def fo(l: List[JValue]): Option[JValue] =
       l match {
         case jobject :: rest =>
-          if (getStr(jobject \ "name") == name)
+          val nameSpec = getStr(jobject \ "name")
+          if (nameSpec == name || nameSpec.split("//").map(_.trim).exists(_ == name))
             Some(jobject)
           else
             fo(rest)

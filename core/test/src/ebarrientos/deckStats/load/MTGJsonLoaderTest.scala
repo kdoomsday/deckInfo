@@ -52,7 +52,7 @@ object MTGJsonLoaderTest extends TestSuite {
         maybePlains.fold(assert(false)) { plains =>
           assert(
             plains.cmc == 0,
-            plains.supertypes contains Basic,
+            plains.supertypes contains Supertype.Basic,
             plains.types contains Land
           )
         }

@@ -1,13 +1,13 @@
 package ebarrientos.deckStats
 
 import ebarrientos.deckStats.basics.Card
-import ebarrientos.deckStats.basics.Legendary
 import ebarrientos.deckStats.basics.{ColoredMana, GenericMana}
 import ebarrientos.deckStats.basics.CardType.{Artifact, Creature, Land}
 import ebarrientos.deckStats.basics.{Black, Blue, Green, Red, White}
 import ebarrientos.deckStats.load.CardLoader
 import zio._
 import ebarrientos.deckStats.basics.HybridMana
+import ebarrientos.deckStats.basics.Supertype
 
 /** Dummy objects to use in tests */
 object DummyObjects {
@@ -17,7 +17,7 @@ object DummyObjects {
     Seq(ColoredMana(White)),
     "Arthur Dent",
     Set(Creature),
-    Set(Legendary),
+    Set(Supertype.Legendary),
     Set("Homeowner"),
     "text",
     1,
@@ -29,7 +29,7 @@ object DummyObjects {
     Seq(HybridMana(Set(ColoredMana(Blue), ColoredMana(Red)))),
     "Tricia McMillan",
     Set(Creature),
-    Set(Legendary),
+    Set(Supertype.Legendary),
     Set("Human", "Adventurer"),
     "text",
     1,
@@ -41,7 +41,7 @@ object DummyObjects {
     Seq(ColoredMana(Red), ColoredMana(Red)),
     "Ford Prefect",
     Set(Creature),
-    Set(Legendary),
+    Set(Supertype.Legendary),
     Set("Hitchhiker"),
     "text",
     2,
@@ -53,7 +53,7 @@ object DummyObjects {
     Seq(GenericMana(1), ColoredMana(Black)),
     "Zaphod BeebleBrox",
     Set(Creature),
-    Set(Legendary),
+    Set(Supertype.Legendary),
     Set("Regent", "Adventurer"),
     "text",
     2,
@@ -65,7 +65,7 @@ object DummyObjects {
     Seq(GenericMana(3)),
     "Marvin the Paranoid Android",
     Set(Artifact, Creature),
-    Set(Legendary),
+    Set(Supertype.Legendary),
     Set("Android"),
     "1t: Tap target Creature",
     0,
@@ -77,7 +77,7 @@ object DummyObjects {
     Seq(),
     "The Restaurant at the End of the Universe",
     Set(Land),
-    Set(Legendary),
+    Set(Supertype.Legendary),
     Set(),
     "t: Add 2 generic mana to your mana pool",
     0,
@@ -95,7 +95,7 @@ object DummyObjects {
     ),
     "The Heart of Gold",
     Set(Artifact),
-    Set(Legendary),
+    Set(Supertype.Legendary),
     Set(),
     """|(5): Flip a coin. Heads, you win the game.
        |Tails you lose the game""".stripMargin,

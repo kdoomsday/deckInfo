@@ -1,0 +1,352 @@
+{
+  "cards": [
+    {
+      "name": "Invasion of Zendikar // Awakened Skyclave",
+      "manaCost": "{3}{G}",
+      "cmc": 4.0,
+      "colors": [
+        "G"
+      ],
+      "colorIdentity": [
+        "G"
+      ],
+      "type": "Battle — Siege",
+      "types": [
+        "Battle"
+      ],
+      "subtypes": [
+        "Siege"
+      ],
+      "rarity": "Uncommon",
+      "set": "MOM",
+      "setName": "March of the Machine",
+      "text": "(As a Siege enters, choose an opponent to protect it. You and others can attack it. When it's defeated, exile it, then cast it transformed.)\nWhen Invasion of Zendikar enters the battlefield, search your library for up to two basic land cards, put them onto the battlefield tapped, then shuffle.",
+      "artist": "Diego Gisbert",
+      "number": "194",
+      "layout": "transform",
+      "multiverseid": "607249",
+      "imageUrl": "http://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=607249&type=card",
+      "rulings": [
+        {
+          "date": "2023-04-14",
+          "text": "Awakened Skyclave is cast as a creature spell. It can be countered and otherwise responded to. It won’t be a land in addition to its other types until it enters the battlefield."
+        },
+        {
+          "date": "2023-04-14",
+          "text": "If Awakened Skyclave enters the battlefield, any ability that triggers whenever a land enters the battlefield will trigger."
+        },
+        {
+          "date": "2023-04-14",
+          "text": "Sieges each have an intrinsic triggered ability. That ability is “When the last defense counter is removed from this permanent, exile it, then you may cast it transformed without paying its mana cost.”"
+        },
+        {
+          "date": "2023-04-14",
+          "text": "As a Siege enters the battlefield, its controller chooses an opponent to be its protector."
+        },
+        {
+          "date": "2023-04-14",
+          "text": "A Siege’s controller can’t be its protector. If a Siege’s protector ever gains control of it, they choose a new player to be its protector. This is a state-based action."
+        },
+        {
+          "date": "2023-04-14",
+          "text": "If a non-battle permanent that is already on the battlefield become a copy of a Siege, its controller chooses one of their opponents to be that battle’s protector. However, it will most likely be put into its owner’s graveyard because it has no defense counters (see below)."
+        },
+        {
+          "date": "2023-04-14",
+          "text": "A battle’s “defense” is displayed in the bottom right corner of the card. A battle enters the battlefield with that number of defense counters. If another permanent enters the battlefield as a copy of a battle, it also enters with that number of defense counters."
+        },
+        {
+          "date": "2023-04-14",
+          "text": "Only creatures controlled by a battle’s protector can block creatures that are attacking that battle. This means a Siege’s controller can never assign creatures to block for it."
+        },
+        {
+          "date": "2023-04-14",
+          "text": "A battle can be dealt damage and be target of spells and/or abilities that target “any target.”"
+        },
+        {
+          "date": "2023-04-14",
+          "text": "Damage dealt to a battle causes that many defense counters to be removed from it."
+        },
+        {
+          "date": "2023-04-14",
+          "text": "A battle can be attacked by all players other than its protector. Notably, this means a Siege’s controller can attack it."
+        },
+        {
+          "date": "2023-04-14",
+          "text": "If a battle has no defense counters, and it isn’t the source of a triggered ability that has triggered but not yet left the stack, that battle is put into its owner’s graveyard. This is a state-based action. This doesn’t cause a Siege’s intrinsic triggered ability to trigger."
+        },
+        {
+          "date": "2023-04-14",
+          "text": "If a Siege never had defense counters on it (perhaps because a permanent became a copy of one), it can’t have its last defense counter removed. It will be put into its owner’s graveyard. You won’t exile it or cast the other face."
+        },
+        {
+          "date": "2023-04-14",
+          "text": "If a token or a card that isn’t represented by a transforming double-faced card becomes a copy of a Siege, it can’t be cast as its triggered ability resolves. It will remain in exile. If it’s a token, it will cease to exist the next time state-based actions are performed."
+        },
+        {
+          "date": "2023-04-14",
+          "text": "If a permanent that is represented by a transforming double-faced card becomes a copy of a Siege, it will be exiled as that Siege’s triggered ability resolves, then it will be cast transformed. Note that this applies only to transforming double-faced cards, not to modal double-faced cards that can normally be played using either face."
+        },
+        {
+          "date": "2023-04-14",
+          "text": "In a multiplayer game, if the protector of a battle leaves the game and that battle is not currently being attacked, its controller chooses a new protector for it as a state-based action. If it is being attacked, its controller chooses a new protector for it once no creatures are attacking it. This means that it continues to be attacked and can be dealt combat damage as normal."
+        },
+        {
+          "date": "2023-04-14",
+          "text": "If a battle that’s being attacked somehow stops being a battle, it is removed from combat. Similarly, if its controller changes in the middle of combat, it is removed from combat."
+        },
+        {
+          "date": "2023-04-14",
+          "text": "Battles can’t attack or block, even if one also becomes a creature. If an attacking or blocking creature somehow becomes a battle in addition to being a creature, it is removed from combat."
+        }
+      ],
+      "printings": [
+        "MOM"
+      ],
+      "originalText": "(As a Siege enters, choose an opponent to protect it. You and others can attack it. When it's defeated, exile it, then cast it transformed.)\nWhen Invasion of Zendikar enters the battlefield, search your library for up to two basic land cards, put them onto the battlefield tapped, then shuffle.",
+      "originalType": "Battle — Siege",
+      "legalities": [
+        {
+          "format": "Alchemy",
+          "legality": "Legal"
+        },
+        {
+          "format": "Brawl",
+          "legality": "Legal"
+        },
+        {
+          "format": "Commander",
+          "legality": "Legal"
+        },
+        {
+          "format": "Duel",
+          "legality": "Legal"
+        },
+        {
+          "format": "Explorer",
+          "legality": "Legal"
+        },
+        {
+          "format": "Future",
+          "legality": "Legal"
+        },
+        {
+          "format": "Gladiator",
+          "legality": "Legal"
+        },
+        {
+          "format": "Historic",
+          "legality": "Legal"
+        },
+        {
+          "format": "Historicbrawl",
+          "legality": "Legal"
+        },
+        {
+          "format": "Legacy",
+          "legality": "Legal"
+        },
+        {
+          "format": "Modern",
+          "legality": "Legal"
+        },
+        {
+          "format": "Oathbreaker",
+          "legality": "Legal"
+        },
+        {
+          "format": "Penny",
+          "legality": "Legal"
+        },
+        {
+          "format": "Pioneer",
+          "legality": "Legal"
+        },
+        {
+          "format": "Standard",
+          "legality": "Legal"
+        },
+        {
+          "format": "Vintage",
+          "legality": "Legal"
+        }
+      ],
+      "id": "f75922b9-2a6f-5a5c-b559-47ea7540601b"
+    },
+    {
+      "name": "Invasion of Zendikar // Awakened Skyclave",
+      "cmc": 4.0,
+      "colors": [
+        "G"
+      ],
+      "colorIdentity": [
+        "G"
+      ],
+      "type": "Creature — Elemental",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Elemental"
+      ],
+      "rarity": "Uncommon",
+      "set": "MOM",
+      "setName": "March of the Machine",
+      "text": "Vigilance, haste\nAs long as Awakened Skyclave is on the battlefield, it's a land in addition to its other types.\n{T}: Add one mana of any color.",
+      "flavor": "Nahiri tried to bend Zendikar to Phyrexia's will. In response, the world rose against her.",
+      "artist": "Diego Gisbert",
+      "number": "194",
+      "power": "4",
+      "toughness": "4",
+      "layout": "transform",
+      "multiverseid": "607250",
+      "imageUrl": "http://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=607250&type=card",
+      "rulings": [
+        {
+          "date": "2023-04-14",
+          "text": "Awakened Skyclave is cast as a creature spell. It can be countered and otherwise responded to. It won’t be a land in addition to its other types until it enters the battlefield."
+        },
+        {
+          "date": "2023-04-14",
+          "text": "If Awakened Skyclave enters the battlefield, any ability that triggers whenever a land enters the battlefield will trigger."
+        },
+        {
+          "date": "2023-04-14",
+          "text": "Sieges each have an intrinsic triggered ability. That ability is “When the last defense counter is removed from this permanent, exile it, then you may cast it transformed without paying its mana cost.”"
+        },
+        {
+          "date": "2023-04-14",
+          "text": "As a Siege enters the battlefield, its controller chooses an opponent to be its protector."
+        },
+        {
+          "date": "2023-04-14",
+          "text": "A Siege’s controller can’t be its protector. If a Siege’s protector ever gains control of it, they choose a new player to be its protector. This is a state-based action."
+        },
+        {
+          "date": "2023-04-14",
+          "text": "If a non-battle permanent that is already on the battlefield become a copy of a Siege, its controller chooses one of their opponents to be that battle’s protector. However, it will most likely be put into its owner’s graveyard because it has no defense counters (see below)."
+        },
+        {
+          "date": "2023-04-14",
+          "text": "A battle’s “defense” is displayed in the bottom right corner of the card. A battle enters the battlefield with that number of defense counters. If another permanent enters the battlefield as a copy of a battle, it also enters with that number of defense counters."
+        },
+        {
+          "date": "2023-04-14",
+          "text": "Only creatures controlled by a battle’s protector can block creatures that are attacking that battle. This means a Siege’s controller can never assign creatures to block for it."
+        },
+        {
+          "date": "2023-04-14",
+          "text": "A battle can be dealt damage and be target of spells and/or abilities that target “any target.”"
+        },
+        {
+          "date": "2023-04-14",
+          "text": "Damage dealt to a battle causes that many defense counters to be removed from it."
+        },
+        {
+          "date": "2023-04-14",
+          "text": "A battle can be attacked by all players other than its protector. Notably, this means a Siege’s controller can attack it."
+        },
+        {
+          "date": "2023-04-14",
+          "text": "If a battle has no defense counters, and it isn’t the source of a triggered ability that has triggered but not yet left the stack, that battle is put into its owner’s graveyard. This is a state-based action. This doesn’t cause a Siege’s intrinsic triggered ability to trigger."
+        },
+        {
+          "date": "2023-04-14",
+          "text": "If a Siege never had defense counters on it (perhaps because a permanent became a copy of one), it can’t have its last defense counter removed. It will be put into its owner’s graveyard. You won’t exile it or cast the other face."
+        },
+        {
+          "date": "2023-04-14",
+          "text": "If a token or a card that isn’t represented by a transforming double-faced card becomes a copy of a Siege, it can’t be cast as its triggered ability resolves. It will remain in exile. If it’s a token, it will cease to exist the next time state-based actions are performed."
+        },
+        {
+          "date": "2023-04-14",
+          "text": "If a permanent that is represented by a transforming double-faced card becomes a copy of a Siege, it will be exiled as that Siege’s triggered ability resolves, then it will be cast transformed. Note that this applies only to transforming double-faced cards, not to modal double-faced cards that can normally be played using either face."
+        },
+        {
+          "date": "2023-04-14",
+          "text": "In a multiplayer game, if the protector of a battle leaves the game and that battle is not currently being attacked, its controller chooses a new protector for it as a state-based action. If it is being attacked, its controller chooses a new protector for it once no creatures are attacking it. This means that it continues to be attacked and can be dealt combat damage as normal."
+        },
+        {
+          "date": "2023-04-14",
+          "text": "If a battle that’s being attacked somehow stops being a battle, it is removed from combat. Similarly, if its controller changes in the middle of combat, it is removed from combat."
+        },
+        {
+          "date": "2023-04-14",
+          "text": "Battles can’t attack or block, even if one also becomes a creature. If an attacking or blocking creature somehow becomes a battle in addition to being a creature, it is removed from combat."
+        }
+      ],
+      "printings": [
+        "MOM"
+      ],
+      "originalText": "Vigilance, haste\nAs long as Awakened Skyclave is on the battlefield, it's a land in addition to its other types.\n{T}: Add one mana of any color.",
+      "originalType": "Creature — Elemental",
+      "legalities": [
+        {
+          "format": "Alchemy",
+          "legality": "Legal"
+        },
+        {
+          "format": "Brawl",
+          "legality": "Legal"
+        },
+        {
+          "format": "Commander",
+          "legality": "Legal"
+        },
+        {
+          "format": "Duel",
+          "legality": "Legal"
+        },
+        {
+          "format": "Explorer",
+          "legality": "Legal"
+        },
+        {
+          "format": "Future",
+          "legality": "Legal"
+        },
+        {
+          "format": "Gladiator",
+          "legality": "Legal"
+        },
+        {
+          "format": "Historic",
+          "legality": "Legal"
+        },
+        {
+          "format": "Historicbrawl",
+          "legality": "Legal"
+        },
+        {
+          "format": "Legacy",
+          "legality": "Legal"
+        },
+        {
+          "format": "Modern",
+          "legality": "Legal"
+        },
+        {
+          "format": "Oathbreaker",
+          "legality": "Legal"
+        },
+        {
+          "format": "Penny",
+          "legality": "Legal"
+        },
+        {
+          "format": "Pioneer",
+          "legality": "Legal"
+        },
+        {
+          "format": "Standard",
+          "legality": "Legal"
+        },
+        {
+          "format": "Vintage",
+          "legality": "Legal"
+        }
+      ],
+      "id": "d9333b7e-78ab-5b78-bc14-8bf10f90645d"
+    }
+  ]
+}

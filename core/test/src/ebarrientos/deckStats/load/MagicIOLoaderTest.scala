@@ -15,21 +15,24 @@ import ebarrientos.deckStats.basics.CardType
 object MagicIOLoaderTest extends TestSuite {
   val log = LoggerFactory.getLogger(getClass())
 
-  private val path = "core/test/resources/MagicIOResponse.json"
+  private val rootPath = "core/test/resources"
+  private def responsePath(relative: String): String = s"$rootPath/$relative"
+  private val path = responsePath("MagicIOResponse.json")
 
   private val defaultMaxRetries = 3
 
-  // Sample json response from MagicIO
-  private val loadJson: zio.Task[String] =
+  /** Load a json as a string from a path */
+  private def loadJson(pathString: String): zio.Task[String] =
     ZIO.scoped(
       ZIO.fromAutoCloseable(
-        ZIO.attempt(scala.io.Source.fromFile(Paths.get(path).toFile()))
+        ZIO.attempt(scala.io.Source.fromFile(Paths.get(pathString).toFile()))
       )
         .map(src => src.getLines().mkString)
     )
 
-  private val getCardResponse: zio.Task[Response] =
-    loadJson.map { responseStr =>
+  /** Load a json and create a sample response that includes the json as the body */
+  private def getCardResponse(pathString: String): zio.Task[Response] =
+    loadJson(pathString).map { responseStr =>
       Response(url = "dummyURL",
                statusCode = 200,
                statusMessage = "OK",
@@ -38,7 +41,7 @@ object MagicIOLoaderTest extends TestSuite {
                history = None)
     }
 
-  private def cardChecks(card: Card) = {
+  private def darkConfidantCardChecks(card: Card) = {
     assert(card.power == 2)
     assert(card.toughness == 1)
     assert(card.text.startsWith("At the beginning"))
@@ -57,10 +60,10 @@ object MagicIOLoaderTest extends TestSuite {
         maxRetries = defaultMaxRetries
       )
       val res =
-        loadJson.flatMap(jsonStr => loader.cardFromJsonString("Dark Confidant", jsonStr))
+        loadJson(path).flatMap(jsonStr => loader.cardFromJsonString("Dark Confidant", jsonStr))
           .map {
             case Some(card) =>
-              cardChecks(card)
+              darkConfidantCardChecks(card)
 
             case None => throw new Exception("Did not parse card")
           }
@@ -71,7 +74,7 @@ object MagicIOLoaderTest extends TestSuite {
       retryTests(1) { (loader, requester) =>
         loader.card("Dark Confidant").map {
           case Some(card) =>
-            cardChecks(card)
+            darkConfidantCardChecks(card)
             assert(requester.failures == 1, requester.calls == 2)
 
           case None => throw new Exception(s"Failed to get card. Actual calls=${requester.calls}")
@@ -91,16 +94,35 @@ object MagicIOLoaderTest extends TestSuite {
         }
       }
     }
+
+    "load a two faced card" - {
+      val loader = testLoader(TestRequester(loadPath = responsePath("MagicIO_InvasionOfZendikar_response.json")))
+      val cardName = "Invasion of Zendikar"
+
+      TestHelper.run { loader.card(cardName) }
+        .fold(throw new Exception(s"Did not find card: $cardName")) { card =>
+          assert(
+            card.multiverseId == Some(607249),
+            card.name == "Invasion of Zendikar",
+            card.cmc == 4
+          )
+        }
+    }
   }
 
-  /** Implements RequestParams => Response in a way that fails callsBeforeSuccess times and then succeeds */
-  private class TestRequester(failureCalls: Int) extends Function[MagicIOLoader.RequestParams, Response] {
+  /**
+   * Implements RequestParams => Response in a way that fails callsBeforeSuccess
+   * times and then succeeds
+   */
+  private case class TestRequester(loadPath: String = path, failureCalls: Int = 0)
+      extends Function[MagicIOLoader.RequestParams, Response] {
+
     var failures = 0
     var calls = 0
 
     override def apply(v1: RequestParams): Response = {
       calls += 1
-      if (failures < failureCalls) {
+      if (failures < failureCalls)
         failures += 1
         Response(url = "dummyURL",
                  statusCode = 400,
@@ -108,23 +130,24 @@ object MagicIOLoaderTest extends TestSuite {
                  data = new Bytes(Array.emptyByteArray),
                  headers = Map.empty,
                  history = None)
-      }
-      else {
-        TestHelper.run(getCardResponse)
-      }
+      else
+        TestHelper.run(getCardResponse(loadPath))
     }
   }
 
-  private def retryTests(failureCalls: Int, maxRetries: Int = defaultMaxRetries)(assertBlock: (MagicIOLoader, TestRequester) => ZIO[Any, Throwable, Unit]) = {
-    val requester = new TestRequester(failureCalls)
-
-    val loader = new MagicIOLoader(
+  /** Create a test MagicIOLoader */
+  def testLoader(requester: RequestParams => Response, maxRetries: Int = defaultMaxRetries): MagicIOLoader =
+    new MagicIOLoader(
       timeout = FiniteDuration(100, scala.concurrent.duration.SECONDS),
       retryTime = FiniteDuration(50, scala.concurrent.duration.MILLISECONDS),
       maxRetries = maxRetries,
       requester
     )
 
+  private def retryTests(failureCalls: Int, maxRetries: Int = defaultMaxRetries)
+                        (assertBlock: (MagicIOLoader, TestRequester) => ZIO[Any, Throwable, Unit]) = {
+    val requester = new TestRequester(path, failureCalls)
+    val loader = testLoader(requester, maxRetries)
     TestHelper.run(assertBlock(loader, requester))
   }
 }
