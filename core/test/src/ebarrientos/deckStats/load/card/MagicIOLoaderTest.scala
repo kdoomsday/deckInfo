@@ -1,4 +1,4 @@
-package ebarrientos.deckStats.load
+package ebarrientos.deckStats.load.card
 
 import utest._
 import ebarrientos.deckStats.TestHelper
@@ -9,7 +9,7 @@ import scala.concurrent.duration.FiniteDuration
 import requests.Response
 import geny.Bytes
 import ebarrientos.deckStats.basics.Card
-import ebarrientos.deckStats.load.MagicIOLoader.RequestParams
+import ebarrientos.deckStats.load.card.MagicIOLoader.RequestParams
 import ebarrientos.deckStats.basics.CardType
 
 object MagicIOLoaderTest extends TestSuite {

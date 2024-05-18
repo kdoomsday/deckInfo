@@ -1,11 +1,11 @@
 package ebarrientos.deckInfo
 
 import ebarrientos.deckStats.basics.Card
-import ebarrientos.deckStats.load.CardLoader
+import ebarrientos.deckStats.load.card.CardLoader
 import ebarrientos.deckStats.queries.DeckObject
 import zio.ZIO
 import ebarrientos.deckStats.queries.DeckCalc
-import ebarrientos.deckStats.load.XMLDeckLoader
+import ebarrientos.deckStats.load.deck.XMLDeckLoader
 import scala.xml.Elem
 import scala.xml.XML
 

@@ -1,7 +1,7 @@
-package ebarrientos.deckStats.load
+package ebarrientos.deckStats.load.card
 
 import ebarrientos.deckStats.basics.{Card, Mana}
-import ebarrientos.deckStats.load.MtgJsonLoader.Carta
+import ebarrientos.deckStats.load.card.MtgJsonLoader.Carta
 import ebarrientos.deckStats.load.utils.LoadUtils
 import ebarrientos.deckStats.stringParsing.MtgJsonParser
 import io.circe.Decoder.Result

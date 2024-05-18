@@ -4,7 +4,7 @@ import ebarrientos.deckStats.basics.Card
 import ebarrientos.deckStats.basics.{ColoredMana, GenericMana}
 import ebarrientos.deckStats.basics.CardType.{Artifact, Creature, Land}
 import ebarrientos.deckStats.basics.Color.*
-import ebarrientos.deckStats.load.CardLoader
+import ebarrientos.deckStats.load.card.CardLoader
 import zio._
 import ebarrientos.deckStats.basics.HybridMana
 import ebarrientos.deckStats.basics.Supertype

@@ -1,4 +1,4 @@
-package ebarrientos.deckStats.load
+package ebarrientos.deckStats.load.card
 
 import ebarrientos.deckStats.basics.{Card, Mana}
 import ebarrientos.deckStats.load.utils.{LoadUtils, URLUtils}

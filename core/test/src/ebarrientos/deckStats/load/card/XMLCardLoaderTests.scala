@@ -1,4 +1,4 @@
-package ebarrientos.deckStats.load
+package ebarrientos.deckStats.load.card
 
 import java.io.File
 import utest._

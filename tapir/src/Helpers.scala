@@ -4,11 +4,11 @@ import ebarrientos.deckStats.config.CoreConfig
 import ebarrientos.deckStats.run.ZioRunner
 import zio._
 import pureconfig.error.ConfigReaderFailures
-import ebarrientos.deckStats.load.CardLoader
-import ebarrientos.deckStats.load.MagicIOLoader
-import ebarrientos.deckStats.load.XMLCardLoader
-import ebarrientos.deckStats.load.SequenceLoader
-import ebarrientos.deckStats.load.H2DBQuillLoader
+import ebarrientos.deckStats.load.card.CardLoader
+import ebarrientos.deckStats.load.card.MagicIOLoader
+import ebarrientos.deckStats.load.card.XMLCardLoader
+import ebarrientos.deckStats.load.card.SequenceLoader
+import ebarrientos.deckStats.load.card.H2DBQuillLoader
 import ebarrientos.deckStats.run.ZioRunnerDefault
 import org.h2.jdbcx.JdbcDataSource
 import javax.sql.DataSource

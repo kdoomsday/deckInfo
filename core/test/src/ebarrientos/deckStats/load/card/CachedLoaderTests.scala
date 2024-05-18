@@ -1,4 +1,4 @@
-package ebarrientos.deckStats.load
+package ebarrientos.deckStats.load.card
 
 import utest._
 import ebarrientos.deckStats.DummyObjects.arthur

@@ -1,4 +1,4 @@
-package ebarrientos.deckStats.load
+package ebarrientos.deckStats.load.deck
 
 import java.io.File
 import ebarrientos.deckStats.basics.{Card, Deck}
@@ -7,6 +7,7 @@ import zio.Task
 import zio.ZIO
 import org.slf4j.LoggerFactory
 import ebarrientos.deckStats.basics.DeckEntry
+import ebarrientos.deckStats.load.card.CardLoader
 
 /**
  * Deck loader that loads the information from an XML file. The card loader provides the card

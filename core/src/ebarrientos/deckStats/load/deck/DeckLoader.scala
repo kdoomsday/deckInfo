@@ -1,4 +1,4 @@
-package ebarrientos.deckStats.load
+package ebarrientos.deckStats.load.deck
 
 import ebarrientos.deckStats.basics.Deck
 import zio.IO

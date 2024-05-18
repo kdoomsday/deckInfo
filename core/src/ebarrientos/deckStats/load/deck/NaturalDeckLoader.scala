@@ -1,8 +1,9 @@
-package ebarrientos.deckStats.load
+package ebarrientos.deckStats.load.deck
 
 import ebarrientos.deckStats.basics.Deck
 import zio._
 import ebarrientos.deckStats.basics.DeckEntry
+import ebarrientos.deckStats.load.card.CardLoader
 
 /** Deck loader that loads a deck that looks like:
   *
