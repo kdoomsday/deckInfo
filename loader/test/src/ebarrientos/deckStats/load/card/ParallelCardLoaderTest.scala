@@ -1,13 +1,12 @@
 package ebarrientos.deckStats.load.card
 
 import utest._
-import ebarrientos.deckStats.DummyObjects
-import ebarrientos.deckStats.DummyObjects._
+import ebarrientos.deckStats.load.DummyObjects
+import ebarrientos.deckStats.load.DummyObjects._
 import ebarrientos.deckStats.TestHelper
 
-object ParallelGroupedCardLoaderTest extends TestSuite{
-  val testLoader = new ParallelGroupedCardLoader {
-    override val maxParallelExecutions = 2
+object ParallelCardLoaderTest extends TestSuite{
+  val testLoader = new ParallelCardLoader {
     override def card(name: String) = DummyObjects.dummyCardLoader.card(name)
   }
 

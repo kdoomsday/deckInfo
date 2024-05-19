@@ -1,20 +1,18 @@
-package ebarrientos.deckStats
-
-import ebarrientos.deckStats.basics.Card
-import ebarrientos.deckStats.basics.{ColoredMana, GenericMana}
-import ebarrientos.deckStats.basics.CardType.{Artifact, Creature, Land}
+package ebarrientos.deckStats.load
+import ebarrientos.deckStats.load.card.CardLoader
+import zio.*
+import ebarrientos.deckStats.basics.*
 import ebarrientos.deckStats.basics.Color.*
-import ebarrientos.deckStats.basics.HybridMana
-import ebarrientos.deckStats.basics.Supertype
+import ebarrientos.deckStats.basics.CardType.*
 
-/** Dummy objects to use in tests */
 object DummyObjects {
 
+  // Have to repeat dummy objects, as the dependency does not come in since it is test
   /* Cards */
   val arthur = Card(
-    Seq(ColoredMana(White)),
+    Seq(ColoredMana(Color.White)),
     "Arthur Dent",
-    Set(Creature),
+    Set(CardType.Creature),
     Set(Supertype.Legendary),
     Set("Homeowner"),
     "text",
@@ -24,9 +22,9 @@ object DummyObjects {
   )
 
   val trillian = Card(
-    Seq(HybridMana(Set(ColoredMana(Blue), ColoredMana(Red)))),
+    Seq(HybridMana(Set(ColoredMana(Color.Blue), ColoredMana(Red)))),
     "Tricia McMillan",
-    Set(Creature),
+    Set(CardType.Creature),
     Set(Supertype.Legendary),
     Set("Human", "Adventurer"),
     "text",
@@ -113,4 +111,21 @@ object DummyObjects {
     toughness = 1,
     multiverseId = Some(8)
   )
+
+  /** Dummy deck loader to be used for tests */
+  val dummyCardLoader: CardLoader = new CardLoader {
+
+    def card(name: String): Task[Option[Card]] =
+      ZIO.succeed(name match {
+        case arthur.name      => Some(arthur)
+        case trillian.name    => Some(trillian)
+        case ford.name        => Some(ford)
+        case zaphod.name      => Some(zaphod)
+        case marvin.name      => Some(marvin)
+        case restaurant.name  => Some(restaurant)
+        case heartOfGold.name => Some(heartOfGold)
+        case petunias.name    => Some(petunias)
+        case _                => None
+      })
+  }
 }

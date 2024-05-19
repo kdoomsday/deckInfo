@@ -1,7 +1,7 @@
 package ebarrientos.deckStats.load.card
 
 import utest._
-import ebarrientos.deckStats.DummyObjects.arthur
+import ebarrientos.deckStats.load.DummyObjects.arthur
 import zio.ZIO
 import ebarrientos.deckStats.TestHelper.run
 import eu.monniot.scala3mock.ScalaMocks.*

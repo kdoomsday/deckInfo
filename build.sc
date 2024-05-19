@@ -63,6 +63,11 @@ object core extends MyModule {
   }
 }
 
+object loader extends MyModule {
+  def ivyDeps = deps ++ circeDeps ++ logbackDeps
+  def moduleDeps = Seq(core)
+}
+
 /** ZIO Https implementations */
 object zioWeb extends MyModule {
 
@@ -72,7 +77,7 @@ object zioWeb extends MyModule {
 
   def ivyDeps = deps ++ circeDeps ++ logbackDeps ++ zioWebDeps
 
-  def moduleDeps = Seq(core)
+  def moduleDeps = Seq(core, loader)
 }
 
 /**

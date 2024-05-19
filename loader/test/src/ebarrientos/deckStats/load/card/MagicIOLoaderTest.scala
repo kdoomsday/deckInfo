@@ -15,7 +15,7 @@ import ebarrientos.deckStats.basics.CardType
 object MagicIOLoaderTest extends TestSuite {
   val log = LoggerFactory.getLogger(getClass())
 
-  private val rootPath = "core/test/resources"
+  private val rootPath = "loader/test/resources"
   private def responsePath(relative: String): String = s"$rootPath/$relative"
   private val path = responsePath("MagicIOResponse.json")
 

@@ -2,7 +2,7 @@ package ebarrientos.deckStats.math
 
 import utest._
 import ebarrientos.deckStats.basics.Deck
-import ebarrientos.deckStats.DummyObjects._
+import ebarrientos.deckStats.DummyObjects.*
 import ebarrientos.deckStats.basics.CardType.Creature
 import ebarrientos.deckStats.basics.CardType.Artifact
 import ebarrientos.deckStats.basics.CardType.Land

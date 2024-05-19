@@ -3,7 +3,7 @@ package ebarrientos.deckStats.load.deck
 import utest._
 import ebarrientos.deckStats.load.deck.XMLDeckLoader
 import java.io.File
-import ebarrientos.deckStats.DummyObjects
+import ebarrientos.deckStats.load.DummyObjects
 import ebarrientos.deckStats.TestHelper
 
 object XMLDeckLoaderTests extends TestSuite {

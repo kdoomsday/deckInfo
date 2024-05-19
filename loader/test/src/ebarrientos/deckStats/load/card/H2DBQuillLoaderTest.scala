@@ -2,7 +2,7 @@ package ebarrientos.deckStats.load.card
 
 import utest.TestSuite
 import utest.Tests
-import ebarrientos.deckStats.DummyObjects
+import ebarrientos.deckStats.load.DummyObjects
 import ebarrientos.deckStats.TestHelper
 import zio.Unsafe
 import utest._
