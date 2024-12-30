@@ -13,13 +13,14 @@ import org.h2.jdbcx.JdbcDataSource
 object H2DBQuillLoaderTest extends TestSuite {
 
   val runner = Unsafe.unsafe(implicit unsafe => new ZioRunnerDefault()(unsafe))
-  val initScriptsPath = "./dbInitScripts/"
+  val initScriptsPath = s"${System.getenv("MILL_WORKSPACE_ROOT")}/dbInitScripts/"
 
-  val ds     = {
+  val ds = {
     val jdbcds = new JdbcDataSource()
     jdbcds.setURL("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1")
     jdbcds
   }
+
   val loader = new H2DBQuillLoader(NullCardLoader, ds, initScriptsPath, runner)
   val r      = zio.Runtime.default
 

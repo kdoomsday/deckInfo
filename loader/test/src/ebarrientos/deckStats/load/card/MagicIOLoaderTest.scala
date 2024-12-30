@@ -16,7 +16,9 @@ object MagicIOLoaderTest extends TestSuite {
   val log = LoggerFactory.getLogger(getClass())
 
   private val rootPath = "loader/test/resources"
-  private def responsePath(relative: String): String = s"$rootPath/$relative"
+  private def responsePath(relative: String): String =
+    getClass().getClassLoader().getResource(relative).getFile()
+
   private val path = responsePath("MagicIOResponse.json")
 
   private val defaultMaxRetries = 3
@@ -111,7 +113,7 @@ object MagicIOLoaderTest extends TestSuite {
   }
 
   /**
-   * Implements RequestParams => Response in a way that fails callsBeforeSuccess
+   * Implements RequestParams => Response in a way that fails `failureCalls`
    * times and then succeeds
    */
   private case class TestRequester(loadPath: String = path, failureCalls: Int = 0)
