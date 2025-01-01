@@ -65,7 +65,10 @@ object core extends MyModule {
   }
 }
 
-object loader extends MyModule {
+/**
+ * Card loaders, deck loaders, and other deck manipulations
+ */
+object deckWork extends MyModule {
   def ivyDeps = deps ++ circeDeps ++ logbackDeps
   def moduleDeps = Seq(core)
 }
@@ -79,7 +82,7 @@ object zioWeb extends MyModule {
 
   def ivyDeps = deps ++ circeDeps ++ logbackDeps ++ zioWebDeps
 
-  def moduleDeps = Seq(core, loader)
+  def moduleDeps = Seq(core, deckWork)
 }
 
 /**

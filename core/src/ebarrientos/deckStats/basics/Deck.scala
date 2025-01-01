@@ -23,5 +23,5 @@ case class Deck(cards: Seq[DeckEntry], name: String = "") {
   * @param copies The number of copies of the card. Must be greater than 0
   */
 case class DeckEntry(card: Card, copies: Int) {
-  require(copies > 0)
+  require(copies > 0, "Copies must be > 0")
 }
