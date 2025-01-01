@@ -6,7 +6,7 @@ import ebarrientos.deckStats.basics.CardType.*
 import ebarrientos.deckStats.basics.Deck
 import ebarrientos.deckStats.basics.DeckEntry
 
-object CardTypeDeckGroupingTest extends TestSuite {
+object SingleGroupCardTypeDeckGroupingTest extends TestSuite {
 
   val tests = Tests {
     test("basic group for each card") {
@@ -16,7 +16,7 @@ object CardTypeDeckGroupingTest extends TestSuite {
           .map((c, i) => DeckEntry(c, i + 1))
 
       val testDeck = Deck(testEntries)
-      val grouper  = CardTypeDeckGrouping()
+      val grouper  = SingleGroupCardTypeDeckGrouping()
       val res      = grouper.group(testDeck)
 
       // assert(res.keySet.size == 3)

@@ -6,9 +6,10 @@ import ebarrientos.deckStats.basics.DeckEntry
 import ebarrientos.deckStats.basics.CardType
 
 /**
- * DeckGrouping that works on a card type basis
+ * DeckGrouping that works on a card type basis and ensures each card is in a
+ * single group.
  */
-class CardTypeDeckGrouping() extends DeckGrouping {
+class SingleGroupCardTypeDeckGrouping() extends DeckGrouping {
 
   override def group(deck: Deck): Map[GroupName, Seq[DeckEntry]] =
     val (creatures, noncreature)       = deck.cards.partition(_.card.is(CardType.Creature))
@@ -30,6 +31,6 @@ class CardTypeDeckGrouping() extends DeckGrouping {
     ).withDefaultValue(Seq.empty)
 }
 
-object CardTypeDeckGrouping {
-  def apply(): CardTypeDeckGrouping = new CardTypeDeckGrouping()
+object SingleGroupCardTypeDeckGrouping {
+  def apply(): SingleGroupCardTypeDeckGrouping = new SingleGroupCardTypeDeckGrouping()
 }
