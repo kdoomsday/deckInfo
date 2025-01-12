@@ -60,7 +60,7 @@ trait MyModule extends ScalaModule {
 object core extends MyModule {
   def ivyDeps = deps ++ circeDeps ++ logbackDeps
 
-  def rootPath = T {
+  def rootPath = Task {
     os.pwd
   }
 }
@@ -102,7 +102,7 @@ object tapir extends MyModule {
 }
 
 /** Update the millw script. */
-def millw() = T.command {
+def millw() = Task.Command {
   val target = mill.util.Util.download("https://raw.githubusercontent.com/lefou/millw/main/millw")
   val millw  = build.millSourcePath / "mill"
   os.copy.over(target.path, millw)
@@ -111,7 +111,7 @@ def millw() = T.command {
 }
 
 /** Generate a Docker image from the assembly */
-def dockerBuild = T {
+def dockerBuild = Task {
   tapir.assembly()
   val dockerImageName = "deckinfo"
   os.proc("docker", "build", "-f", "Dockerfile", "-t", s"$dockerImageName", ".").call()
