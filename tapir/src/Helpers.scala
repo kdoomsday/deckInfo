@@ -13,6 +13,7 @@ import ebarrientos.deckStats.run.ZioRunnerDefault
 import org.h2.jdbcx.JdbcDataSource
 import javax.sql.DataSource
 import pureconfig.ConfigSource
+import ebarrientos.deckStats.grouping.SingleGroupCardTypeDeckGrouping
 
 object Helpers {
 
@@ -53,5 +54,5 @@ object Helpers {
         .orDie
     )
 
-  val logicLive = new ZIOServerLogic(loaderLive)
+  val logicLive = new ZIOServerLogic(loaderLive, SingleGroupCardTypeDeckGrouping)
 }

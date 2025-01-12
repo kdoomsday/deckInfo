@@ -12,13 +12,13 @@ import scala.meta.contrib.DocToken.GroupName
  * DeckGrouping that works on a card type basis and ensures each card is in a
  * single group.
  */
-class SingleGroupCardTypeDeckGrouping() extends DeckGrouping {
+object SingleGroupCardTypeDeckGrouping extends DeckGrouping {
 
   /** Helper to go from card type to GroupName in fewer characters */
-  private inline def s(ct: CardType): GroupName = ct.toString()
+  private inline def s(ct: CardType): String = ct.toString()
 
-  override def group(deck: Deck): Map[GroupName, Seq[DeckEntry]] =
-    val initial = Map.empty[GroupName, MSeq[DeckEntry]].withDefaultValue(MSeq.empty[DeckEntry])
+  override def group(deck: Deck): Map[String, Seq[DeckEntry]] =
+    val initial = Map.empty[String, MSeq[DeckEntry]].withDefaultValue(MSeq.empty[DeckEntry])
     deck
       .cards
       .foldLeft(initial) {
@@ -33,8 +33,4 @@ class SingleGroupCardTypeDeckGrouping() extends DeckGrouping {
       }
       .map((k, mutableV) => (k, mutableV.toSeq))
       .withDefaultValue(Seq.empty) // Need this again because it gets lost after the map
-}
-
-object SingleGroupCardTypeDeckGrouping {
-  def apply(): SingleGroupCardTypeDeckGrouping = new SingleGroupCardTypeDeckGrouping()
 }

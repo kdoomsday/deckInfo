@@ -1,12 +1,12 @@
-package ebarrientos.deckStats.math
+package ebarrientos.deckStats.calc
 
 import utest._
 import ebarrientos.deckStats.basics.Deck
-import ebarrientos.deckStats.DummyObjects._
-import ebarrientos.deckStats.queries.DeckCalc
+import ebarrientos.deckStats.load.DummyObjects._
 import ebarrientos.deckStats.queries.CurvePoint
 import ebarrientos.deckStats.queries.CountObject
 import ebarrientos.deckStats.basics.DeckEntry
+import ebarrientos.deckStats.grouping.DeckGrouping
 
 object DeckCalcTests extends TestSuite {
   val d1 = Deck(Seq(DeckEntry(arthur, 2), DeckEntry(trillian, 1)), name = "d1")
@@ -15,9 +15,13 @@ object DeckCalcTests extends TestSuite {
                     DeckEntry(ford, 1), DeckEntry(marvin, 1), DeckEntry(zaphod, 1),
                     DeckEntry(restaurant, 1), DeckEntry(heartOfGold, 1)))
 
+  val identgrouper = new DeckGrouping {
+    override def group(deck: Deck): Map[String, Seq[DeckEntry]] = Map("group" -> deck.cards)
+  }
+
   val tests = Tests {
     "Simple deck full calcs" - {
-      val res = DeckCalc.fullCalc(d1)
+      val res = DeckCalc.fullCalc(d1, identgrouper)
 
       assert(res.avgCMC == res.avgCMCNonLands,
              res.avgCMC == 1.0,
@@ -27,7 +31,7 @@ object DeckCalcTests extends TestSuite {
     }
 
     "Full deck full calcs" - {
-      val res = DeckCalc.fullCalc(d2)
+      val res = DeckCalc.fullCalc(d2, identgrouper)
 
       assert(res.avgCMC == 14.0/7.0)
       assert(res.avgCMCNonLands == 14.0/6.0)

@@ -16,8 +16,7 @@ object SingleGroupCardTypeDeckGroupingTest extends TestSuite {
           .map((c, i) => DeckEntry(c, i + 1))
 
       val testDeck = Deck(testEntries)
-      val grouper  = SingleGroupCardTypeDeckGrouping()
-      val res      = grouper.group(testDeck)
+      val res      = SingleGroupCardTypeDeckGrouping.group(testDeck)
 
       // assert(res.keySet.size == 3)
       assert(res(Creature.toString).size == 2)

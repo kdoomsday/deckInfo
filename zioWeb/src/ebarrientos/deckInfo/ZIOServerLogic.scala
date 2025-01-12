@@ -4,12 +4,13 @@ import ebarrientos.deckStats.basics.Card
 import ebarrientos.deckStats.load.card.CardLoader
 import ebarrientos.deckStats.queries.DeckObject
 import zio.ZIO
-import ebarrientos.deckStats.queries.DeckCalc
+import ebarrientos.deckStats.calc.DeckCalc
 import ebarrientos.deckStats.load.deck.XMLDeckLoader
 import scala.xml.Elem
 import scala.xml.XML
+import ebarrientos.deckStats.grouping.DeckGrouping
 
-class ZIOServerLogic(cardLoader: CardLoader) {
+class ZIOServerLogic(cardLoader: CardLoader, deckGrouping: DeckGrouping) {
   import ZIOServerLogic.urlDecode
 
   def card(name: String): ZIO[Any, Throwable, Option[Card]] =
@@ -20,7 +21,7 @@ class ZIOServerLogic(cardLoader: CardLoader) {
       elem          <- elemFromString(stringXmlContent)
       loader        <- ZIO.succeed(new XMLDeckLoader(elem, cardLoader))
       deck          <- loader.load()
-      calc <- ZIO.succeed(DeckCalc.fullCalc(deck))
+      calc <- ZIO.succeed(DeckCalc.fullCalc(deck, deckGrouping))
     } yield calc)
       .either
       .map(_.left.map(_ => ()))
