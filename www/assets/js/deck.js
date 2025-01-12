@@ -77,12 +77,17 @@ function displayInfo(data) {
 
     $('#deckList').html("");
     $('#deckList').append("<ul id='deckList_inner'></ul>");
-    for (card of data.cards) {
-        $('#deckList_inner').append(`<li>${card.count} x ${cardLink(card.name, card.multiverseId)}</li>`);
-    }
+    Object.keys(data.cards).forEach(key => {
+        var grouplist = `<li><span class="groupTitle">${key}</span><ul>`;
+        data.cards[key].forEach(card =>
+            grouplist += `<li class="deckEntry">${card.count} x ${cardLink(card.name, card.multiverseId)}</li>`
+        );
+        grouplist += "</ul></li>";
+        $('#deckList_inner').append(grouplist);
+    });
 
     var baseUrl = "https://gatherer.wizards.com/Handlers/Image.ashx";
-    Array.from(document.querySelectorAll("#deckList_inner > li > a")).forEach((element) => {
+    Array.from(document.querySelectorAll("#deckList_inner > li > ul > li > a")).forEach((element) => {
         var muid = element.getAttribute("multiverseId");
         var imgsrc = `${baseUrl}?multiverseid=${muid}&type=card`;
         element.addEventListener("mouseenter", (ev) => {
