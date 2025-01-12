@@ -77,8 +77,10 @@ function displayInfo(data) {
 
     $('#deckList').html("");
     $('#deckList').append("<ul id='deckList_inner'></ul>");
+    // Append card groups and cards
     Object.keys(data.cards).forEach(key => {
-        var grouplist = `<li><span class="groupTitle">${key}</span><ul>`;
+        var totalCount = data.cards[key].map(c => c.count).reduce((s, c) => s + c);
+        var grouplist = `<li><span class="groupTitle">${key} (${totalCount})</span><ul>`;
         data.cards[key].forEach(card =>
             grouplist += `<li class="deckEntry">${card.count} x ${cardLink(card.name, card.multiverseId)}</li>`
         );
