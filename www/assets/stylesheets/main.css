@@ -2,6 +2,10 @@
     font-size: 0.8rem;
 }
 
+.groupCount {
+    color: lightgray;
+}
+
 .deckEntry {
     font-size: 0.8rem;
 }
