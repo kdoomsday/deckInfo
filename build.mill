@@ -111,8 +111,9 @@ def millw() = Task.Command {
 }
 
 /** Generate a Docker image from the assembly */
-def dockerBuild = Task {
+def dockerBuild() = Task.Command {
   tapir.assembly()
   val dockerImageName = "deckinfo"
-  os.proc("docker", "build", "-f", "Dockerfile", "-t", s"$dockerImageName", ".").call()
+  val dockerFile = Task.workspace / "Dockerfile"
+  os.proc("docker", "build", "-f", dockerFile, "-t", s"$dockerImageName", Task.workspace).call()
 }
