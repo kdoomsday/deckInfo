@@ -1,6 +1,7 @@
 package build
 
 import mill._, scalalib._
+import $file.versionUtil
 
 trait MyModule extends ScalaModule {
   def scalaVersion = "3.3.3"
@@ -59,10 +60,6 @@ trait MyModule extends ScalaModule {
  */
 object core extends MyModule {
   def ivyDeps = deps ++ circeDeps ++ logbackDeps
-
-  def rootPath = Task {
-    os.pwd
-  }
 }
 
 /**
@@ -110,10 +107,31 @@ def millw() = Task.Command {
   target
 }
 
-/** Generate a Docker image from the assembly */
-def dockerBuild() = Task.Command {
+/**
+ * Generate a Docker image from the assembly
+ * Will tag it with the current version as a release, and will also advance the
+ * version
+ */
+def dockerBuild = Task {
   tapir.assembly()
+
+  val version = versionUtil.currentVersion(Task.workspace)
+  val tag = version.asRelease.toString
+  val next = version.asRC.next
+
   val dockerImageName = "deckinfo"
   val dockerFile = Task.workspace / "Dockerfile"
-  os.proc("docker", "build", "-f", dockerFile, "-t", s"$dockerImageName", Task.workspace).call()
+  os.proc("docker", "build", "-f", dockerFile,
+          "-t", s"$dockerImageName", "-t", s"$dockerImageName:$tag",
+          Task.workspace)
+    .call()
+  versionUtil.write(next, Task.workspace)
+}
+
+def start = Task {
+  tapir.run()
+}
+
+def appVersion = Task {
+  println(versionUtil.currentVersion(Task.workspace))
 }

@@ -1,0 +1,41 @@
+package build
+
+import mill._, scalalib._
+import os.Path
+
+/* Utilities to manage versions for the application */
+
+/** A version in our system */
+case class Version(major: Int, minor: Int, point: Int, isRC: Boolean) {
+  override def toString = s"""$major.$minor.$point${if (isRC) "-RC" else ""}"""
+  def next: Version = this.copy(point = point + 1)
+  def asRelease = this.copy(isRC = false)
+  def asRC = this.copy(isRC = true)
+}
+
+def versionFileName = "version.txt"
+
+def vFile(rootPath: Path) = rootPath / versionFileName
+
+/**
+  * Read the current version from the version file
+  *
+  * @param rootPath Path to the directory where the version file is located
+  * @return `Version` instance read from the file
+  */
+def currentVersion(rootPath: Path): Version = {
+  val current = os.read(vFile(rootPath)).trim
+  parseVersion(current)
+}
+
+/** Reads a version string and parses it */
+def parseVersion(vString: String): Version = {
+  val r = """([0-9]*)\.([0-9]*)\.([0-9]*)(-RC)?""".r
+  val r(major, minor, point, rc) = vString
+  Version(major.toInt, minor.toInt, point.toInt, rc != null)
+}
+
+/** Write a new version into the version file */
+def write(v: Version, rootPath: Path): Unit = {
+  os.write.over(vFile(rootPath), v.toString)
+}
