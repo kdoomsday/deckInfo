@@ -46,3 +46,6 @@ Devel.org
 # data
 *.db
 *.org_archive
+
+# Emacs
+.dir-locals.el
