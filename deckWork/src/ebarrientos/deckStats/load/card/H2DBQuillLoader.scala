@@ -1,5 +1,6 @@
 package ebarrientos.deckStats.load.card
 
+
 import ebarrientos.deckStats.basics.Card
 import ebarrientos.deckStats.basics.CardType
 import ebarrientos.deckStats.basics.Mana
@@ -20,12 +21,14 @@ import javax.sql.DataSource
 import scala.jdk.CollectionConverters._
 import scala.annotation.unused
 
-/** Card loader using quill to handle database queries
-  *
-  * @param helper [[CardLoader]] to fetch info if not present in this one
-  * @param ds     [[DataSource]] to use
-  * @param runner [[ZioRunner]] which will be used to ensure tables are initialized
-  */
+
+/**
+ * Card loader using quill to handle database queries
+ *
+ * @param helper [[CardLoader]] to fetch info if not present in this one
+ * @param ds     [[DataSource]] to use
+ * @param runner [[ZioRunner]] which will be used to ensure tables are initialized
+ */
 class H2DBQuillLoader(
     val helper: CardLoader,
     ds: DataSource,
@@ -37,20 +40,25 @@ class H2DBQuillLoader(
   private val log    = LoggerFactory.getLogger(getClass())
   private val parser = MtgJsonParser
 
+
   /** DataSource layer for the dao */
   private val dataSource: ZLayer[Any, Throwable, DataSource] =
     ZLayer.fromZIO(ZIO.succeed(ds))
 
+
   private val ctx = new H2ZioJdbcContext(LowerCase)
   import ctx._
+
 
   // Encoders/Decoders
   // Mana
   @unused implicit private val manaDecoder: MappedEncoding[String, Seq[Mana]] =
     MappedEncoding[String, Seq[Mana]](costStr => parser.parseAll(parser.cost, costStr).get)
 
+
   @unused implicit private val manaEncoder: MappedEncoding[Seq[Mana], String] =
     MappedEncoding[Seq[Mana], String](cost => parser.stringify(cost))
+
 
   // Card types
   @unused implicit private val cardTypeDecoder: MappedEncoding[String, Set[CardType]] =
@@ -58,27 +66,35 @@ class H2DBQuillLoader(
       _.split(" ").map(CardType.apply).toSet
     )
 
+
   @unused implicit private val cardTypeEncoder: MappedEncoding[Set[CardType], String] =
     MappedEncoding[Set[CardType], String](_.mkString(" "))
+
 
   // Supertypes
   @unused implicit private val superTypeDecoder: MappedEncoding[String, Set[Supertype]] =
     MappedEncoding[String, Set[Supertype]](
-      _.split(" ").collect {
-        case st if st.nonEmpty => Supertype.apply(st)
-      }.toSet
+      _.split(" ")
+        .collect {
+          case st if st.nonEmpty => Supertype.apply(st)
+        }
+        .toSet
     )
+
 
   @unused implicit private val superTypeEncoder: MappedEncoding[Set[Supertype], String] =
     MappedEncoding[Set[Supertype], String](_.mkString(" "))
+
 
   // Subtypes
   @unused implicit private val subTypeDecoder: MappedEncoding[String, Set[String]] =
     MappedEncoding[String, Set[String]](_.split(" ").toSet)
 
+
   @unused implicit private val subTypeEncoder: MappedEncoding[Set[String], String] =
     MappedEncoding[Set[String], String](_.mkString(" "))
   // End Encoders/Decoders
+
 
   override def card(name: String): Task[Option[Card]] =
     retrieve(name)
@@ -90,6 +106,7 @@ class H2DBQuillLoader(
             .flatMap(oc => maybeStore(oc) *> ZIO.succeed(oc))
         }
       }
+
 
   /** Get card from DB, do not involve helper */
   private def retrieve(name: String): Task[Option[Card]] = {
@@ -105,9 +122,11 @@ class H2DBQuillLoader(
       .provide(dataSource)
   }
 
+
   /** Store the card, if it is present */
   private def maybeStore(oc: Option[Card]): Task[Unit] =
     oc.map(c => store(c)).getOrElse(ZIO.unit)
+
 
   private def store(c: Card): Task[Unit] =
     ctx
@@ -116,25 +135,28 @@ class H2DBQuillLoader(
       .map(_ => ())
       .provide(dataSource)
 
-  /** Store multiple cards at once
-    *
-    * @param cards
-    *   Cards to store
-    * @return
-    *   Number of cards stores. Assumes all were inserted
-    */
+
+  /**
+   * Store multiple cards at once
+   *
+   * @param cards
+   *   Cards to store
+   * @return
+   *   Number of cards stores. Assumes all were inserted
+   */
   private def storeMulti(cards: Seq[Card]): Task[Long] =
     ctx
       .run(liftQuery(cards).foreach(c => query[Card].insertValue(c)))
       .map(_ => cards.size.toLong)
       .provide(dataSource)
 
+
   /** Attempt to run table creation */
   private def runInitScripts(): Task[Unit] = {
     def runSingle(path: Path): ZIO[DataSource, Throwable, Unit] = {
       log.debug(s"Run script: $path")
-      val source       = scala.io.Source.fromFile(path.toFile())
-      val text         = source.getLines().mkString("\n")
+      val source              = scala.io.Source.fromFile(path.toFile())
+      val text                = source.getLines().mkString("\n")
       source.close()
       inline def createScript = quote(sql"#${text}".as[Update[Int]])
       ctx.run(createScript).unit
@@ -152,13 +174,15 @@ class H2DBQuillLoader(
       .unit
   }
 
-  /** Queries for all cards at once, without resorting to the helper
-    *
-    * @param names
-    *   All the looked for cards
-    * @return
-    *   All of the cards that were found. This might be less than the requested cards
-    */
+
+  /**
+   * Queries for all cards at once, without resorting to the helper
+   *
+   * @param names
+   *   All the looked for cards
+   * @return
+   *   All of the cards that were found. This might be less than the requested cards
+   */
   private def queryMultiple(names: Seq[String]): Task[Seq[Card]] = {
     inline def q = quote {
       query[Card]
@@ -171,6 +195,7 @@ class H2DBQuillLoader(
       .provide(dataSource)
   }
 
+
   /** Implement {{cards(names)}} so we can leverage querying multiple cards at once */
   override def cards(names: Seq[String]): ZIO[Any, Throwable, Seq[Card]] =
     for {
@@ -180,13 +205,17 @@ class H2DBQuillLoader(
       _            <- storeMulti(helperCards)
     } yield storedCards ++ helperCards
 
+
   private def logTotalCardCount(): Task[Unit] =
     ctx
       .run(quote(query[Card].size))
       .map(count => log.debug(s"Found $count cards."))
       .provide(dataSource)
 
+
   log.debug("Attempting to run init scripts")
+
+
   /* Initialize the tables if necessary */
   runner.run(
     (runInitScripts() *> logTotalCardCount()).catchAll { ex =>
@@ -194,5 +223,7 @@ class H2DBQuillLoader(
       ZIO.fail(ex)
     }
   )
+
+
   log.debug(s"Finished initialization of ${getClass()}")
 }

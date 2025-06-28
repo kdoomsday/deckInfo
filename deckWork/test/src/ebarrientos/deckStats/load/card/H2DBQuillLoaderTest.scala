@@ -1,5 +1,6 @@
 package ebarrientos.deckStats.load.card
 
+
 import utest.TestSuite
 import utest.Tests
 import ebarrientos.deckStats.load.DummyObjects
@@ -9,11 +10,13 @@ import utest._
 import ebarrientos.deckStats.run.ZioRunnerDefault
 import org.h2.jdbcx.JdbcDataSource
 
+
 /** Tests for [[H2DBQuillLoader]] */
 object H2DBQuillLoaderTest extends TestSuite {
 
-  val runner = Unsafe.unsafe(implicit unsafe => new ZioRunnerDefault()(unsafe))
+  val runner          = Unsafe.unsafe(implicit unsafe => new ZioRunnerDefault()(unsafe))
   val initScriptsPath = s"${System.getenv("MILL_WORKSPACE_ROOT")}/dbInitScripts/"
+
 
   val ds = {
     val jdbcds = new JdbcDataSource()
@@ -21,8 +24,10 @@ object H2DBQuillLoaderTest extends TestSuite {
     jdbcds
   }
 
+
   val loader = new H2DBQuillLoader(NullCardLoader, ds, initScriptsPath, runner)
   val r      = zio.Runtime.default
+
 
   val tests = Tests {
     test("Load on empty produces empty") {
@@ -95,4 +100,5 @@ object H2DBQuillLoaderTest extends TestSuite {
       assert(!names.contains("nonexistent"))
     }
   }
+
 }

@@ -1,10 +1,12 @@
 package ebarrientos.deckStats.grouping
 
+
 import utest._
 import ebarrientos.deckStats.load.DummyObjects.*
 import ebarrientos.deckStats.basics.CardType.*
 import ebarrientos.deckStats.basics.Deck
 import ebarrientos.deckStats.basics.DeckEntry
+
 
 object SingleGroupCardTypeDeckGroupingTest extends TestSuite {
 
@@ -27,4 +29,5 @@ object SingleGroupCardTypeDeckGroupingTest extends TestSuite {
       assert(res(Battle.toString).size == 0)
     }
   }
+
 }

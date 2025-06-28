@@ -1,5 +1,6 @@
 package ebarrientos.deckInfo
 
+
 import ebarrientos.deckStats.basics.Card
 import ebarrientos.deckStats.load.card.CardLoader
 import ebarrientos.deckStats.queries.DeckObject
@@ -10,22 +11,24 @@ import scala.xml.Elem
 import scala.xml.XML
 import ebarrientos.deckStats.grouping.DeckGrouping
 
+
 class ZIOServerLogic(cardLoader: CardLoader, deckGrouping: DeckGrouping) {
   import ZIOServerLogic.urlDecode
+
 
   def card(name: String): ZIO[Any, Throwable, Option[Card]] =
     cardLoader.card(urlDecode(name))
 
-  def deck(stringXmlContent: String): ZIO[Any, Nothing, Either[Unit, DeckObject]] = {
+
+  def deck(stringXmlContent: String): ZIO[Any, Nothing, Either[Unit, DeckObject]] =
     (for {
-      elem          <- elemFromString(stringXmlContent)
-      loader        <- ZIO.succeed(new XMLDeckLoader(elem, cardLoader))
-      deck          <- loader.load()
-      calc <- ZIO.succeed(DeckCalc.fullCalc(deck, deckGrouping))
+      elem   <- elemFromString(stringXmlContent)
+      loader <- ZIO.succeed(new XMLDeckLoader(elem, cardLoader))
+      deck   <- loader.load()
+      calc   <- ZIO.succeed(DeckCalc.fullCalc(deck, deckGrouping))
     } yield calc)
       .either
       .map(_.left.map(_ => ()))
-  }
 
 
   /** Convert a string to an XML Elem */
@@ -33,10 +36,13 @@ class ZIOServerLogic(cardLoader: CardLoader, deckGrouping: DeckGrouping) {
     ZIO.attempt {
       XML.loadString(xmlString)
     }
+
 }
+
 
 object ZIOServerLogic {
+
   @inline def urlDecode(raw: String): String =
     java.net.URLDecoder.decode(raw, "utf-8")
-}
 
+}

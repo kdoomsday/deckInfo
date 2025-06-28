@@ -1,11 +1,14 @@
 package ebarrientos.deckStats.load.card
 
+
 import ebarrientos.deckStats.basics.Card
 import zio._
 
-/** Loader que nunca consigue la carta. Sirve en casos en que se quiere que
-  * el helper de otro loader no consiga nada
-  */
+
+/**
+ * Loader que nunca consigue la carta. Sirve en casos en que se quiere que
+ * el helper de otro loader no consiga nada
+ */
 object NullCardLoader extends CardLoader {
   def card(name: String): Task[Option[Card]] = ZIO.none
 }

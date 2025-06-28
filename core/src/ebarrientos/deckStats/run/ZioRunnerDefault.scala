@@ -1,7 +1,9 @@
 package ebarrientos.deckStats.run
 
-import javax.inject.{ Singleton, Inject }
+
+import javax.inject.{Inject, Singleton}
 import zio.Unsafe
+
 
 /** Default ZioRunner that uses [[zio.Runtime.default]] */
 @Singleton

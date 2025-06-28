@@ -1,5 +1,6 @@
 package ebarrientos.deckStats.load.card
 
+
 import ebarrientos.deckStats.basics.{Card, Mana}
 import ebarrientos.deckStats.load.utils.{LoadUtils, URLUtils}
 import org.json4s._
@@ -16,14 +17,21 @@ import scala.concurrent.duration.FiniteDuration
 import zio.Schedule
 import zio.Duration
 
+
 /** Loader para cargar información de api.magicthegathering.io */
-class MagicIOLoader(val timeout: FiniteDuration, retryTime: FiniteDuration, maxRetries: Int, requester: MagicIOLoader.RequestParams => Response)
-    extends CardLoader
+class MagicIOLoader(
+    val timeout: FiniteDuration,
+    retryTime: FiniteDuration,
+    maxRetries: Int,
+    requester: MagicIOLoader.RequestParams => Response
+) extends CardLoader
     with LoadUtils
     with URLUtils {
 
   /** Alternate constructor that uses MagicIOLoader.requestsCallCard by default as the requester */
-  def this(timeout: FiniteDuration, retryTime: FiniteDuration, maxRetries: Int) = this(timeout, retryTime, maxRetries, MagicIOLoader.requestsCallCard)
+  def this(timeout: FiniteDuration, retryTime: FiniteDuration, maxRetries: Int) =
+    this(timeout, retryTime, maxRetries, MagicIOLoader.requestsCallCard)
+
 
   private val log = LoggerFactory.getLogger(getClass())
 
@@ -48,6 +56,7 @@ class MagicIOLoader(val timeout: FiniteDuration, retryTime: FiniteDuration, maxR
         ZIO.succeed(None)
       }
 
+
   /** From json get supertypes, types and subtypes */
   def parseTypesJson(
       cardJson: JValue
@@ -69,6 +78,7 @@ class MagicIOLoader(val timeout: FiniteDuration, retryTime: FiniteDuration, maxR
     (supertypes.toSet, types.toSet, subtypes.toSet)
   }
 
+
   /** Given the card's json string, parse the card */
   def cardFromJsonString(name: String, cardJson: String): Task[Option[Card]] =
     ZIO.attempt {
@@ -79,10 +89,12 @@ class MagicIOLoader(val timeout: FiniteDuration, retryTime: FiniteDuration, maxR
       }
     }
 
-  /** In an array of results, find the one that fully matches the expected name. This is important
-    * because the API finds partial matches (e.g. when searching for 'Wasteland' a result will come
-    * in for 'Wasteland Scorpion'
-    */
+
+  /**
+   * In an array of results, find the one that fully matches the expected name. This is important
+   * because the API finds partial matches (e.g. when searching for 'Wasteland' a result will come
+   * in for 'Wasteland Scorpion'
+   */
   private def findObject(name: String, arr: JArray): Option[JValue] = {
     @tailrec
     def fo(l: List[JValue]): Option[JValue] =
@@ -101,6 +113,7 @@ class MagicIOLoader(val timeout: FiniteDuration, retryTime: FiniteDuration, maxR
     fo(arr.arr)
   }
 
+
   // Construir la carta a partir del jobject correspondiente ya extraido de la lista
   private def cardFromJobject(name: String, j: JValue): Card = {
     val manaCost: Seq[Mana]           = parseAll(cost, getStr(j \\ "manaCost")).get
@@ -118,33 +131,41 @@ class MagicIOLoader(val timeout: FiniteDuration, retryTime: FiniteDuration, maxR
     )
   }
 
+
   private def getStr(value: JValue): String = value match {
     case JString(s) => s
     case _          => ""
   }
 
+
   private def getInt(value: JValue): Int = value match {
-    case JInt(num)                              => num.toInt
-    case JString(txt) if (txt matches "[0-9]+") => txt.toInt
-    case _                                      => 0
+    case JInt(num)                               => num.toInt
+    case JString(txt) if (txt.matches("[0-9]+")) => txt.toInt
+    case _                                       => 0
   }
+
 }
+
 
 object MagicIOLoader {
   case class RequestParams(cardName: String, timeout: FiniteDuration)
 
   val baseUrl = "https://api.magicthegathering.io/v1/cards"
 
-  /** Make the call to get a card
+
+  /**
+   * Make the call to get a card
    *
    * @param name Name of the card
    * @return Response
    */
   private def requestsCallCard: RequestParams => Response =
-    requestParams => requests.get(
-      baseUrl,
-      params = Map("name" -> requestParams.cardName),
-      readTimeout = requestParams.timeout.toMillis.toInt,
-      connectTimeout = requestParams.timeout.toMillis.toInt
-    )
+    requestParams =>
+      requests.get(
+        baseUrl,
+        params = Map("name" -> requestParams.cardName),
+        readTimeout = requestParams.timeout.toMillis.toInt,
+        connectTimeout = requestParams.timeout.toMillis.toInt
+      )
+
 }

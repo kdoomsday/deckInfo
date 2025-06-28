@@ -1,5 +1,6 @@
 package ebarrientos.deckStats.calc
 
+
 import ebarrientos.deckStats.math.Calc._
 import ebarrientos.deckStats.basics._
 import ebarrientos.deckStats.math.Calc
@@ -9,10 +10,12 @@ import ebarrientos.deckStats.queries.DeckObject
 import ebarrientos.deckStats.queries.CountObject
 import ebarrientos.deckStats.queries.CurvePoint
 
+
 object DeckCalc {
 
   @inline private def deckEntry2cardObject(de: DeckEntry): CardObject =
     CardObject(de.card.name, de.copies, de.card.multiverseId.getOrElse(-1))
+
 
   /**
    * Full calculations
@@ -48,4 +51,5 @@ object DeckCalc {
       cards = cards
     )
   }
+
 }

@@ -1,5 +1,6 @@
 package ebarrientos.deckInfo
 
+
 import ebarrientos.deckStats.basics.Card
 import ebarrientos.deckStats.basics.CardType
 import ebarrientos.deckStats.basics.Color
@@ -16,7 +17,9 @@ import zio.json.DeriveJsonEncoder
 import zio.json.JsonDecoder
 import zio.json.JsonEncoder
 
+
 object Codecs {
+
   implicit val colorEncoder: JsonEncoder[Color] = JsonEncoder[String].contramap {
     case White => "W"
     case Blue  => "U"
@@ -24,6 +27,7 @@ object Codecs {
     case Red   => "R"
     case Green => "G"
   }
+
 
   implicit val manaPropertyEncoder: JsonEncoder[ManaProperty] = DeriveJsonEncoder.gen
   implicit val manaEncoder: JsonEncoder[Mana]                 = DeriveJsonEncoder.gen
@@ -35,6 +39,7 @@ object Codecs {
   implicit val curvePointEncoder: JsonEncoder[CurvePoint]     = DeriveJsonEncoder.gen
   implicit val deckObjectEncoder: JsonEncoder[DeckObject]     = DeriveJsonEncoder.gen
 
+
   implicit val colorDecoder: JsonDecoder[Color] = JsonDecoder[String].map {
     case "W" => White
     case "U" => Blue
@@ -42,6 +47,7 @@ object Codecs {
     case "R" => Red
     case "G" => Green
   }
+
 
   implicit val manaPropertyDecoder: JsonDecoder[ManaProperty] = DeriveJsonDecoder.gen
   implicit val manaDecoder: JsonDecoder[Mana]                 = DeriveJsonDecoder.gen

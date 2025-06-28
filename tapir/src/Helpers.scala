@@ -1,5 +1,6 @@
 package ebarrientos.deckInfo
 
+
 import ebarrientos.deckStats.config.CoreConfig
 import ebarrientos.deckStats.run.ZioRunner
 import zio._
@@ -15,6 +16,7 @@ import javax.sql.DataSource
 import pureconfig.ConfigSource
 import ebarrientos.deckStats.grouping.SingleGroupCardTypeDeckGrouping
 
+
 object Helpers {
 
   private val runner: ZioRunner =
@@ -22,11 +24,13 @@ object Helpers {
       new ZioRunnerDefault()
     }
 
+
   private def dataSource(config: CoreConfig): DataSource = {
     val ds = new JdbcDataSource()
     ds.setURL(config.dbConnectionUrl)
     ds
   }
+
 
   /** Card loader a usar para servir el contenido */
   private def loaderZIO(
@@ -45,7 +49,9 @@ object Helpers {
       cardLoader
     }
 
+
   val appConfig: CoreConfig = ConfigSource.default.loadOrThrow[CoreConfig]
+
 
   val loaderLive: CardLoader =
     runner.run(
@@ -53,6 +59,7 @@ object Helpers {
         .mapError(configErrorFailures => new Exception(configErrorFailures.prettyPrint()))
         .orDie
     )
+
 
   val logicLive = new ZIOServerLogic(loaderLive, SingleGroupCardTypeDeckGrouping)
 }

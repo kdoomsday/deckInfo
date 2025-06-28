@@ -1,24 +1,34 @@
 package ebarrientos.deckStats.load.card
 
+
 import java.io.File
 import utest._
 import ebarrientos.deckStats.TestHelper
 import ebarrientos.deckStats.basics.CardType.Enchantment
 
+
 object XMLCardLoaderTests extends TestSuite {
 
-  val fileOldFormat = new File(getClass().getClassLoader().getResource("cardsTest_oldFormat.xml").getFile())
-  val fileNewFormat = new File(getClass().getClassLoader().getResource("cardsTest_newFormat.xml").getFile())
+  val fileOldFormat = new File(
+    getClass().getClassLoader().getResource("cardsTest_oldFormat.xml").getFile()
+  )
+
+
+  val fileNewFormat = new File(
+    getClass().getClassLoader().getResource("cardsTest_newFormat.xml").getFile()
+  )
+
 
   @inline def withLoader(file: File) = new XMLCardLoader(file.getAbsolutePath())
-  @inline def withOldLoader() = withLoader(fileOldFormat)
-  @inline def withNewLoader() = withLoader(fileNewFormat)
+  @inline def withOldLoader()        = withLoader(fileOldFormat)
+  @inline def withNewLoader()        = withLoader(fileNewFormat)
+
 
   val tests = Tests {
 
     test("load known card") {
       val loader = withNewLoader()
-      val res = TestHelper.run(loader.card("Etchings of the Chosen"))
+      val res    = TestHelper.run(loader.card("Etchings of the Chosen"))
       assert(res.isDefined)
 
       val card = res.get
@@ -30,7 +40,7 @@ object XMLCardLoaderTests extends TestSuite {
 
     test("load known card in old format") {
       val loader = withOldLoader()
-      val res = TestHelper.run(loader.card("Tundra Kavu"))
+      val res    = TestHelper.run(loader.card("Tundra Kavu"))
       assert(res.isDefined)
 
       val card = res.get
@@ -43,20 +53,20 @@ object XMLCardLoaderTests extends TestSuite {
 
     test("load nonexistent card in new format") {
       val loader = withNewLoader()
-      val res = TestHelper.run(loader.card("Eduardo's egregious card name"))
+      val res    = TestHelper.run(loader.card("Eduardo's egregious card name"))
       assert(res.isEmpty)
     }
 
     test("load nonexistent card in old format") {
       val loader = withOldLoader()
-      val res = TestHelper.run(loader.card("Eduardo's egregious card name"))
+      val res    = TestHelper.run(loader.card("Eduardo's egregious card name"))
       assert(res.isEmpty)
     }
 
     test("load new format deathrite") {
       val loader = withNewLoader()
-      val res = TestHelper.run(loader.card("Deathrite Shaman"))
-      val card = res.get
+      val res    = TestHelper.run(loader.card("Deathrite Shaman"))
+      val card   = res.get
 
       assert(card.power == 1)
       assert(card.toughness == 2)
@@ -64,4 +74,5 @@ object XMLCardLoaderTests extends TestSuite {
       assert(card.cmc == 1)
     }
   }
+
 }

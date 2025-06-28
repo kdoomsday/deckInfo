@@ -1,5 +1,6 @@
 package ebarrientos.deckStats.math
 
+
 import utest._
 import ebarrientos.deckStats.basics.Deck
 import ebarrientos.deckStats.DummyObjects.*
@@ -9,15 +10,24 @@ import ebarrientos.deckStats.basics.CardType.Land
 import ebarrientos.deckStats.basics.DeckEntry
 import ebarrientos.deckStats.basics.CardType
 
+
 object CalcTests extends TestSuite {
 
   val deck = Deck(
-    Seq(DeckEntry(arthur, 2), DeckEntry(trillian, 1), DeckEntry(ford, 1),
-        DeckEntry(marvin, 1), DeckEntry(zaphod, 1), DeckEntry(restaurant, 1),
-        DeckEntry(heartOfGold, 1))
+    Seq(
+      DeckEntry(arthur, 2),
+      DeckEntry(trillian, 1),
+      DeckEntry(ford, 1),
+      DeckEntry(marvin, 1),
+      DeckEntry(zaphod, 1),
+      DeckEntry(restaurant, 1),
+      DeckEntry(heartOfGold, 1)
+    )
   )
 
-  val minDeck =  Deck(Seq(DeckEntry(arthur, 2), DeckEntry(trillian, 1)))
+
+  val minDeck = Deck(Seq(DeckEntry(arthur, 2), DeckEntry(trillian, 1)))
+
 
   val tests = Tests {
     test("count") {
@@ -26,7 +36,7 @@ object CalcTests extends TestSuite {
       }
 
       test("groupedCount") {
-        val gc: Map[CardType,Int] = Calc.groupedCount(minDeck, _.types)
+        val gc: Map[CardType, Int] = Calc.groupedCount(minDeck, _.types)
         assert(gc(Creature) == 3)
         assert(gc(Land) == 0)
       }
@@ -102,23 +112,28 @@ object CalcTests extends TestSuite {
 
     test("groupedManaCurve") {
       val classicCurve: Seq[(Int, Int)] = Calc.manaCurve(deck)
-      val groupCurve: Seq[(Int, Int)] =
-        Calc.groupedCount1(deck, groupFunc=_.cmc, cardFilter = !_.is(Land))
-          .toSeq.sortBy(_._1)
+      val groupCurve: Seq[(Int, Int)]   =
+        Calc
+          .groupedCount1(deck, groupFunc = _.cmc, cardFilter = !_.is(Land))
+          .toSeq
+          .sortBy(_._1)
 
       assert(classicCurve == groupCurve)
       groupCurve
     }
 
     test("manaSymbols") {
-      val symbols: Map[String,Double] = Calc.manaSymbols(deck)
-      assert(symbols("W") == 3,
-             symbols("U") == 1.5,
-             symbols("B") == 2,
-             symbols("R") == 3.5,
-             symbols("G") == 1,
-             symbols("C") == 4)
+      val symbols: Map[String, Double] = Calc.manaSymbols(deck)
+      assert(
+        symbols("W") == 3,
+        symbols("U") == 1.5,
+        symbols("B") == 2,
+        symbols("R") == 3.5,
+        symbols("G") == 1,
+        symbols("C") == 4
+      )
       symbols
     }
   }
+
 }

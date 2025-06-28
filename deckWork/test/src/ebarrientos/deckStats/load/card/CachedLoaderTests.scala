@@ -1,10 +1,12 @@
 package ebarrientos.deckStats.load.card
 
+
 import utest._
 import ebarrientos.deckStats.load.DummyObjects.arthur
 import zio.ZIO
 import ebarrientos.deckStats.TestHelper.run
 import eu.monniot.scala3mock.ScalaMocks.*
+
 
 /**
  * Tests for the CachedLoader
@@ -14,7 +16,7 @@ object CachedLoaderTests extends TestSuite {
   val tests = Tests {
     test("caches the result") {
       withExpectations() {
-        val c = mock[CardLoader]
+        val c    = mock[CardLoader]
         val name = arthur.name
         // when(c.card(name)).thenReturn(ZIO.some(arthur))
         when(c.card)
@@ -33,5 +35,5 @@ object CachedLoaderTests extends TestSuite {
       }
     }
   }
-}
 
+}

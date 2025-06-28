@@ -1,5 +1,6 @@
 package ebarrientos.deckInfo
 
+
 import sttp.tapir.server.ziohttp.ZioHttpInterpreter
 import sttp.tapir.server.ziohttp.ZioHttpServerOptions
 import sttp.tapir.ztapir._
@@ -11,10 +12,12 @@ import sttp.tapir.swagger.bundle.SwaggerInterpreter
 import org.slf4j.LoggerFactory
 import org.slf4j.Logger
 
+
 object App extends ZIOAppDefault {
   private val appConfig: CoreConfig = ConfigSource.default.loadOrThrow[CoreConfig]
 
   private val log: Logger = LoggerFactory.getLogger(classOf[App])
+
 
   override def run = {
     val serverOptions: ZioHttpServerOptions[Any] =
@@ -22,9 +25,9 @@ object App extends ZIOAppDefault {
 
     val port = appConfig.port
 
-    val cardEnpoints = CardServerEndpoints.allEndpoints
+    val cardEnpoints    = CardServerEndpoints.allEndpoints
     val publicEndpoints = PublicEndpoints.all
-    val endpoints = cardEnpoints ++ publicEndpoints
+    val endpoints       = cardEnpoints ++ publicEndpoints
 
     val docEndpoints: List[ZServerEndpoint[Any, Any]] =
       SwaggerInterpreter().fromServerEndpoints[Task](cardEnpoints, "deckInfo", "1.0.0")
@@ -44,9 +47,11 @@ object App extends ZIOAppDefault {
     ).exitCode
   }
 
+
   private def welcomeMessage(port: Int): String =
     s"""|Welcome to DeckInfo!
         |Go to http://localhost:${port} for the application.
         |Go to http://localhost:${port}/docs to open SwaggerUI.
         |Press ENTER key to exit.""".stripMargin
+
 }

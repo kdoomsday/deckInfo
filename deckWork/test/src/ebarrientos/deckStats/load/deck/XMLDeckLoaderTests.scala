@@ -1,17 +1,20 @@
 package ebarrientos.deckStats.load.deck
 
+
 import utest._
 import ebarrientos.deckStats.load.deck.XMLDeckLoader
 import java.io.File
 import ebarrientos.deckStats.load.DummyObjects
 import ebarrientos.deckStats.TestHelper
 
+
 object XMLDeckLoaderTests extends TestSuite {
 
   val file = new File(getClass().getClassLoader().getResource("Test.dec").getFile())
 
+
   val tests = Tests {
-    val loader = new XMLDeckLoader(file, DummyObjects.dummyCardLoader)
+    val loader  = new XMLDeckLoader(file, DummyObjects.dummyCardLoader)
     val loadedF = loader.load()
 
     val res = TestHelper.run(loadedF)
@@ -36,11 +39,12 @@ object XMLDeckLoaderTests extends TestSuite {
     }
 
     test("numCopies") {
-      res.get(DummyObjects.arthur.name).fold(assert(1==0))(e => e.copies == 4)
+      res.get(DummyObjects.arthur.name).fold(assert(1 == 0))(e => e.copies == 4)
     }
 
     test("deckName") {
       assert(res.name == "The Rock X")
     }
   }
+
 }

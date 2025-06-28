@@ -1,11 +1,13 @@
 package ebarrientos.deckStats
 
+
 import ebarrientos.deckStats.basics.Card
 import ebarrientos.deckStats.basics.{ColoredMana, GenericMana}
 import ebarrientos.deckStats.basics.CardType.{Artifact, Creature, Land}
 import ebarrientos.deckStats.basics.Color.*
 import ebarrientos.deckStats.basics.HybridMana
 import ebarrientos.deckStats.basics.Supertype
+
 
 /** Dummy objects to use in tests */
 object DummyObjects {
@@ -23,6 +25,7 @@ object DummyObjects {
     multiverseId = Some(1)
   )
 
+
   val trillian = Card(
     Seq(HybridMana(Set(ColoredMana(Blue), ColoredMana(Red)))),
     "Tricia McMillan",
@@ -34,6 +37,7 @@ object DummyObjects {
     2,
     multiverseId = Some(2)
   )
+
 
   val ford = Card(
     Seq(ColoredMana(Red), ColoredMana(Red)),
@@ -47,6 +51,7 @@ object DummyObjects {
     multiverseId = Some(3)
   )
 
+
   val zaphod = Card(
     Seq(GenericMana(1), ColoredMana(Black)),
     "Zaphod BeebleBrox",
@@ -58,6 +63,7 @@ object DummyObjects {
     1,
     multiverseId = Some(4)
   )
+
 
   val marvin = Card(
     Seq(GenericMana(3)),
@@ -71,6 +77,7 @@ object DummyObjects {
     multiverseId = Some(5)
   )
 
+
   val restaurant = Card(
     Seq(),
     "The Restaurant at the End of the Universe",
@@ -82,6 +89,7 @@ object DummyObjects {
     0,
     multiverseId = Some(6)
   )
+
 
   val heartOfGold = Card(
     Seq(
@@ -102,6 +110,7 @@ object DummyObjects {
     multiverseId = Some(7)
   )
 
+
   val petunias = Card(
     cost = Seq(GenericMana(0)),
     name = "Bowl of Petunias",
@@ -113,4 +122,5 @@ object DummyObjects {
     toughness = 1,
     multiverseId = Some(8)
   )
+
 }

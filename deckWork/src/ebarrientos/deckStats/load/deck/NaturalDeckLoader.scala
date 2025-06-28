@@ -1,21 +1,24 @@
 package ebarrientos.deckStats.load.deck
 
+
 import ebarrientos.deckStats.basics.Deck
 import zio._
 import ebarrientos.deckStats.basics.DeckEntry
 import ebarrientos.deckStats.load.card.CardLoader
 
-/** Deck loader that loads a deck that looks like:
-  *
-  * 4x Swords to Plowshares
-  * Demonic Tutor
-  * ...
-  *
-  * Numbers can optionally be followed by 'x'. No number means a single copy
-  *
-  * @param text
-  * @param loader
-  */
+
+/**
+ * Deck loader that loads a deck that looks like:
+ *
+ * 4x Swords to Plowshares
+ * Demonic Tutor
+ * ...
+ *
+ * Numbers can optionally be followed by 'x'. No number means a single copy
+ *
+ * @param text
+ * @param loader
+ */
 class NaturalDeckLoader(text: String, loader: CardLoader) extends DeckLoader {
 
   override def load(): Task[Deck] =
@@ -30,17 +33,20 @@ class NaturalDeckLoader(text: String, loader: CardLoader) extends DeckLoader {
       .map(_.flatten)
       .map(des => Deck(des))
 
-  /** Split the line into the amount portion and the card name portion
-    *
-    * @param line the line to parse
-    * @return Amount and card name, if present
-    */
+
+  /**
+   * Split the line into the amount portion and the card name portion
+   *
+   * @param line the line to parse
+   * @return Amount and card name, if present
+   */
   def parseLine(line: String): Option[(String, String)] = {
     val regex = """\s*([0-9]*)\s*x?\s*(.+)""".r
     regex
       .findFirstMatchIn(line)
       .map(m => (m.group(1), m.group(2)))
   }
+
 
   def parseCardDef(odef: Option[(String, String)]): Task[Option[DeckEntry]] =
     odef
@@ -54,7 +60,9 @@ class NaturalDeckLoader(text: String, loader: CardLoader) extends DeckLoader {
         }
       }
       .getOrElse(ZIO.succeed(None))
+
 }
+
 
 object NaturalDeckLoader {
   def apply(text: String, loader: CardLoader) = new NaturalDeckLoader(text, loader)

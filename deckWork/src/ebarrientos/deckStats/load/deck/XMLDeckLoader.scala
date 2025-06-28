@@ -1,5 +1,6 @@
 package ebarrientos.deckStats.load.deck
 
+
 import java.io.File
 import ebarrientos.deckStats.basics.{Card, Deck}
 import scala.xml.Elem
@@ -8,6 +9,7 @@ import zio.ZIO
 import org.slf4j.LoggerFactory
 import ebarrientos.deckStats.basics.DeckEntry
 import ebarrientos.deckStats.load.card.CardLoader
+
 
 /**
  * Deck loader that loads the information from an XML file. The card loader provides the card
@@ -21,9 +23,11 @@ case class XMLDeckLoader(
   def this(file: File, loader: CardLoader) =
     this(scala.xml.XML.loadFile(file), loader)
 
+
   def this(path: String, loader: CardLoader) = this(new File(path), loader)
 
   val log = LoggerFactory.getLogger(getClass())
+
 
   override def load(): Task[Deck] = {
     // This will throw a NoSuchElementException if there is no main deck
@@ -40,8 +44,7 @@ case class XMLDeckLoader(
     log.debug("Found {} distinct cards", cardinfo.size)
 
     val cardMap: ZIO[Any, Throwable, Map[String, Card]] =
-      for { cards <- loader.cards(cardinfo.map { case (name, _) => name }) }
-      yield cards
+      for { cards <- loader.cards(cardinfo.map { case (name, _) => name }) } yield cards
         .map(c => c.name -> c)
         .toMap
 
@@ -64,4 +67,5 @@ case class XMLDeckLoader(
         Deck(deckEntries, deckName)
       }
   }
+
 }

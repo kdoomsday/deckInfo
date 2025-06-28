@@ -1,5 +1,6 @@
 package ebarrientos.deckInfo
 
+
 import sttp.tapir.ztapir._
 import ebarrientos.deckStats.basics.Card
 import sttp.tapir.Schema
@@ -14,10 +15,13 @@ import sttp.tapir.Endpoint
 import ebarrientos.deckStats.queries.DeckObject
 import ebarrientos.deckStats.basics.Color.*
 
+
 /** Endpoint definitions */
 object CardEndpoints {
+
   import Schemas._
   import Codecs._
+
 
   def cardEndpoint: Endpoint[Unit, String, Unit, Card, Any] =
     val res =
@@ -28,6 +32,7 @@ object CardEndpoints {
         .description("Endpoint to query info about a card by its name")
     res
 
+
   def postDeck =
     endpoint
       .post
@@ -37,17 +42,22 @@ object CardEndpoints {
 
 }
 
+
 /** Server definitions */
 object CardServerEndpoints {
   import CardEndpoints._
 
+
   def cardServerEndpoint: ZServerEndpoint[Any, Any] =
     cardEndpoint.serverLogicOption(name => Helpers.logicLive.card(name))
+
 
   def deckServerEndpoint: ZServerEndpoint[Any, Any] =
     postDeck.serverLogic(content => Helpers.logicLive.deck(xmlFromContent(content)))
 
+
   val allEndpoints = List(cardServerEndpoint, deckServerEndpoint)
+
 
   /** Extract the xmlDeck from the request */
   private def xmlFromContent(content: String): String = {
@@ -58,7 +68,9 @@ object CardServerEndpoints {
       .filterNot(line => line.trim.startsWith(boundary))
       .mkString
   }
+
 }
+
 
 object Schemas {
   implicit def wSchema: Schema[White.type]              = Schema.string

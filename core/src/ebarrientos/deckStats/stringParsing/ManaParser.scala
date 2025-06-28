@@ -1,10 +1,12 @@
 package ebarrientos.deckStats.stringParsing
 
+
 import scala.util.parsing.combinator.JavaTokenParsers
 import ebarrientos.deckStats.basics.Mana
 import ebarrientos.deckStats.basics.GenericMana
 import ebarrientos.deckStats.basics.HybridMana
 import ebarrientos.deckStats.basics.XMana
+
 
 object ManaParser extends JavaTokenParsers with ParserHelpers {
   def cost: Parser[Seq[Mana]] = rep(mana)
