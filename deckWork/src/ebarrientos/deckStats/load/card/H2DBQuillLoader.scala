@@ -19,7 +19,6 @@ import java.nio.file.Path
 import java.nio.file.Paths
 import javax.sql.DataSource
 import scala.jdk.CollectionConverters._
-import scala.annotation.unused
 
 
 /**
@@ -37,8 +36,9 @@ class H2DBQuillLoader(
 ) extends CardLoader
     with LoadUtils {
 
-  private val log    = LoggerFactory.getLogger(getClass())
-  private val parser = MtgJsonParser
+  import H2DBQuillLoader.Implicits.*
+
+  private val log = LoggerFactory.getLogger(getClass())
 
 
   /** DataSource layer for the dao */
@@ -48,52 +48,6 @@ class H2DBQuillLoader(
 
   private val ctx = new H2ZioJdbcContext(LowerCase)
   import ctx._
-
-
-  // Encoders/Decoders
-  // Mana
-  @unused implicit private val manaDecoder: MappedEncoding[String, Seq[Mana]] =
-    MappedEncoding[String, Seq[Mana]](costStr => parser.parseAll(parser.cost, costStr).get)
-
-
-  @unused implicit private val manaEncoder: MappedEncoding[Seq[Mana], String] =
-    MappedEncoding[Seq[Mana], String](cost => parser.stringify(cost))
-
-
-  // Card types
-  @unused implicit private val cardTypeDecoder: MappedEncoding[String, Set[CardType]] =
-    MappedEncoding[String, Set[CardType]](
-      _.split(" ").map(CardType.apply).toSet
-    )
-
-
-  @unused implicit private val cardTypeEncoder: MappedEncoding[Set[CardType], String] =
-    MappedEncoding[Set[CardType], String](_.mkString(" "))
-
-
-  // Supertypes
-  @unused implicit private val superTypeDecoder: MappedEncoding[String, Set[Supertype]] =
-    MappedEncoding[String, Set[Supertype]](
-      _.split(" ")
-        .collect {
-          case st if st.nonEmpty => Supertype.apply(st)
-        }
-        .toSet
-    )
-
-
-  @unused implicit private val superTypeEncoder: MappedEncoding[Set[Supertype], String] =
-    MappedEncoding[Set[Supertype], String](_.mkString(" "))
-
-
-  // Subtypes
-  @unused implicit private val subTypeDecoder: MappedEncoding[String, Set[String]] =
-    MappedEncoding[String, Set[String]](_.split(" ").toSet)
-
-
-  @unused implicit private val subTypeEncoder: MappedEncoding[Set[String], String] =
-    MappedEncoding[Set[String], String](_.mkString(" "))
-  // End Encoders/Decoders
 
 
   override def card(name: String): Task[Option[Card]] =
@@ -226,4 +180,60 @@ class H2DBQuillLoader(
 
 
   log.debug(s"Finished initialization of ${getClass()}")
+}
+
+
+object H2DBQuillLoader {
+
+  object Implicits {
+    private val parser = MtgJsonParser
+
+
+    // Encoders/Decoders
+    // Mana
+    implicit val manaDecoder: MappedEncoding[String, Seq[Mana]] =
+      MappedEncoding[String, Seq[Mana]](costStr => parser.parseAll(parser.cost, costStr).get)
+
+
+    implicit val manaEncoder: MappedEncoding[Seq[Mana], String] =
+      MappedEncoding[Seq[Mana], String](cost => parser.stringify(cost))
+
+
+    // Card types
+    implicit val cardTypeDecoder: MappedEncoding[String, Set[CardType]] =
+      MappedEncoding[String, Set[CardType]](
+        _.split(" ").map(CardType.apply).toSet
+      )
+
+
+    implicit val cardTypeEncoder: MappedEncoding[Set[CardType], String] =
+      MappedEncoding[Set[CardType], String](_.mkString(" "))
+
+
+    // Supertypes
+    implicit val superTypeDecoder: MappedEncoding[String, Set[Supertype]] =
+      MappedEncoding[String, Set[Supertype]](
+        _.split(" ")
+          .collect {
+            case st if st.nonEmpty => Supertype.apply(st)
+          }
+          .toSet
+      )
+
+
+    implicit val superTypeEncoder: MappedEncoding[Set[Supertype], String] =
+      MappedEncoding[Set[Supertype], String](_.mkString(" "))
+
+
+    // Subtypes
+    implicit val subTypeDecoder: MappedEncoding[String, Set[String]] =
+      MappedEncoding[String, Set[String]](_.split(" ").toSet)
+
+
+    implicit val subTypeEncoder: MappedEncoding[Set[String], String] =
+      MappedEncoding[Set[String], String](_.mkString(" "))
+    // End Encoders/Decoders
+
+  }
+
 }
