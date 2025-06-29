@@ -30,6 +30,7 @@ object DeckCalc {
         .groupedCount(d, _.types)
         .map { case (t, c) => CountObject(t.toString(), c) }
         .toSeq
+        .sortBy(_.count)
 
     val symbolCounts: Seq[CountObject] =
       Calc

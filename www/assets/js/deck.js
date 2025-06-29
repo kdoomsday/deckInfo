@@ -177,8 +177,6 @@ function countsChart(data) {
 
     const cd = countsToChartData(data.counts);
 
-    const colors = ["#703716", "#1b5918", "#bb0606", "#071084", "#a08924", "#8e8c83", "#669ae2"];
-
     const ctx = document.getElementById('counts').getContext('2d');
     const myChart = new Chart(ctx, {
         type: 'pie',
@@ -186,7 +184,7 @@ function countsChart(data) {
             labels: cd.labels,
             datasets: [{
                 data: cd.counts,
-                backgroundColor: colors
+                backgroundColor: typeColor
             }],
         },
         options: {
@@ -243,6 +241,23 @@ function symbolColor(context) {
     else
         return "#888888";
 }
+
+
+/** Color for a type of card */
+function typeColor(context) {
+    const index = context.dataIndex;
+    const label = context.chart.data.labels[index];
+
+    if      (label == "Artifact")     return 'rgba(142, 140, 131, 0.9)';
+    else if (label == "Creature")     return 'rgba( 27,  89,  24, 1.0)';
+    else if (label == "Instant")      return 'rgba(187,   6,   6, 1.0)';
+    else if (label == "Land")         return 'rgba(112,  55,  22, 0.8)';
+    else if (label == "Planeswalker") return 'rgba(160, 137,  36, 1.0)';
+    else if (label == "Sorcery")      return 'rgba(112,  16, 132, 1.0)';
+    else if (label == "Enchantment")  return 'rgba(102, 154, 226, 1.0)';
+    else return 'rgba(255, 255, 255, 0)';
+}
+
 
 /** Mana symbols chart */
 function symbolsChart(data) {
