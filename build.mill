@@ -4,7 +4,7 @@ import mill._, scalalib._
 import $file.versionUtil
 
 trait MyModule extends ScalaModule {
-  def scalaVersion = "3.3.3"
+  def scalaVersion = "3.3.6"
 
   val zioVersion        = "2.0.21"
   val zioCatsVersion    = "3.3.0"
