@@ -13,9 +13,13 @@ case class Version(major: Int, minor: Int, point: Int, isRC: Boolean) {
   def asRC = this.copy(isRC = true)
 }
 
-def versionFileName = "version.txt"
 
+final val versionFileName = "version.txt"
+
+
+/** Path to the version file */
 def vFile(rootPath: Path) = rootPath / versionFileName
+
 
 /**
   * Read the current version from the version file
@@ -28,12 +32,14 @@ def currentVersion(rootPath: Path): Version = {
   parseVersion(current)
 }
 
+
 /** Reads a version string and parses it */
 def parseVersion(vString: String): Version = {
   val r = """([0-9]*)\.([0-9]*)\.([0-9]*)(-RC)?""".r
   val r(major, minor, point, rc) = vString
   Version(major.toInt, minor.toInt, point.toInt, rc != null)
 }
+
 
 /** Write a new version into the version file */
 def write(v: Version, rootPath: Path): Unit = {

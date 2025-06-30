@@ -2,6 +2,8 @@ package build
 
 import mill._, scalalib._
 import $file.versionUtil
+import $file.versionUtil.Version
+import mainargs.{arg, Flag}
 
 trait MyModule extends ScalaModule {
   def scalaVersion = "3.3.6"
@@ -107,30 +109,38 @@ def millw() = Task.Command {
   target
 }
 
+
 /**
- * Generate a Docker image from the assembly
- * Will tag it with the current version as a release, and will also advance the
- * version
+ * Create a Docker image and release it under the current version. If configured
+ * to bump, will also advance the version by writing into "version.txt"
+ * 
+ * @param bump If active, will advance the version after release
  */
-def dockerBuild = Task {
+def dockerBuild(@arg(doc = "If set, will release current version and move project to next")
+                bump: Flag) = Task.Command {
+
   tapir.assembly()
 
-  val version = versionUtil.currentVersion(Task.workspace)
-  val tag = version.asRelease.toString
-  val next = version.asRC.next
-
+  val version = versionUtil.currentVersion(Task.workspace).asRelease
   val dockerImageName = "deckinfo"
   val dockerFile = Task.workspace / "Dockerfile"
+
   os.proc("docker", "build", "-f", dockerFile,
-          "-t", s"$dockerImageName", "-t", s"$dockerImageName:$tag",
-          Task.workspace)
+          "-t", s"$dockerImageName",
+          "-t", s"$dockerImageName:$version", Task.workspace)
     .call()
-  versionUtil.write(next, Task.workspace)
+
+  if (bump.value) {
+    val next = version.asRC.next
+    versionUtil.write(next, Task.workspace)
+  }
 }
+
 
 def start = Task {
   tapir.run()
 }
+
 
 def appVersion = Task {
   println(versionUtil.currentVersion(Task.workspace))

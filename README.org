@@ -37,3 +37,16 @@ this functionality) was created.
 * Running
 Upload a deck through the interface, see your information. By default runs on
 http://localhost:8080. Run it with ~./mill tapir.run~
+
+* Deploying to Docker
+Deploying is accomplished via ~./mill dockerBuild~. This will generate the image
+and tag it with the current release version number.
+
+Doing ~/.mill dockerBuild --bump~ will release the current version, and then
+advance it by one.
+
+* Running the Docker image
+Ensure you map port =8080= so you can access the page. If running in local you can
+reach it via http://localhost:8080.
+
+Swagger docs will be in http://localhost:8080/docs.
