@@ -253,8 +253,8 @@ function typeColor(context) {
     else if (label == "Instant")      return 'rgba(187,   6,   6, 1.0)';
     else if (label == "Land")         return 'rgba(112,  55,  22, 0.8)';
     else if (label == "Planeswalker") return 'rgba(160, 137,  36, 1.0)';
-    else if (label == "Sorcery")      return 'rgba(112,  16, 132, 1.0)';
-    else if (label == "Enchantment")  return 'rgba(102, 154, 226, 1.0)';
+    else if (label == "Sorcery")      return 'rgba( 10,  70, 166, 1.0)';
+    else if (label == "Enchantment")  return 'rgba(207, 151, 252, 1.0)';
     else return 'rgba(255, 255, 255, 0)';
 }
 
