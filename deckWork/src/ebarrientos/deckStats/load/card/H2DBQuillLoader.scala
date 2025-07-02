@@ -24,9 +24,10 @@ import scala.jdk.CollectionConverters._
 /**
  * Card loader using quill to handle database queries
  *
- * @param helper [[CardLoader]] to fetch info if not present in this one
- * @param ds     [[DataSource]] to use
- * @param runner [[ZioRunner]] which will be used to ensure tables are initialized
+ * @param helper          [[CardLoader]] to fetch info if not present in this one
+ * @param ds              [[DataSource]] to use
+ * @param initScriptsPath [[Path]] to scripts to initialize the database
+ * @param runner          [[ZioRunner]] which will be used to ensure tables are initialized
  */
 class H2DBQuillLoader(
     val helper: CardLoader,
@@ -50,6 +51,7 @@ class H2DBQuillLoader(
   import ctx._
 
 
+  /* Fetches the card directly. If not present, will fetch from helper and store in DB */
   override def card(name: String): Task[Option[Card]] =
     retrieve(name)
       .flatMap { oc =>
@@ -82,6 +84,12 @@ class H2DBQuillLoader(
     oc.map(c => store(c)).getOrElse(ZIO.unit)
 
 
+  /**
+   * Store a card in the database
+   *
+   * @param c The [[Card]]
+   * @return Task that succeeds if the insert succeeds
+   */
   private def store(c: Card): Task[Unit] =
     ctx
       .run(quote(query[Card].insertValue(lift(c))))
@@ -93,10 +101,8 @@ class H2DBQuillLoader(
   /**
    * Store multiple cards at once
    *
-   * @param cards
-   *   Cards to store
-   * @return
-   *   Number of cards stores. Assumes all were inserted
+   * @param cards Cards to store
+   * @return Number of cards stores. Assumes all were inserted
    */
   private def storeMulti(cards: Seq[Card]): Task[Long] =
     ctx
@@ -132,10 +138,8 @@ class H2DBQuillLoader(
   /**
    * Queries for all cards at once, without resorting to the helper
    *
-   * @param names
-   *   All the looked for cards
-   * @return
-   *   All of the cards that were found. This might be less than the requested cards
+   * @param names All the cards to look for
+   * @return All of the cards that were found. This might be less than the requested cards
    */
   private def queryMultiple(names: Seq[String]): Task[Seq[Card]] = {
     inline def q = quote {
@@ -167,10 +171,10 @@ class H2DBQuillLoader(
       .provide(dataSource)
 
 
+  /* Initialize the tables if necessary */
   log.debug("Attempting to run init scripts")
 
 
-  /* Initialize the tables if necessary */
   runner.run(
     (runInitScripts() *> logTotalCardCount()).catchAll { ex =>
       log.error("Error initializing database", ex)

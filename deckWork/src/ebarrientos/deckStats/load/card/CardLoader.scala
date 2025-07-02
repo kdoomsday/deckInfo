@@ -6,7 +6,7 @@ import zio.Task
 import zio.ZIO
 
 
-/** All card loaders must implement these methods. */
+/** Can fetch card information by name from some source */
 trait CardLoader {
 
   /**
