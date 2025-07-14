@@ -27,7 +27,7 @@ object MtgJsonParser extends JavaTokenParsers with ParserHelpers {
    * De secuencia de mana a mana. Si hay 1 elemento se devuelve el elemento.
    * Si no, se considera mana híbrido
    */
-  private[this] def seq2Mana(ms: Seq[Mana]): Mana = if (ms.size == 1) ms.head
+  private def seq2Mana(ms: Seq[Mana]): Mana = if (ms.size == 1) ms.head
   else HybridMana(ms.toSet)
 
 

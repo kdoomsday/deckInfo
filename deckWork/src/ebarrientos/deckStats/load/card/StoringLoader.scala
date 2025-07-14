@@ -30,7 +30,7 @@ trait StoringLoader extends CardLoader {
   /** If ocard is not defined, fecth with helper. Then, if fetch is successful,
     * store. In all cases, if there is a card it will be returned
     */
-  private[this] def fetchIfNecessary(
+  private def fetchIfNecessary(
       ocard: Option[Card],
       name: String
   ): Task[Option[Card]] =

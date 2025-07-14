@@ -9,7 +9,7 @@ import zio._
 
 /** Loader that caches values in memory for repeated use. */
 class CachedLoader(private val l: CardLoader) extends CardLoader {
-  private[this] val map = mutable.HashMap[String, Card]()
+  private val map = mutable.HashMap[String, Card]()
 
 
   def card(name: String): Task[Option[Card]] =

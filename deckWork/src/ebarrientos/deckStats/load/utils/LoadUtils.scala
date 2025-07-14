@@ -42,7 +42,7 @@ trait LoadUtils {
   }
 
   // Convert power or toughness to Int, taking into consideration things like '*'
-  private[this] def strToInt(s: String) = {
+  private def strToInt(s: String) = {
     if (s.contains("*") || s.contains("X")) 0
     else if (s.contains("+")) s.takeWhile(_ != '+').toInt
     else s.toInt
