@@ -23,10 +23,10 @@ class MtgJsonLoader(source: => String) extends CardLoader with LoadUtils {
 
 
   override def card(name: String): IO[Exception, Option[Card]] =
-    byName(name).map(_.toOption.map(toCard _))
+    byName(name).map(_.toOption.map(toCard))
 
 
-  private[this] def byName(name: String): IO[ParsingFailure, Result[Carta]] =
+  private def byName(name: String): IO[ParsingFailure, Result[Carta]] =
     ZIO.fromEither {
       parse(source).map { json =>
         json
@@ -38,7 +38,7 @@ class MtgJsonLoader(source: => String) extends CardLoader with LoadUtils {
 
 
   /** Convertir de [[Carta]] a [[Card]] */
-  private[this] def toCard(c: Carta): Card = {
+  private def toCard(c: Carta): Card = {
     val cost: Seq[Mana]               = c.manaCost.fold(Seq[Mana]())(manaParseFunc(_))
     val (supertypes, types, subtypes) = parseTypes(
       buildTypes(c.types, c.`type`, c.subtypes.getOrElse(Nil))
@@ -58,7 +58,7 @@ class MtgJsonLoader(source: => String) extends CardLoader with LoadUtils {
   }
 
 
-  private[this] def buildTypes(
+  private def buildTypes(
       supertypes: Seq[String],
       `type`: String,
       subtypes: Seq[String]

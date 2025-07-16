@@ -9,7 +9,7 @@ import zio._
 
 /** Cached loader that stores cards in a weak hash map, to prevent too much growth. */
 class WeakCachedLoader(val helper: CardLoader) extends CardLoader {
-  private[this] lazy val map = new mutable.WeakHashMap[String, Card]
+  private lazy val map = new mutable.WeakHashMap[String, Card]
 
 
   def card(name: String): Task[Option[Card]] =
@@ -23,7 +23,7 @@ class WeakCachedLoader(val helper: CardLoader) extends CardLoader {
 
 
   // Guardar la carta, si existe
-  private[this] def store(name: String, oCard: Option[Card]): Unit =
+  private def store(name: String, oCard: Option[Card]): Unit =
     oCard.foreach(card => map(name) = card)
 
 }

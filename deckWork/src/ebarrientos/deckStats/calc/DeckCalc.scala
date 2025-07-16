@@ -47,7 +47,7 @@ object DeckCalc {
       cardCount = Calc.count(d),
       counts = counts,
       manaSymbols = symbolCounts,
-      manaCurve = Calc.manaCurve(d).map(CurvePoint.apply _),
+      manaCurve = Calc.manaCurve(d).map(CurvePoint.apply),
       deckName = d.name,
       cards = cards
     )

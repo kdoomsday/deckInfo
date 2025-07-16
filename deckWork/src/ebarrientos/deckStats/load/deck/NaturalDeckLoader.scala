@@ -27,8 +27,8 @@ class NaturalDeckLoader(text: String, loader: CardLoader) extends DeckLoader {
         text
           .split("\n")
           .toSeq
-          .map(parseLine _)
-          .map(parseCardDef _)
+          .map(parseLine)
+          .map(parseCardDef)
       )
       .map(_.flatten)
       .map(des => Deck(des))

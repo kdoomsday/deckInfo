@@ -14,7 +14,7 @@ import org.h2.jdbcx.JdbcDataSource
 /** Tests for [[H2DBQuillLoader]] */
 object H2DBQuillLoaderTest extends TestSuite {
 
-  val runner          = Unsafe.unsafe(implicit unsafe => new ZioRunnerDefault()(unsafe))
+  val runner          = Unsafe.unsafe(implicit unsafe => new ZioRunnerDefault()(using unsafe))
   val initScriptsPath = s"${System.getenv("MILL_WORKSPACE_ROOT")}/dbInitScripts/"
 
 
