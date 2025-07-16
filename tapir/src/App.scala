@@ -39,7 +39,7 @@ object App extends ZIOAppDefault {
         app          <- ZIO.succeed(ZioHttpInterpreter(serverOptions).toHttp(allEndpoints))
         actualPort   <- Server.install(app)
         _            <- zio.Console.printLine(welcomeMessage(actualPort))
-        _            <- zio.Console.readLine
+        _            <- ZIO.never
         _            <- ZIO.succeed(log.info("Server shutdown requested"))
       } yield ()
     ).provide(
@@ -52,6 +52,6 @@ object App extends ZIOAppDefault {
     s"""|Welcome to DeckInfo!
         |Go to http://localhost:${port} for the application.
         |Go to http://localhost:${port}/docs to open SwaggerUI.
-        |Press ENTER key to exit.""".stripMargin
+        |Kill application with Ctrl-C""".stripMargin
 
 }
