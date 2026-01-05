@@ -1,12 +1,19 @@
+//| mvnDeps:
+//| - com.lihaoyi::mill-contrib-scoverage:1.0.3
+//| mill-opts: ["--ticker=false"]
+
 package build
 
 import mill.*, scalalib.*
 import mill.api.BuildCtx
+import mill.contrib.scoverage.ScoverageModule
 import os.Path
 import mainargs.{arg, Flag}
 
-trait MyModule extends ScalaModule {
-  def scalaVersion = "3.7.0"
+
+trait MyModule extends ScoverageModule {
+  def scalaVersion     = "3.7.0"
+  def scoverageVersion = "2.1.1"
 
   val zioVersion        = "2.0.21"
   val zioCatsVersion    = "3.3.0"
@@ -42,7 +49,7 @@ trait MyModule extends ScalaModule {
 
   val logbackDeps = Seq(mvn"ch.qos.logback:logback-classic:$logbackVersion")
 
-  object test extends ScalaTests with TestModule.Utest {
+  object test extends ScoverageTests with TestModule.Utest {
 
     def mvnDeps = Seq(
       mvn"com.lihaoyi::utest:$utestVer",
