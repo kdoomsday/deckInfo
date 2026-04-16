@@ -19,6 +19,7 @@ trait MyModule extends ScoverageModule {
   val zioCatsVersion    = "3.3.0"
   val utestVer          = "0.8.2"
   val scala3mockVersion = "0.6.0"
+  val scalaMockVersion  = "7.5.5"
   val quillVersion      = "4.6.0"
   val logbackVersion    = "1.4.5"
   val scalaXmlVersion   = "2.1.0"
@@ -53,6 +54,7 @@ trait MyModule extends ScoverageModule {
 
     def mvnDeps = Seq(
       mvn"com.lihaoyi::utest:$utestVer",
+      mvn"org.scalamock::scalamock:$scalaMockVersion",
       mvn"eu.monniot::scala3mock:$scala3mockVersion",
       mvn"eu.monniot::scala3mock-scalatest:$scala3mockVersion"
     )
@@ -110,6 +112,10 @@ object tapir extends MyModule {
  * Create a Docker image and release it under the current version. If configured
  * to `release`, will also advance the version by writing into "version.txt",
  * and create the image under the new version
+ *
+ * Examples:
+ * `./mill dockerBuild`
+ * `./mill dockerBuild --release`
  *
  * @param release If active, will advance the version before building the image
  */
