@@ -10,7 +10,7 @@ import org.scalamock.stubs.Stubs
 import org.scalamock.stubs.Stub
 
 
-object SequenceLoaderTests extends TestSuite, Stubs {
+object SequenceLoaderTest extends TestSuite, Stubs {
 
   private val runtime = Runtime.default
 
@@ -65,18 +65,27 @@ object SequenceLoaderTests extends TestSuite, Stubs {
       assert(res == Option(DummyObjects.arthur))
     }
 
-    test("failing loader fails the task") {
+    test("one failing loader does not fail the task") {
+      val l1      = new CardLoader {
+        def card(name: String): Task[Option[Card]] = ZIO.fail(new RuntimeException("boom"))
+      }
+      val l2      = loaderFinds(DummyObjects.trillian)
+      val loader  = new SequenceLoader(l1, l2)
+
+      val res = TestHelper.run(loader.card("err"))
+      assert(res == Option(DummyObjects.trillian))
+    }
+
+    test("all loaders failing fails the taks") {
       val message = "boom"
       val l1      = new CardLoader {
         def card(name: String): Task[Option[Card]] = ZIO.fail(new RuntimeException(message))
       }
-      val l2      = loaderFinds(DummyObjects.arthur)
-      val loader  = new SequenceLoader(l1, l2)
+      val loader  = new SequenceLoader(l1)
 
       val res = intercept[RuntimeException] {
         TestHelper.run(loader.card("err"))
       }
-
       assert(res.getMessage() == message)
     }
   }
