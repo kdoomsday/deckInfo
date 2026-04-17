@@ -29,6 +29,13 @@ object SequenceLoaderTest extends TestSuite, Stubs {
     res
 
 
+  /** Loader that finds a card, but only after a delay */
+  private def loaderDelay(found: Card, delay: Duration) =
+    val res = stub[CardLoader]
+    res.card.returnsWith(ZIO.sleep(delay) *> ZIO.succeed(Some(found)))
+    res
+
+
   val tests = Tests {
     test("all loaders None => None") {
       val l1     = emptyLoader
@@ -87,6 +94,17 @@ object SequenceLoaderTest extends TestSuite, Stubs {
         TestHelper.run(loader.card("err"))
       }
       assert(res.getMessage() == message)
+    }
+
+    test("loaders are raced, fastest result gets picked up") {
+      val l1 = loaderDelay(DummyObjects.arthur, 100.millis)
+      val l2 = loaderDelay(DummyObjects.trillian, 10.millis)
+      val loader = SequenceLoader(l1, l2)(20.millis)
+
+      val res = TestHelper.run(loader.card("any"))
+      assert(res == Option(DummyObjects.trillian))
+      assert(l1.card.times == 1)
+      assert(l2.card.times == 1)
     }
   }
 
