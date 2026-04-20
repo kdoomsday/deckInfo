@@ -10,68 +10,68 @@ object SmartRaceTest extends TestSuite {
 
   val tests = Tests {
     test("z1 returns Some first, use it") {
-      val z1         = ZIO.sleep(10.millis) *> ZIO.succeed(Some(1))
-      val z2         = ZIO.sleep(100.millis) *> ZIO.succeed(Some(2))
-      val startDelay = 50.millis
+      val z1    = ZIO.sleep(10.millis) *> ZIO.succeed(Some(1))
+      val z2    = ZIO.sleep(100.millis) *> ZIO.succeed(Some(2))
+      val delay = 50.millis
 
-      val res = TestHelper.run(SmartRace.race(z1, z2)(startDelay))
+      val res = TestHelper.run(SmartRace.race(z1, z2)(delay))
       assert(res == Some(1))
     }
 
     test("z2 returns Some when z1 is slow, use it") {
-      val z1         = ZIO.sleep(100.millis) *> ZIO.succeed(Some(1))
-      val z2         = ZIO.sleep(10.millis) *> ZIO.succeed(Some(2))
-      val startDelay = 50.millis
+      val z1    = ZIO.sleep(100.millis) *> ZIO.succeed(Some(1))
+      val z2    = ZIO.sleep(10.millis) *> ZIO.succeed(Some(2))
+      val delay = 50.millis
 
-      val res = TestHelper.run(SmartRace.race(z1, z2)(startDelay))
+      val res = TestHelper.run(SmartRace.race(z1, z2)(delay))
       assert(res == Some(2))
     }
 
     test("z1 returns None, result is z2's") {
-      val z1         = ZIO.succeed(None)
-      val z2         = ZIO.succeed(Some(2))
-      val startDelay = 50.millis
+      val z1    = ZIO.succeed(None)
+      val z2    = ZIO.succeed(Some(2))
+      val delay = 50.millis
 
-      val res = TestHelper.run(SmartRace.race(z1, z2)(startDelay))
+      val res = TestHelper.run(SmartRace.race(z1, z2)(delay))
       assert(res == Some(2))
     }
 
     test("z1 fails fast, result is z2's") {
-      val z1         = ZIO.fail(new RuntimeException("boom"))
-      val z2         = ZIO.succeed(Some(2))
-      val startDelay = 50.millis
+      val z1    = ZIO.fail(new RuntimeException("boom"))
+      val z2    = ZIO.succeed(Some(2))
+      val delay = 50.millis
 
-      val res = TestHelper.run(SmartRace.race(z1, z2)(startDelay))
+      val res = TestHelper.run(SmartRace.race(z1, z2)(delay))
       assert(res == Some(2))
     }
 
     test("both return None, returns None") {
-      val z1         = ZIO.succeed(None)
-      val z2         = ZIO.succeed(None)
-      val startDelay = 50.millis
+      val z1    = ZIO.succeed(None)
+      val z2    = ZIO.succeed(None)
+      val delay = 50.millis
 
-      val res = TestHelper.run(SmartRace.race(z1, z2)(startDelay))
+      val res = TestHelper.run(SmartRace.race(z1, z2)(delay))
       assert(res.isEmpty)
     }
 
     test("both fail, fails the task") {
-      val z1         = ZIO.fail(new RuntimeException("boom1"))
-      val z2         = ZIO.fail(new RuntimeException("boom2"))
-      val startDelay = 50.millis
+      val z1    = ZIO.fail(new RuntimeException("boom1"))
+      val z2    = ZIO.fail(new RuntimeException("boom2"))
+      val delay = 50.millis
 
       val res = intercept[RuntimeException] {
-        TestHelper.run(SmartRace.race(z1, z2)(startDelay))
+        TestHelper.run(SmartRace.race(z1, z2)(delay))
       }
       assert(res.getMessage.contains("boom1") || res.getMessage.contains("boom2"))
     }
 
     test("types for the exception align") {
-      val z1         = ZIO.fail(new E1("boom1"))
-      val z2         = ZIO.fail(new E2("boom2"))
-      val startDelay = 50.millis
+      val z1    = ZIO.fail(new E1("boom1"))
+      val z2    = ZIO.fail(new E2("boom2"))
+      val delay = 50.millis
 
       val res = intercept[E1 | E2] {
-        TestHelper.run(SmartRace.race(z1, z2)(startDelay))
+        TestHelper.run(SmartRace.race(z1, z2)(delay))
       }
 
       res match {
@@ -81,15 +81,15 @@ object SmartRaceTest extends TestSuite {
     }
 
     test("z1 returns Some, z2 never started") {
-      var z2Started  = false
-      val z1         = ZIO.succeed(Some(1))
-      val z2         = ZIO.succeed {
+      var z2Started = false
+      val z1        = ZIO.succeed(Some(1))
+      val z2        = ZIO.succeed {
         z2Started = true
         Some(2)
       }
-      val startDelay = 50.millis
+      val delay     = 50.millis
 
-      val res = TestHelper.run(SmartRace.race(z1, z2)(startDelay))
+      val res = TestHelper.run(SmartRace.race(z1, z2)(delay))
       assert(res == Some(1))
       assert(!z2Started)
     }
@@ -98,8 +98,31 @@ object SmartRaceTest extends TestSuite {
       val z1    = ZIO.sleep(20.millis) *> ZIO.succeed(Some(1))
       val z2    = ZIO.sleep(50.millis) *> ZIO.succeed(Some(2))
       val delay = 5.millis
-      val res = TestHelper.run(SmartRace.race(z1, z2)(delay))
+      val res   = TestHelper.run(SmartRace.race(z1, z2)(delay))
       assert(res == Some(1))
+    }
+
+    test("if z1 finishes z2 is started without waiting for the delay") {
+      val start         = java.lang.System.currentTimeMillis()
+      val z1            = ZIO.none
+      val z2            = ZIO.some(2)
+      val delay         = 500.millis
+      val res           = TestHelper.run(SmartRace.race(z1, z2)(delay))
+      assert(res == Some(2))
+      val totalDuration = (java.lang.System.currentTimeMillis() - start).millis
+      assert(totalDuration < delay)
+    }
+
+    test("z2 is called only once, even if z1 finds nothing") {
+      val run         = Ref.make(0).flatMap { runs =>
+          val z1    = ZIO.none
+          val z2    = runs.getAndUpdate(_ + 1) *> ZIO.sleep(50.millis) *> ZIO.some(2)
+          val delay = 10.millis
+          (SmartRace.race(z1, z2)(delay)).zip(runs.get)
+      }
+      val (res, runs) = TestHelper.run(run)
+      assert(res == Some(2))
+      assert(runs == 1)
     }
   }
 

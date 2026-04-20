@@ -29,10 +29,10 @@ object SmartRace {
   def race[R, E1, E2, A](z1: ZIO[R, E1, Option[A]], z2: ZIO[R, E2, Option[A]])(
       startDelay: Duration
   ): ZIO[R, E1 | E2, Option[A]] =
-    val lside = z1.flatMap:
-      case Some(value) => ZIO.some(value)
-      case None => z2
-    val rside = ZIO.sleep(startDelay) *> z2
-    lside.race(rside)
+      val lside = z1.flatMap:
+          case Some(value) => ZIO.some(value)
+          case None        => z2
+      val rside = ZIO.sleep(startDelay) *> z2
+      lside.race(rside)
 
 }
