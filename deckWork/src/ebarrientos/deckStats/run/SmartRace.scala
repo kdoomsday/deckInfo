@@ -29,12 +29,10 @@ object SmartRace {
   def race[R, E1, E2, A](z1: ZIO[R, E1, Option[A]], z2: ZIO[R, E2, Option[A]])(
       startDelay: Duration
   ): ZIO[R, E1 | E2, Option[A]] =
-    val l = z1.someOrFail(NoneFailure)
-    val r = (ZIO.sleep(startDelay) *> z2).someOrFail(NoneFailure)
-
-    l.race(r)
-      .asSome
-      .catchSome { case NoneFailure => ZIO.succeed(None) }
-      .asInstanceOf[ZIO[R, E1 | E2, Option[A]]] // force fit to expected type
+    val lside = z1.flatMap:
+      case Some(value) => ZIO.some(value)
+      case None => z2
+    val rside = ZIO.sleep(startDelay) *> z2
+    lside.race(rside)
 
 }
