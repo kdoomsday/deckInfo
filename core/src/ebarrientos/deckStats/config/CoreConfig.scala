@@ -20,5 +20,6 @@ case class CoreConfig(
     parallelMax: Int,
     requestConfig: RequestConfig,
     paths: Paths,
-    port: Int
+    port: Int,
+    loadRaceDelay: FiniteDuration
 ) derives ConfigReader

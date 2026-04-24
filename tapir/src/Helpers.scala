@@ -8,7 +8,7 @@ import pureconfig.error.ConfigReaderFailures
 import ebarrientos.deckStats.load.card.CardLoader
 import ebarrientos.deckStats.load.card.MagicIOLoader
 import ebarrientos.deckStats.load.card.XMLCardLoader
-import ebarrientos.deckStats.load.card.SequenceLoader
+import ebarrientos.deckStats.load.card.RacingLoader
 import ebarrientos.deckStats.load.card.H2DBQuillLoader
 import ebarrientos.deckStats.run.ZioRunnerDefault
 import org.h2.jdbcx.JdbcDataSource
@@ -44,7 +44,7 @@ object Helpers {
       val ds         = dataSource(appConfig)
       val loader     = new MagicIOLoader(timeout, retryTime, maxRetries)
       val xmlLoader  = new XMLCardLoader(appConfig.paths.xmlCards)
-      val seqLoader  = new SequenceLoader(xmlLoader, loader)
+      val seqLoader  = new RacingLoader(xmlLoader, loader)(Duration.fromScala(appConfig.loadRaceDelay))
       val cardLoader = new H2DBQuillLoader(seqLoader, ds, appConfig.paths.initScripts, runner)
       cardLoader
     }
