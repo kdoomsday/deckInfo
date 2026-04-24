@@ -55,4 +55,63 @@ object SmartRace {
           .asInstanceOf[ZIO[R, E1 | E2, Option[A]]]
     }
 
+
+  /**
+   * Race a primary effect against a sequence of backups, introducing each backup
+   * progressively.
+   *
+   * This composes `raceBackup` repeatedly so the overall effect tries `z` first
+   * and then races the result against `zs` one by one. Each call to
+   * `raceBackup` uses an adjusted delay so later backups are introduced after
+   * proportionally larger waits. Effect 2 waits `delay` before starting. Effect 3
+   * waits `delay * 2`, and so forth.
+   *
+   * Behavior and guarantees:
+   * - The returned effect completes with the first non-`None` `Option[A]` produced
+   *   by any of the provided effects.
+   * - Each backup is introduced using `raceBackup`, so a backup is started at the
+   *   earliest of (a) the left side failing, (b) the left side producing `None`,
+   *   or (c) the configured delay for that backup. `raceBackup` also guarantees a
+   *   given backup effect is started at most once.
+   * - If every effect returns `None`, the result is `None`.
+   * - The overall effect only fails if every effect fails; which failure is
+   *   reported is unspecified (same semantics as `raceBackup` composition).
+   *
+   * Concurrency and interruption:
+   * - Internally this builds a chain of races. When a winner completes, losers
+   *   are interrupted according to ZIO's race semantics (and `raceBackup`'s
+   *   internal semantics).
+   *
+   * Example:
+   * {{{
+   *   SmartRace.raceAllBackup(primary, backup1, backup2)(delay)
+   * }}}
+   *
+   * @param z   Primary effect to try first (must produce an Option[A])
+   * @param zs  Additional backup effects; each is tried in order
+   * @param delay Base delay used to stagger introduction of successive backups
+   * @return    A `ZIO[R, E, Option[A]]` with the first non-`None` result or
+   *            `None` if none of the effects produced a value; fails only if all
+   *            effects fail.
+   */
+  def raceAllBackup[R, E, A](z: ZIO[R, E, Option[A]], zs: ZIO[R, E, Option[A]]*)(
+      delay: Duration
+  ): ZIO[R, E, Option[A]] =
+      /**
+       * Recursive run that repeatedly uses raceBackup to race all effects.
+       *
+       * @param iteration Which iteration we are in, to adjust the delay for further effects
+       * @param initial First effect to race
+       * @param rest All other effects to race
+       */
+      def rb(
+          iteration: Int,
+          initial: ZIO[R, E, Option[A]],
+          rest: ZIO[R, E, Option[A]]*
+      ): ZIO[R, E, Option[A]] =
+        if rest.isEmpty then initial
+        else rb(iteration + 1, raceBackup(initial, rest.head)(delay * iteration), rest.tail*)
+
+      rb(1, z, zs*)
+
 }
