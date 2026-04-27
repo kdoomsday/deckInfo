@@ -31,7 +31,7 @@ trait CardLoader {
    */
   def cards(names: Seq[String]): ZIO[Any, Throwable, Seq[Card]] =
     for {
-      cs <- ZIO.collectAllSuccesses(names.map(card))
+      cs <- ZIO.collectAllSuccessesPar(names.map(card))
     } yield cs.flatten
 
 

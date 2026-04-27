@@ -17,7 +17,7 @@ import ebarrientos.deckStats.basics.CardType
 object MagicIOLoaderTest extends TestSuite {
   val log = LoggerFactory.getLogger(getClass())
 
-  private val rootPath                               = "loader/test/resources"
+  private val rootPath = "loader/test/resources"
 
 
   private def responsePath(relative: String): String =
@@ -26,7 +26,8 @@ object MagicIOLoaderTest extends TestSuite {
 
   private val path = responsePath("MagicIOResponse.json")
 
-  private val defaultMaxRetries = 3
+  private val defaultMaxRetries  = 3
+  private val defaultMaxParallel = 3
 
 
   /** Load a json as a string from a path */
@@ -70,7 +71,8 @@ object MagicIOLoaderTest extends TestSuite {
       val loader = new MagicIOLoader(
         timeout = FiniteDuration(100, scala.concurrent.duration.SECONDS),
         retryTime = FiniteDuration(1, scala.concurrent.duration.SECONDS),
-        maxRetries = defaultMaxRetries
+        maxRetries = defaultMaxRetries,
+        maxParallel = defaultMaxParallel
       )
       val res    =
         loadJson(path)
@@ -84,7 +86,7 @@ object MagicIOLoaderTest extends TestSuite {
       TestHelper.run(res)
     }
 
-    "retry when the call fails" - {
+    "retry when the call fails" -
       retryTests(1) { (loader, requester) =>
         loader.card("Dark Confidant").map {
           case Some(card) =>
@@ -94,7 +96,6 @@ object MagicIOLoaderTest extends TestSuite {
           case None => throw new Exception(s"Failed to get card. Actual calls=${requester.calls}")
         }
       }
-    }
 
     "retry only up to max retries" - {
       val retries = 3
@@ -142,15 +143,15 @@ object MagicIOLoaderTest extends TestSuite {
     override def apply(v1: RequestParams): Response = {
       calls += 1
       if (failures < failureCalls)
-        failures += 1
-        Response(
-          url = "dummyURL",
-          statusCode = 400,
-          statusMessage = "BadRequest",
-          data = new Bytes(Array.emptyByteArray),
-          headers = Map.empty,
-          history = None
-        )
+          failures += 1
+          Response(
+            url = "dummyURL",
+            statusCode = 400,
+            statusMessage = "BadRequest",
+            data = new Bytes(Array.emptyByteArray),
+            headers = Map.empty,
+            history = None
+          )
       else TestHelper.run(getCardResponse(loadPath))
     }
 
@@ -160,12 +161,14 @@ object MagicIOLoaderTest extends TestSuite {
   /** Create a test MagicIOLoader */
   def testLoader(
       requester: RequestParams => Response,
+      maxParallel: Int = defaultMaxParallel,
       maxRetries: Int = defaultMaxRetries
   ): MagicIOLoader =
     new MagicIOLoader(
       timeout = FiniteDuration(100, scala.concurrent.duration.SECONDS),
       retryTime = FiniteDuration(50, scala.concurrent.duration.MILLISECONDS),
       maxRetries = maxRetries,
+      maxParallelExecutions = maxParallel,
       requester
     )
 

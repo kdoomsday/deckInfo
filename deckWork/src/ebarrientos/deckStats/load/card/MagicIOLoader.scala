@@ -18,19 +18,30 @@ import zio.Schedule
 import zio.Duration
 
 
-/** Loader para cargar información de api.magicthegathering.io */
+/**
+ * Loader para cargar información de api.magicthegathering.io
+ *
+ * @param timeout Timeout for calls
+ * @param retryTime Time to wait for retries in case of failure on a call
+ * @param maxRetries Maximum number of retries
+ * @param requester Function from params to response to request the card. Exists
+ *   to aid in testing but the real implementation can be found in
+ *   `MagicIOLoader.requestsCallCard` and is in fact used by default in the
+ *   alternate constructor
+ */
 class MagicIOLoader(
-    val timeout: FiniteDuration,
+    timeout: FiniteDuration,
     retryTime: FiniteDuration,
     maxRetries: Int,
+    val maxParallelExecutions: Int,
     requester: MagicIOLoader.RequestParams => Response
-) extends CardLoader
+) extends ParallelGroupedCardLoader
     with LoadUtils
     with URLUtils {
 
   /** Alternate constructor that uses MagicIOLoader.requestsCallCard by default as the requester */
-  def this(timeout: FiniteDuration, retryTime: FiniteDuration, maxRetries: Int) =
-    this(timeout, retryTime, maxRetries, MagicIOLoader.requestsCallCard)
+  def this(timeout: FiniteDuration, retryTime: FiniteDuration, maxRetries: Int, maxParallel: Int) =
+    this(timeout, retryTime, maxRetries, maxParallel, MagicIOLoader.requestsCallCard)
 
 
   private val log = LoggerFactory.getLogger(getClass())
