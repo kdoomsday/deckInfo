@@ -38,15 +38,16 @@ object Helpers {
       runner: ZioRunner
   ): ZIO[Any, ConfigReaderFailures, CardLoader] =
     ZIO.succeed {
-      val timeout    = appConfig.requestConfig.timeout
-      val retryTime  = appConfig.requestConfig.retryTime
-      val maxRetries = appConfig.requestConfig.maxRetries
+      val timeout     = appConfig.requestConfig.timeout
+      val retryTime   = appConfig.requestConfig.retryTime
+      val maxRetries  = appConfig.requestConfig.maxRetries
       val maxParallel = appConfig.parallelMax
-      val ds         = dataSource(appConfig)
-      val loader     = new MagicIOLoader(timeout, retryTime, maxRetries, maxParallel)
-      val xmlLoader  = new XMLCardLoader(appConfig.paths.xmlCards)
-      val seqLoader  = new RacingLoader(xmlLoader, loader)(Duration.fromScala(appConfig.loadRaceDelay))
-      val cardLoader = new H2DBQuillLoader(seqLoader, ds, appConfig.paths.initScripts, runner)
+      val ds          = dataSource(appConfig)
+      val loader      = new MagicIOLoader(timeout, retryTime, maxRetries, maxParallel)
+      val xmlLoader   = new XMLCardLoader(appConfig.paths.xmlCards)
+      val raceDelay   = Duration.fromScala(appConfig.loadRaceDelay)
+      val seqLoader   = new RacingLoader(xmlLoader, loader)(raceDelay)
+      val cardLoader  = new H2DBQuillLoader(seqLoader, ds, appConfig.paths.initScripts, runner)
       cardLoader
     }
 
