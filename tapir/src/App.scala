@@ -44,7 +44,7 @@ object App extends ZIOAppDefault {
       } yield ()
     ).provide(
       Server.defaultWithPort(port)
-    ).exitCode
+    )
   }
 
 

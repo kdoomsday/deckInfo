@@ -90,7 +90,7 @@ object SequenceLoaderTest extends TestSuite, Stubs {
       }
       val loader  = new SequenceLoader(l1)
 
-      val res = intercept[RuntimeException] {
+      val res = assertThrows[RuntimeException] {
         TestHelper.run(loader.card("err"))
       }
       assert(res.getMessage() == message)

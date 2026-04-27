@@ -12,7 +12,7 @@ object CardTypeTests extends TestSuite {
     }
 
     test("load an unknown type throws") {
-      intercept[Exception] {
+      assertThrows[Exception] {
         CardType("unknown")
       }
     }

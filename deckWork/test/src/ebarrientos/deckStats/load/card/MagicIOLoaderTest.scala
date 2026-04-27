@@ -67,7 +67,7 @@ object MagicIOLoaderTest extends TestSuite {
 
 
   val tests = Tests {
-    "load a card from its json" - {
+    test("load a card from its json") {
       val loader = new MagicIOLoader(
         timeout = FiniteDuration(100, scala.concurrent.duration.SECONDS),
         retryTime = FiniteDuration(1, scala.concurrent.duration.SECONDS),
@@ -86,7 +86,7 @@ object MagicIOLoaderTest extends TestSuite {
       TestHelper.run(res)
     }
 
-    "retry when the call fails" -
+    test("retry when the call fails") {
       retryTests(1) { (loader, requester) =>
         loader.card("Dark Confidant").map {
           case Some(card) =>
@@ -96,8 +96,9 @@ object MagicIOLoaderTest extends TestSuite {
           case None => throw new Exception(s"Failed to get card. Actual calls=${requester.calls}")
         }
       }
+    }
 
-    "retry only up to max retries" - {
+    test("retry only up to max retries") {
       val retries = 3
       retryTests(100, maxRetries = retries) { (loader, requester) =>
         loader.card("Dark Confidant").map {
@@ -110,7 +111,7 @@ object MagicIOLoaderTest extends TestSuite {
       }
     }
 
-    "load a two faced card" - {
+    test("load a two faced card") {
       val loader   = testLoader(
         TestRequester(loadPath = responsePath("MagicIO_InvasionOfZendikar_response.json"))
       )

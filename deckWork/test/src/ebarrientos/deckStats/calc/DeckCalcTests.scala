@@ -33,7 +33,7 @@ object DeckCalcTests extends TestSuite {
 
 
   val tests = Tests {
-    "Simple deck full calcs" - {
+    test("Simple deck full calcs") {
       val res = DeckCalc.fullCalc(d1, identgrouper)
 
       assert(
@@ -45,7 +45,7 @@ object DeckCalcTests extends TestSuite {
       )
     }
 
-    "Full deck full calcs" - {
+    test("Full deck full calcs") {
       val res = DeckCalc.fullCalc(d2, identgrouper)
 
       assert(res.avgCMC == 14.0 / 7.0)

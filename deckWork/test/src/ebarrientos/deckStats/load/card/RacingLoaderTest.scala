@@ -86,7 +86,7 @@ object RacingLoaderTest extends TestSuite, Stubs {
       }
       val loader  = new RacingLoader(l1)(50.millis)
 
-      val res = intercept[RuntimeException] {
+      val res = assertThrows[RuntimeException] {
         TestHelper.run(loader.card("err"))
       }
       assert(res.getMessage() == message)
@@ -99,7 +99,7 @@ object RacingLoaderTest extends TestSuite, Stubs {
       }
       val loader  = new RacingLoader(l1, l1)(50.millis)
 
-      val res = intercept[RuntimeException] {
+      val res = assertThrows[RuntimeException] {
         TestHelper.run(loader.card("err"))
       }
       assert(res.getMessage() == message)

@@ -77,7 +77,7 @@ object SmartRaceTest extends TestSuite {
         val z2    = ZIO.fail(new Exception("boom2"))
         val delay = 50.millis
 
-        val res = intercept[Exception] {
+        val res = assertThrows[Exception] {
           TestHelper.run(SmartRace.raceBackup(z1, z2)(delay))
         }
         assert(res.getMessage.contains("boom1") || res.getMessage.contains("boom2"))
@@ -88,7 +88,7 @@ object SmartRaceTest extends TestSuite {
         val z2    = ZIO.fail(new E2("boom2"))
         val delay = 50.millis
 
-        val res = intercept[E1 | E2] {
+        val res = assertThrows[E1 | E2] {
           TestHelper.run(SmartRace.raceBackup(z1, z2)(delay))
         }
 

@@ -26,7 +26,7 @@ object MtgJsonLoaderTest extends TestSuite {
 
 
   val tests = Tests {
-    "Load a creature from the sample" - {
+    test("Load a creature from the sample") {
       val ioCard: IO[Exception, Option[Card]] = loader.card("Adorable Kitten")
       for (maybeCard <- ioCard) yield {
         assert(maybeCard.isDefined)
@@ -43,7 +43,7 @@ object MtgJsonLoaderTest extends TestSuite {
       }
     }
 
-    "Load a sorcery" - {
+    test("Load a sorcery") {
       val ioWrath: IO[Exception, Option[Card]] = loader.card("Wrath of God")
       for (maybeWrath <- ioWrath) yield {
         assert(maybeWrath.isDefined)
@@ -57,7 +57,7 @@ object MtgJsonLoaderTest extends TestSuite {
       }
     }
 
-    "Land" - {
+    test("Land") {
       for (maybePlains <- loader.card("Plains")) yield maybePlains.fold(assert(false)) { plains =>
         assert(
           plains.cmc == 0,
